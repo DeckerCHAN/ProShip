@@ -16,7 +16,6 @@ branches:
   # whitelist
   only:
     - master
-    - develop
     
 # enable patching of AssemblyInfo.* files
 assembly_info:
