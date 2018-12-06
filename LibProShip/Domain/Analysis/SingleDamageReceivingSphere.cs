@@ -15,6 +15,9 @@ namespace LibProShip.Domain.Analysis
     {
         public SingleDamageReceivingSphereResult GetAnalysisResult(Replay replay)
         {
+            
+            if(Version )
+            
             var packetSorted = replay.Packets.OrderBy(x => x.Time).ToList();
 
             var index = 0;

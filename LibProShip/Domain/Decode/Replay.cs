@@ -6,6 +6,8 @@ namespace LibProShip.Domain.Decode
     public sealed class Replay : IEntity<Replay>
     {
         public Battle Battle { get; }
+        
+        public double Version { get; }
 
         public DateTime DateTime { get; }
 
