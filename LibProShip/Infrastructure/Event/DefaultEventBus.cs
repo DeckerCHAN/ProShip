@@ -40,8 +40,9 @@ namespace LibProShip.Infrastructure.Event
             var handlers = this.Handlers.Where(x => ie.GetType() == x.Item1).Select(x => x.Item2).ToList();
             foreach (var eHandler in handlers)
             {
-                if (eHandler is IDomainEventHandler<T> handler)
+                if (eHandler is IDomainEventHandler<T> )
                 {
+                    var handler = (IDomainEventHandler<T>) eHandler;
                     await Task.Run((() => { handler.Handle(ie); }));
                 }
             }
