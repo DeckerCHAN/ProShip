@@ -1,3 +1,4 @@
+using System.Threading;
 using LibProShip.Infrastructure.Event;
 using Xunit;
 
@@ -17,6 +18,8 @@ namespace LibProShip.Test.Integration.EventTest
             var handlerMock = new TestDomainEventHandler();
             eventBus.Register(handlerMock);
             eventBus.Raise(new TestEvent());
+            
+            Thread.Sleep(5000);
 
             Assert.Equal(handlerMock.HandleTimes, 1);
         }
