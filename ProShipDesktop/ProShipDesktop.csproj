@@ -80,5 +80,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LibProShip\LibProShip.csproj">
+      <Project>{bba14266-aa31-41a0-b76c-a562263c8d6e}</Project>
+      <Name>LibProShip</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
