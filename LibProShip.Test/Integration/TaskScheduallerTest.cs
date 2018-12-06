@@ -20,7 +20,7 @@ namespace LibProShip.Test.Integration
         {
             var schedualler = new TaskScheduler();
             var cts = new CancellationTokenSource();
-            schedualler.AddDelayTask(() => { this.output.WriteLine(DateTime.Now.ToString("T"));}, TimeSpan.FromSeconds(1),cts.Token);
+            schedualler.AddRecurringTask(() => { this.output.WriteLine(DateTime.Now.ToString("T"));}, TimeSpan.FromSeconds(1),cts.Token);
             Thread.Sleep(5000);
             cts.Cancel();            
         }
