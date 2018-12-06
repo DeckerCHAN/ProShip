@@ -41,4 +41,4 @@ artifacts:
 
   # pushing a single file with environment variable in path and "Deployment name" specified
   - path: ProShipDesktop\bin
-    name: myapp
+    name: ProShip
