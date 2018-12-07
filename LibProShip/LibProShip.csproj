@@ -91,6 +91,7 @@
     <Compile Include="Domain\Parse\Version\V1710\ReplayProcessor.cs" />
     <Compile Include="Domain\RepositoryBase.cs" />
     <Compile Include="Domain\IValueObject.cs" />
+    <Compile Include="Infrastructure\BlowFish.cs" />
     <Compile Include="Infrastructure\Configs\IDynamicConfig.cs" />
     <Compile Include="Infrastructure\Configs\IStaticConfig.cs" />
     <Compile Include="Infrastructure\Configs\JsonDynamicConfig.cs" />
