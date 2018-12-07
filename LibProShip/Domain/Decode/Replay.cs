@@ -7,7 +7,7 @@ namespace LibProShip.Domain.Decode
     {
         public Battle Battle { get; }
         
-        public double Version { get; }
+        public string Version { get; }
 
         public DateTime DateTime { get; }
 

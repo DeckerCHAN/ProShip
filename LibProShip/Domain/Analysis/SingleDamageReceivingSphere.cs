@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using LibProShip.Domain.Analysis.Interface;
 using LibProShip.Domain.Decode;
+using LibProShip.Infrastructure.Utils;
 
 namespace LibProShip.Domain.Analysis
 {
@@ -15,9 +16,11 @@ namespace LibProShip.Domain.Analysis
     {
         public SingleDamageReceivingSphereResult GetAnalysisResult(Replay replay)
         {
-            
-            if(Version )
-            
+            if (VersionUtils.Lower(replay.Version, "0.6.0.0") || VersionUtils.Higher(replay.Version, "0.7.10.6"))
+            {
+                return null;
+            }
+
             var packetSorted = replay.Packets.OrderBy(x => x.Time).ToList();
 
             var index = 0;
@@ -25,13 +28,12 @@ namespace LibProShip.Domain.Analysis
             while (index < packetSorted.Count)
             {
                 var packet = packetSorted[index];
-                if(packet.Data)
+                if (packet.Data)
                 {
-                    
                     //TODO: Do something
                 }
-                
-                index ++;
+
+                index++;
             }
 
 
