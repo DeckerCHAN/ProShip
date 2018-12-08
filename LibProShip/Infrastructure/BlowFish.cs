@@ -34,16 +34,16 @@ namespace LibProShip.Infrastructure
     /// </summary>
     public class Blowfish
     {
-        const int   N = 16;
-        const int   KEYBYTES = 8;
+        private const int N = 16;
 
-        static readonly uint[]   _P = 
+        static readonly uint[] _P =
         {
             0x243f6a88, 0x85a308d3, 0x13198a2e, 0x03707344, 0xa4093822, 0x299f31d0,
             0x082efa98, 0xec4e6c89, 0x452821e6, 0x38d01377, 0xbe5466cf, 0x34e90c6c,
             0xc0ac29b7, 0xc97c50dd, 0x3f84d5b5, 0xb5470917, 0x9216d5d9, 0x8979fb1b
         };
-        static readonly uint[,]  _S = 
+
+        static readonly uint[,] _S =
         {
             {
                 0xd1310ba6, 0x98dfb5ac, 0x2ffd72db, 0xd01adfb7, 0xb8e1afed, 0x6a267e96,
@@ -227,8 +227,8 @@ namespace LibProShip.Infrastructure
             }
         };
 
-        readonly uint[]      P;
-        readonly uint[,]     S;
+        readonly uint[] P;
+        readonly uint[,] S;
 
         /// <summary>
         /// Constructs and initializes a blowfish instance with the supplied key.
@@ -236,46 +236,47 @@ namespace LibProShip.Infrastructure
         /// <param name="key">The key to cipher with.</param>
         public Blowfish(byte[] key)
         {
-            short           i;
+            short i;
 
-            P = _P.Clone() as uint[];
-            S = _S.Clone() as uint[,];
+            this.P = _P.Clone() as uint[];
+            this.S = _S.Clone() as uint[,];
 
             short j = 0;
-            for (i = 0; i < N + 2; ++i) 
+            for (i = 0; i < N + 2; ++i)
             {
-                uint            data = 0x00000000;
-                short           k;
-                for (k = 0; k < 4; ++k) 
+                uint data = 0x00000000;
+                short k;
+                for (k = 0; k < 4; ++k)
                 {
                     data = (data << 8) | key[j];
                     j++;
-                    if (j >= key.Length) 
+                    if (j >= key.Length)
                     {
                         j = 0;
                     }
                 }
-                P[i] = P[i] ^ data;
+
+                this.P[i] = this.P[i] ^ data;
             }
 
-            uint datal = 0x00000000;
-            uint datar = 0x00000000;
+            uint dataL = 0x00000000;
+            uint dataR = 0x00000000;
 
-            for (i = 0; i < N + 2; i += 2) 
+            for (i = 0; i < N + 2; i += 2)
             {
-                Encipher(ref datal, ref datar);
-                P[i] = datal;
-                P[i + 1] = datar;
+                this.Encipher(ref dataL, ref dataR);
+                this.P[i] = dataL;
+                this.P[i + 1] = dataR;
             }
 
-            for (i = 0; i < 4; ++i) 
+            for (i = 0; i < 4; ++i)
             {
-                for (j = 0; j < 256; j += 2) 
+                for (j = 0; j < 256; j += 2)
                 {
-                    Encipher(ref datal, ref datar);
+                    this.Encipher(ref dataL, ref dataR);
 
-                    S[i,j] = datal;
-                    S[i,j + 1] = datar;
+                    this.S[i, j] = dataL;
+                    this.S[i, j + 1] = dataR;
                 }
             }
         }
@@ -291,19 +292,19 @@ namespace LibProShip.Infrastructure
             ushort b;
             ushort c;
             ushort d;
-            uint  y;
+            uint y;
 
-            d = (ushort)(x & 0x00FF);
+            d = (ushort) (x & 0x00FF);
             x >>= 8;
-            c = (ushort)(x & 0x00FF);
+            c = (ushort) (x & 0x00FF);
             x >>= 8;
-            b = (ushort)(x & 0x00FF);
+            b = (ushort) (x & 0x00FF);
             x >>= 8;
-            a = (ushort)(x & 0x00FF);
+            a = (ushort) (x & 0x00FF);
             //y = ((S[0][a] + S[1][b]) ^ S[2][c]) + S[3][d];
-            y = S[0,a] + S[1,b];
-            y = y ^ S[2,c];
-            y = y + S[3,d];
+            y = this.S[0, a] + this.S[1, b];
+            y = y ^ this.S[2, c];
+            y = y + this.S[3, d];
 
             return y;
         }
@@ -312,27 +313,28 @@ namespace LibProShip.Infrastructure
         /// Encrypts a byte array in place.
         /// </summary>
         /// <param name="data">The array to encrypt.</param>
-        /// <param name="length">The amount to encrypt.</param>
-        public void Encipher(byte[] data, int length)
+        public void Encipher(byte[] data)
         {
+            var length = data.Length;
             uint xl, xr;
             if ((length % 8) != 0)
                 throw new Exception("Invalid Length");
-            for (int i = 0; i < length; i+=8)
+            for (int i = 0; i < length; i += 8)
             {
                 // Encode the data in 8 byte blocks.
-                xl = (uint)((data[i] << 24) | (data[i+1] << 16) | (data[i+2] << 8) | data[i+3]);
-                xr = (uint)((data[i+4] << 24) | (data[i+5] << 16) | (data[i+6] << 8) | data[i+7]);
-                Encipher(ref xl, ref xr);
+                xl = (uint) ((data[i] << 24) | (data[i + 1] << 16) | (data[i + 2] << 8) | data[i + 3]);
+                xr = (uint) ((data[i + 4] << 24) | (data[i + 5] << 16) | (data[i + 6] << 8) | data[i + 7]);
+                this.Encipher(ref xl, ref xr);
                 // Now Replace the data.
-                data[i] = (byte)(xl >> 24);
-                data[i+1] = (byte)(xl >> 16);
-                data[i+2] = (byte)(xl >> 8);
-                data[i+3] = (byte)(xl);
-                data[i+4] = (byte)(xr >> 24);
-                data[i+5] = (byte)(xr >> 16);
-                data[i+6] = (byte)(xr >> 8);
-                data[i+7] = (byte)(xr);}
+                data[i] = (byte) (xl >> 24);
+                data[i + 1] = (byte) (xl >> 16);
+                data[i + 2] = (byte) (xl >> 8);
+                data[i + 3] = (byte) (xl);
+                data[i + 4] = (byte) (xr >> 24);
+                data[i + 5] = (byte) (xr >> 16);
+                data[i + 6] = (byte) (xr >> 8);
+                data[i + 7] = (byte) (xr);
+            }
         }
 
         /// <summary>
@@ -342,18 +344,18 @@ namespace LibProShip.Infrastructure
         /// <param name="xr">The right part of the 8 bytes.</param>
         private void Encipher(ref uint xl, ref uint xr)
         {
-            uint    Xl;
-            uint    Xr;
-            uint    temp;
-            short   i;
+            uint Xl;
+            uint Xr;
+            uint temp;
+            short i;
 
             Xl = xl;
             Xr = xr;
 
-            for (i = 0; i < N; ++i) 
+            for (i = 0; i < N; ++i)
             {
-                Xl = Xl ^ P[i];
-                Xr = F(Xl) ^ Xr;
+                Xl = Xl ^ this.P[i];
+                Xr = this.F(Xl) ^ Xr;
 
                 temp = Xl;
                 Xl = Xr;
@@ -364,8 +366,8 @@ namespace LibProShip.Infrastructure
             Xl = Xr;
             Xr = temp;
 
-            Xr = Xr ^ P[N];
-            Xl = Xl ^ P[N + 1];
+            Xr = Xr ^ this.P[N];
+            Xl = Xl ^ this.P[N + 1];
 
             xl = Xl;
             xr = Xr;
@@ -375,27 +377,28 @@ namespace LibProShip.Infrastructure
         /// Decrypts a byte array in place.
         /// </summary>
         /// <param name="data">The array to decrypt.</param>
-        /// <param name="length">The amount to decrypt.</param>
-        public void Decipher(byte[] data, int length)
+        public void Decipher(byte[] data)
         {
+            int length = data.Length;
             uint xl, xr;
             if ((length % 8) != 0)
                 throw new Exception("Invalid Length");
-            for (int i = 0; i < length; i+=8)
+            for (int i = 0; i < length; i += 8)
             {
                 // Encode the data in 8 byte blocks.
-                xl = (uint)((data[i] << 24) | (data[i+1] << 16) | (data[i+2] << 8) | data[i+3]);
-                xr = (uint)((data[i+4] << 24) | (data[i+5] << 16) | (data[i+6] << 8) | data[i+7]);
-                Decipher(ref xl, ref xr);
+                xl = (uint) ((data[i] << 24) | (data[i + 1] << 16) | (data[i + 2] << 8) | data[i + 3]);
+                xr = (uint) ((data[i + 4] << 24) | (data[i + 5] << 16) | (data[i + 6] << 8) | data[i + 7]);
+                this.Decipher(ref xl, ref xr);
                 // Now Replace the data.
-                data[i] = (byte)(xl >> 24);
-                data[i+1] = (byte)(xl >> 16);
-                data[i+2] = (byte)(xl >> 8);
-                data[i+3] = (byte)(xl);
-                data[i+4] = (byte)(xr >> 24);
-                data[i+5] = (byte)(xr >> 16);
-                data[i+6] = (byte)(xr >> 8);
-                data[i+7] = (byte)(xr);}
+                data[i] = (byte) (xl >> 24);
+                data[i + 1] = (byte) (xl >> 16);
+                data[i + 2] = (byte) (xl >> 8);
+                data[i + 3] = (byte) (xl);
+                data[i + 4] = (byte) (xr >> 24);
+                data[i + 5] = (byte) (xr >> 16);
+                data[i + 6] = (byte) (xr >> 8);
+                data[i + 7] = (byte) (xr);
+            }
         }
 
         /// <summary>
@@ -405,18 +408,18 @@ namespace LibProShip.Infrastructure
         /// <param name="xr">The right part of the 8 bytes.</param>
         private void Decipher(ref uint xl, ref uint xr)
         {
-            uint    Xl;
-            uint    Xr;
-            uint    temp;
-            short   i;
+            uint Xl;
+            uint Xr;
+            uint temp;
+            short i;
 
             Xl = xl;
             Xr = xr;
 
-            for (i = N + 1; i > 1; --i) 
+            for (i = N + 1; i > 1; --i)
             {
-                Xl = Xl ^ P[i];
-                Xr = F(Xl) ^ Xr;
+                Xl = Xl ^ this.P[i];
+                Xr = this.F(Xl) ^ Xr;
 
                 /* Exchange Xl and Xr */
                 temp = Xl;
@@ -429,243 +432,11 @@ namespace LibProShip.Infrastructure
             Xl = Xr;
             Xr = temp;
 
-            Xr = Xr ^ P[1];
-            Xl = Xl ^ P[0];
+            Xr = Xr ^ this.P[1];
+            Xl = Xl ^ this.P[0];
 
             xl = Xl;
             xr = Xr;
-        }
-    }
-
-    public class BlowfishStream : Stream
-    {
-        class CBState : IAsyncResult
-        {
-            internal readonly AsyncCallback callback;
-            internal readonly object state;
-            internal readonly byte[] buffer;
-            internal IAsyncResult result;
-            internal CBState(AsyncCallback callback, object state, byte[] buffer)
-            {
-                this.callback = callback;
-                this.state = state;
-                this.buffer = buffer;
-            }
-            #region IAsyncResult Members
-
-            public object AsyncState
-            {
-                get
-                {
-                    return state;
-                }
-            }
-
-            public bool CompletedSynchronously
-            {
-                get
-                {
-                    return result.CompletedSynchronously;
-                }
-            }
-
-            public System.Threading.WaitHandle AsyncWaitHandle
-            {
-                get
-                {
-                    return result.AsyncWaitHandle;
-                }
-            }
-
-            public bool IsCompleted
-            {
-                get
-                {
-                    return result.IsCompleted;
-                }
-            }
-
-            #endregion
-        }
-
-        public enum Target
-        {
-            Encrypted,
-            Normal
-        };
-
-        readonly Stream              stream;
-        readonly Blowfish            bf;
-        readonly Target              target;
-
-        BlowfishStream(Stream stream, Blowfish bf, Target target)
-        {
-            this.stream = stream;
-            this.bf = bf;
-            this.target = target;
-        }
-
-        /// <summary>
-        /// Returns true if the stream support reads.
-        /// </summary>
-        public override bool CanRead
-        {
-            get {return stream.CanRead;}
-        }
-
-        /// <summary>
-        /// Returns true is the stream supports seeks.
-        /// </summary>
-        public override bool CanSeek
-        {
-            get {return stream.CanSeek;}
-        }
-
-        /// <summary>
-        /// Returns true if the stream supports writes.
-        /// </summary>
-        public override bool CanWrite
-        {
-            get {return stream.CanWrite;}
-        }
-
-        /// <summary>
-        /// Returns the length of the stream.
-        /// </summary>
-        public override long Length
-        {
-            get {return stream.Length;}
-        }
-
-        /// <summary>
-        /// Gets or Sets the posistion of the stream.
-        /// </summary>
-        public override long Position
-        {
-            get {return stream.Position;}
-            set {stream.Position = value;}
-        }
-
-        /// <summary>
-        /// Flushes the stream.
-        /// </summary>
-        public override void Flush()
-        {
-            stream.Flush();
-        }
-
-        /// <summary>
-        /// Read data from the stream and encrypt it.
-        /// </summary>
-        /// <param name="buffer">The buffer to read into.</param>
-        /// <param name="offset">The offset in the buffer to begin storing data.</param>
-        /// <param name="count">The number of bytes to read.</param>
-        /// <returns></returns>
-        public override int Read(byte[] buffer, int offset, int count)
-        {
-            int bytesRead = stream.Read(buffer, offset, count);
-            if (target == Target.Normal)
-                bf.Encipher(buffer, bytesRead);
-            else
-                bf.Decipher(buffer, bytesRead);
-            return bytesRead;
-        }
-
-        /// <summary>
-        /// Write data to the stream after decrypting it.
-        /// </summary>
-        /// <param name="buffer">The buffer containing the data to write.</param>
-        /// <param name="offset">The offset in the buffer where the data begins.</param>
-        /// <param name="count">The number of bytes to write.</param>
-        public override void Write(byte[] buffer, int offset, int count)
-        {
-            if (target == Target.Normal)
-                bf.Decipher(buffer, count);
-            else
-                bf.Encipher(buffer, count);
-            stream.Write(buffer, offset, count);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="offset"></param>
-        /// <param name="count"></param>
-        /// <param name="callback"></param>
-        /// <param name="state"></param>
-        /// <returns></returns>
-        public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
-        {
-            CBState cbs = new CBState(callback, state, buffer);
-            cbs.result = base.BeginRead (buffer, offset, count, new AsyncCallback(ReadComplete), cbs);
-            return cbs;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="asyncResult"></param>
-        /// <returns></returns>
-        public override int EndRead(IAsyncResult asyncResult)
-        {
-            CBState cbs = (CBState)asyncResult.AsyncState;
-            int bytesRead = base.EndRead (cbs.result);
-            if (target == Target.Normal)
-                bf.Encipher(cbs.buffer, bytesRead);
-            else
-                bf.Decipher(cbs.buffer, bytesRead);
-            return bytesRead;
-        }
-
-
-        /// <summary>
-        /// The Read has completed.
-        /// </summary>
-        /// <param name="result">The result of the async write.</param>
-        private void ReadComplete(IAsyncResult result)
-        {
-            CBState cbs = (CBState)result.AsyncState;
-            cbs.callback(cbs);
-        }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="offset"></param>
-        /// <param name="count"></param>
-        /// <param name="callback"></param>
-        /// <param name="state"></param>
-        /// <returns></returns>
-        public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
-        {
-            if (target == Target.Normal)
-                bf.Decipher(buffer, count);
-            else
-                bf.Encipher(buffer, count);
-            return base.BeginWrite (buffer, offset, count, callback, state);
-        }
-
-        /// <summary>
-        /// Move the current stream posistion to the specified location.
-        /// </summary>
-        /// <param name="offset">The offset from the origin to seek.</param>
-        /// <param name="origin">The origin to seek from.</param>
-        /// <returns>The new position.</returns>
-        public override long Seek(long offset, SeekOrigin origin)
-        {
-            return stream.Seek(offset, origin);
-        }
-
-        /// <summary>
-        /// Set the stream length.
-        /// </summary>
-        /// <param name="value">The length to set.</param>
-        public override void SetLength(long value)
-        {
-            stream.SetLength(value);
         }
     }
 }
