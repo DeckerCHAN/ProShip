@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace LibProShip.Test.Integration.PlayGround
+namespace LibProShip.Test.Unit.PlayGround
 {
         public interface IA<in T> where T : IB
         {

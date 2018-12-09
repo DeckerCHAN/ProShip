@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.IO;
-using LibProShip.Infrastructure.Event;
+using LibProShip.Infrastructure.Eventing;
 
 namespace LibProShip.Domain.FileSystem
 {
-    public class FileChangeDomainEvent : IDomainEvent
+    public class FileChangeEvent : IDomainEvent
     {
-        public FileChangeDomainEvent(object source, ICollection<FileInfo> replayFiles)
+        public FileChangeEvent(object source, ICollection<FileInfo> replayFiles)
         {
             this.Source = source;
             this.ReplayFiles = replayFiles;

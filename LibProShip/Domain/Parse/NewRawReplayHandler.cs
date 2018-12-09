@@ -3,7 +3,8 @@ using System.Linq;
 using LibProShip.Domain.Decode;
 using LibProShip.Domain.Decode.Event;
 using LibProShip.Domain.Parse.Events;
-using LibProShip.Infrastructure.Event;
+using LibProShip.Infrastructure.Eventing;
+using LibProShip.Infrastructure.Repo;
 
 namespace LibProShip.Domain.Parse
 {

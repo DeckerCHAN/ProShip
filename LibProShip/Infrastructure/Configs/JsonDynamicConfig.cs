@@ -1,11 +1,18 @@
+using System.IO;
+
 namespace LibProShip.Infrastructure.Configs
 {
     public abstract class JsonDynamicConfig : IDynamicConfig
     {
         protected JsonDynamicConfig(string defaultJson)
         {
+        }
+        
+        protected JsonDynamicConfig(Stream defaultJsonStream)
+        {
             
         }
+
         public string GetConfig(string key)
         {
             throw new System.NotImplementedException();

@@ -21,6 +21,8 @@ namespace LibProShip.Domain.Decode
         public string ArenaId { get; }
         public IDictionary<Player, Ship> PlayerShips { get; }
         public Player ControlPlayer { get; }
+        public string Version { get; }
+
 
         public bool SameAs(Battle other)
         {

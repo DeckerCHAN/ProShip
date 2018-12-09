@@ -4,14 +4,29 @@ namespace LibProShip.Domain.Decode
 {
     public sealed class RawReplay : IValueObject<RawReplay>
     {
-        public RawReplay(Battle battle, Stream stream, string version)
+        public RawReplay(Battle battle, Stream stream)
         {
             this.Stream = stream;
-            this.Version = version;
             this.Battle = battle;
         }
 
-        public Stream Stream { get; }
+        private Stream BackedStream;
+
+        public Stream Stream
+        {
+            get
+            {
+                var st = new MemoryStream();
+                this.BackedStream.CopyTo(st);
+                st.Seek(0, SeekOrigin.Begin);
+                this.BackedStream.Seek(0, SeekOrigin.Begin);
+                return st;
+            }
+
+
+            private set => this.BackedStream = value;
+        }
+
         public Battle Battle { get; }
 
         public bool SameAs(RawReplay other)
@@ -19,6 +34,5 @@ namespace LibProShip.Domain.Decode
             throw new System.NotImplementedException();
         }
 
-        public string Version { get; }
     }
 }

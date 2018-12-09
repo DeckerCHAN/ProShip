@@ -1,4 +1,4 @@
-using LibProShip.Infrastructure.Event;
+using LibProShip.Infrastructure.Eventing;
 
 namespace LibProShip.Domain.Decode.Event
 {

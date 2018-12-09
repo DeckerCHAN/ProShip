@@ -1,8 +1,8 @@
 using System.Threading;
-using LibProShip.Infrastructure.Event;
+using LibProShip.Infrastructure.Eventing;
 using Xunit;
 
-namespace LibProShip.Test.Integration.EventTest
+namespace LibProShip.Test.Unit.EventTest
 {
     public class EventBusTest
     {

@@ -1,6 +1,6 @@
 using LibProShip.Domain;
 
-namespace LibProShip.Infrastructure.Event
+namespace LibProShip.Infrastructure.Eventing
 {
     public interface IDomainEventHandler<in T>: IInit where T: IDomainEvent 
     {

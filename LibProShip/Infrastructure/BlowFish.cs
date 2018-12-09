@@ -1,31 +1,4 @@
-/****************************************************************************
- |
- | Copyright (c) 2007 Novell, Inc.
- | All Rights Reserved.
- |
- | This program is free software; you can redistribute it and/or
- | modify it under the terms of version 2 of the GNU General Public License as
- | published by the Free Software Foundation.
- |
- | This program is distributed in the hope that it will be useful,
- | but WITHOUT ANY WARRANTY; without even the implied warranty of
- | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- | GNU General Public License for more details.
- |
- | You should have received a copy of the GNU General Public License
- | along with this program; if not, contact Novell, Inc.
- |
- | To contact Novell about this file by physical or electronic mail,
- | you may find current contact information at www.novell.com 
- |
- |  Author: Russ Young
- |  Thanks to: Bruce Schneier / Counterpane Labs 
- |  for the Blowfish encryption algorithm and
- |  reference implementation. http://www.schneier.com/blowfish.html
- |***************************************************************************/
-
 using System;
-using System.IO;
 
 namespace LibProShip.Infrastructure
 {
@@ -227,8 +200,8 @@ namespace LibProShip.Infrastructure
             }
         };
 
-        readonly uint[] P;
-        readonly uint[,] S;
+        private readonly uint[] P;
+        private readonly uint[,] S;
 
         /// <summary>
         /// Constructs and initializes a blowfish instance with the supplied key.
@@ -288,53 +261,54 @@ namespace LibProShip.Infrastructure
         /// <returns></returns>
         private uint F(uint x)
         {
-            ushort a;
-            ushort b;
-            ushort c;
-            ushort d;
-            uint y;
-
-            d = (ushort) (x & 0x00FF);
+            var d = (ushort) (x & 0x00FF);
             x >>= 8;
-            c = (ushort) (x & 0x00FF);
+            var c = (ushort) (x & 0x00FF);
             x >>= 8;
-            b = (ushort) (x & 0x00FF);
+            var b = (ushort) (x & 0x00FF);
             x >>= 8;
-            a = (ushort) (x & 0x00FF);
+            var a = (ushort) (x & 0x00FF);
             //y = ((S[0][a] + S[1][b]) ^ S[2][c]) + S[3][d];
-            y = this.S[0, a] + this.S[1, b];
+            var y = this.S[0, a] + this.S[1, b];
             y = y ^ this.S[2, c];
             y = y + this.S[3, d];
 
             return y;
         }
 
+
         /// <summary>
-        /// Encrypts a byte array in place.
+        /// Encrypts a byte array.
         /// </summary>
-        /// <param name="data">The array to encrypt.</param>
-        public void Encipher(byte[] data)
+        /// <param name="data">Origin data.</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public byte[] Encipher(byte[] data)
         {
             var length = data.Length;
+            var res = new byte[data.Length];
+            Array.Copy(data, res, data.Length);
             uint xl, xr;
             if ((length % 8) != 0)
                 throw new Exception("Invalid Length");
-            for (int i = 0; i < length; i += 8)
+            for (var i = 0; i < length; i += 8)
             {
                 // Encode the data in 8 byte blocks.
-                xl = (uint) ((data[i] << 24) | (data[i + 1] << 16) | (data[i + 2] << 8) | data[i + 3]);
-                xr = (uint) ((data[i + 4] << 24) | (data[i + 5] << 16) | (data[i + 6] << 8) | data[i + 7]);
+                xl = (uint) ((res[i] << 24) | (res[i + 1] << 16) | (res[i + 2] << 8) | res[i + 3]);
+                xr = (uint) ((res[i + 4] << 24) | (res[i + 5] << 16) | (res[i + 6] << 8) | res[i + 7]);
                 this.Encipher(ref xl, ref xr);
                 // Now Replace the data.
-                data[i] = (byte) (xl >> 24);
-                data[i + 1] = (byte) (xl >> 16);
-                data[i + 2] = (byte) (xl >> 8);
-                data[i + 3] = (byte) (xl);
-                data[i + 4] = (byte) (xr >> 24);
-                data[i + 5] = (byte) (xr >> 16);
-                data[i + 6] = (byte) (xr >> 8);
-                data[i + 7] = (byte) (xr);
+                res[i] = (byte) (xl >> 24);
+                res[i + 1] = (byte) (xl >> 16);
+                res[i + 2] = (byte) (xl >> 8);
+                res[i + 3] = (byte) (xl);
+                res[i + 4] = (byte) (xr >> 24);
+                res[i + 5] = (byte) (xr >> 16);
+                res[i + 6] = (byte) (xr >> 8);
+                res[i + 7] = (byte) (xr);
             }
+
+            return res;
         }
 
         /// <summary>
@@ -373,32 +347,39 @@ namespace LibProShip.Infrastructure
             xr = Xr;
         }
 
+
         /// <summary>
-        /// Decrypts a byte array in place.
+        /// Decrypts a byte array.
         /// </summary>
-        /// <param name="data">The array to decrypt.</param>
-        public void Decipher(byte[] data)
+        /// <param name="data">data to decrypt</param>
+        /// <exception cref="Exception"></exception>
+        public byte[] Decipher(byte[] data)
         {
-            int length = data.Length;
+            var length = data.Length;
+            var res = new byte[data.Length];
+            Array.Copy(data, res, data.Length);
+
             uint xl, xr;
             if ((length % 8) != 0)
                 throw new Exception("Invalid Length");
-            for (int i = 0; i < length; i += 8)
+            for (var i = 0; i < length; i += 8)
             {
                 // Encode the data in 8 byte blocks.
-                xl = (uint) ((data[i] << 24) | (data[i + 1] << 16) | (data[i + 2] << 8) | data[i + 3]);
-                xr = (uint) ((data[i + 4] << 24) | (data[i + 5] << 16) | (data[i + 6] << 8) | data[i + 7]);
+                xl = (uint) ((res[i] << 24) | (res[i + 1] << 16) | (res[i + 2] << 8) | res[i + 3]);
+                xr = (uint) ((res[i + 4] << 24) | (res[i + 5] << 16) | (res[i + 6] << 8) | res[i + 7]);
                 this.Decipher(ref xl, ref xr);
                 // Now Replace the data.
-                data[i] = (byte) (xl >> 24);
-                data[i + 1] = (byte) (xl >> 16);
-                data[i + 2] = (byte) (xl >> 8);
-                data[i + 3] = (byte) (xl);
-                data[i + 4] = (byte) (xr >> 24);
-                data[i + 5] = (byte) (xr >> 16);
-                data[i + 6] = (byte) (xr >> 8);
-                data[i + 7] = (byte) (xr);
+                res[i] = (byte) (xl >> 24);
+                res[i + 1] = (byte) (xl >> 16);
+                res[i + 2] = (byte) (xl >> 8);
+                res[i + 3] = (byte) (xl);
+                res[i + 4] = (byte) (xr >> 24);
+                res[i + 5] = (byte) (xr >> 16);
+                res[i + 6] = (byte) (xr >> 8);
+                res[i + 7] = (byte) (xr);
             }
+            
+            return res;
         }
 
         /// <summary>

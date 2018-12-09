@@ -1,12 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
-using Castle.DynamicProxy;
+using System.Threading.Tasks;
 using LibProShip.Infrastructure.Configs;
-using LibProShip.Infrastructure.Event;
-using LibProShip.Infrastructure.Scheduling;
+using LibProShip.Infrastructure.Eventing;
 
 namespace LibProShip.Domain.FileSystem
 {
@@ -19,26 +16,24 @@ namespace LibProShip.Domain.FileSystem
     {
         private readonly IEventBus EventBus;
         private readonly ISystemConfig Config;
-        private readonly ITaskScheduler Scheduler;
         private ISet<string> RaisedFiles { get; }
 
-        public FileManager(IEventBus eventBus, ISystemConfig config, ITaskScheduler scheduler)
+        public FileManager(IEventBus eventBus, ISystemConfig config)
         {
             this.EventBus = eventBus;
             this.Config = config;
-            this.Scheduler = scheduler;
             this.RaisedFiles = new HashSet<string>();
         }
 
         private void RaiseNewReplayEvent(ICollection<FileInfo> replayFiles)
         {
-            var e = new FileChangeDomainEvent(this, replayFiles);
+            var e = new FileChangeEvent(this, replayFiles);
             this.EventBus.Raise(e);
         }
 
         private FileInfo[] GetAllReplayFile()
         {
-            var files = this.Config.ReplayPath.GetFiles("*.replay");
+            var files = this.Config.ReplayPath.GetFiles("*.wowsreplay");
             return files;
         }
 
@@ -58,14 +53,25 @@ namespace LibProShip.Domain.FileSystem
         {
             var scannedFiles = this.GetAllReplayFile();
             scannedFiles = this.FilterOutExistReplays(scannedFiles);
+            if (scannedFiles.Length == 0)
+            {
+                return;
+            }
+
             this.RaiseNewReplayEvent(scannedFiles);
             this.SaveToProcessedReplay(scannedFiles);
         }
 
         public void Init()
         {
-            this.Scheduler.AddRecurringTask(this.TriggerScan, TimeSpan.FromSeconds(10),
-                new CancellationToken());
+            Task.Run(async () =>
+            {
+                while (true)
+                {
+                    await Task.Delay(5000);
+                    this.TriggerScan();
+                }
+            });
         }
     }
 }

@@ -78,8 +78,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FileMonitorTest.cs" />
+    <Compile Include="Integration\ApplicationTest.cs" />
+    <Compile Include="Unit\BlowFishTest.cs" />
     <Compile Include="Unit\EventTest\EventBusTest.cs" />
+    <Compile Include="Unit\FileMonitorTest.cs" />
     <Compile Include="Unit\PlayGround\Class1.cs" />
     <Compile Include="Unit\TaskScheduallerTest.cs" />
     <Compile Include="Tests.cs" />

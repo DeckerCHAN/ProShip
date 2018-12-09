@@ -1,4 +1,4 @@
-namespace LibProShip.Infrastructure.Event
+namespace LibProShip.Infrastructure.Eventing
 {
     public interface IDomainEvent
     {

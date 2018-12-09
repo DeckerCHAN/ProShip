@@ -1,48 +1,21 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Castle.MicroKernel.Resolvers.SpecializedResolvers;
 using Castle.Windsor;
 using Castle.Windsor.Installer;
 using LibProShip.Application.VisualObject;
 using LibProShip.Domain;
 using LibProShip.Domain.Decode;
-using LibProShip.Domain.Parse.Events;
-using LibProShip.Infrastructure.Event;
+using LibProShip.Domain.Decode.Handler;
+using LibProShip.Domain.Parse;
+using LibProShip.Infrastructure.Eventing;
+using LibProShip.Infrastructure.Repo;
 
 namespace LibProShip.Application
 {
-    public class DomainEventPublisher : IDomainEventHandler<IDomainEvent>
-    {
-        private readonly IEventBus EventBus;
-
-        public event EventHandler NewReplaySaved;
-
-        public DomainEventPublisher(IEventBus eventBus)
-        {
-            this.EventBus = eventBus;
-        }
-
-        public void Handle(IDomainEvent e)
-        {
-            if (e.GetType() == typeof(NewReplaySavedEvent))
-            {
-                var handler = this.NewReplaySaved;
-                handler?.Invoke(this, new EventArgs());
-            }
-            else
-            {
-            }
-        }
-
-        public void Init()
-        {
-            this.EventBus.Register(this);
-        }
-    }
-
-
     public class Application
     {
         //TODO: Remove container init here
@@ -54,7 +27,9 @@ namespace LibProShip.Application
         public Application()
         {
             this.Container = new WindsorContainer();
-            this.Container.Install(FromAssembly.This());
+            this.Container.Kernel.Resolver.AddSubResolver(new CollectionResolver( this.Container.Kernel));
+
+            this.Container.Install(FromAssembly.InThisApplication());
             this.EventBus = this.Container.Resolve<IEventBus>();
             this.DomainEventPublisher = this.Container.Resolve<DomainEventPublisher>();
             this.Initialise();

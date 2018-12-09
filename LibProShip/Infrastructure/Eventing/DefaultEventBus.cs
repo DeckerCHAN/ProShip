@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LibProShip.Infrastructure.Event
+namespace LibProShip.Infrastructure.Eventing
 {
     public sealed class DefaultEventBus : IEventBus
     {

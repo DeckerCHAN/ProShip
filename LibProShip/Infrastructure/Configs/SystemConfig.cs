@@ -8,16 +8,15 @@ namespace LibProShip.Infrastructure.Configs
     }
 
 
-    public class SystemConfig : JsonDynamicConfig, ISystemConfig
+    public class SystemConfig :  ISystemConfig
     {
-        public SystemConfig(string defaultJson) : base(defaultJson)
-        {
-        }
+
 
 
         public DirectoryInfo ReplayPath
         {
-            get { return new DirectoryInfo(this.GetConfig("ReplayPath")); }
+//            get { return new DirectoryInfo(this.GetConfig("ReplayPath")); }
+            get { return new DirectoryInfo(@"D:\World_of_Warships\replays"); }
         }
     }
 }

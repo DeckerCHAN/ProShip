@@ -1,10 +1,7 @@
-using System;
-using System.Threading;
-using LibProShip.Infrastructure.Scheduling;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace LibProShip.Test.Integration
+namespace LibProShip.Test.Unit
 {
     public class TaskScheduallerTest
     {
@@ -18,11 +15,7 @@ namespace LibProShip.Test.Integration
         [Fact]
         public void Test1()
         {
-            var schedualler = new TaskScheduler();
-            var cts = new CancellationTokenSource();
-            schedualler.AddRecurringTask(() => { this.output.WriteLine(DateTime.Now.ToString("T"));}, TimeSpan.FromSeconds(1),cts.Token);
-            Thread.Sleep(5000);
-            cts.Cancel();            
+              
         }
     }
 }
