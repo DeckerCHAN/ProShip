@@ -5,10 +5,7 @@ namespace LibProShip.Domain.Decode
 {
     public class Ship : IValueObject<Ship>
     {
-        public override string ToString()
-        {
-            throw new NotImplementedException();
-        }
+        
 
         public bool SameAs(Ship other)
         {
@@ -18,10 +15,11 @@ namespace LibProShip.Domain.Decode
 
     public class Battle : IValueObject<Battle>
     {
-        public string ArenaId { get; }
-        public IDictionary<Player, Ship> PlayerShips { get; }
+        public IReadOnlyDictionary<Player, Ship> PlayerShips { get; }
         public Player ControlPlayer { get; }
         public string Version { get; }
+        public int Duration { get; }
+        
 
 
         public bool SameAs(Battle other)

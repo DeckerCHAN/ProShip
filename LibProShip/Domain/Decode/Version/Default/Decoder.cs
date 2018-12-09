@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using LibProShip.Infrastructure;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace LibProShip.Domain.Decode.Version.Default
 {
@@ -75,6 +76,10 @@ namespace LibProShip.Domain.Decode.Version.Default
                 }
 
                 var battle = JsonConvert.DeserializeObject<Battle>(areaInfoString);
+                var jobj = JObject.Parse(areaInfoString);
+                var version  =  jobj.SelectToken("clientVersionFromExe");
+                
+                
                 var resultRawPlay = new RawReplay(battle, resStream);
                 return resultRawPlay;
 //
