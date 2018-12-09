@@ -24,9 +24,7 @@ namespace LibProShip.Domain.Decode.Version.Default
         public RawReplay DecodeReplay(FileInfo replayFile)
         {
             using (var f =
-                (new FileStream(
-                    @"D:\World_of_Warships\replays\20181105_205142_PRSD210-Grozovoy-pr-40N_15_NE_north.wowsreplay",
-                    FileMode.Open)))
+                new FileStream(replayFile.FullName, FileMode.Open))
             {
                 var signtureBytes = new byte[4];
                 f.Read(signtureBytes, 0, 4);
