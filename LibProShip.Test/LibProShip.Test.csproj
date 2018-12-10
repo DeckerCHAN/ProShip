@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Integration\ApplicationTest.cs" />
+    <Compile Include="Integration\PersistentTest.cs" />
     <Compile Include="Unit\BlowFishTest.cs" />
     <Compile Include="Unit\EventTest\EventBusTest.cs" />
     <Compile Include="Unit\FileMonitorTest.cs" />

@@ -6,7 +6,7 @@ using LiteDB;
 
 namespace LibProShip.Infrastructure.Repo
 {
-    public  class RepositoryBase<T> : IDisposable, IRepository<Replay>
+    public  class RepositoryBase<T> : IDisposable
     {
         public RepositoryBase()
         {
@@ -28,22 +28,17 @@ namespace LibProShip.Infrastructure.Repo
             this.context.Dispose();
         }
 
-        public void Insert(Replay item)
+        public void Insert(T item)
         {
             throw new NotImplementedException();
         }
 
-        public void Update(Replay item)
+        public void Update(T item)
         {
             throw new NotImplementedException();
         }
 
-        public void Remote(Replay item)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<Replay> IRepository<Replay>.GetAll()
+        public void Remote(T item)
         {
             throw new NotImplementedException();
         }
