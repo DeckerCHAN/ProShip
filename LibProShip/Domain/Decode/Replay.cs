@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace LibProShip.Domain.Decode
 {
-    public sealed class Replay : IEntity<Replay>
+    public sealed class Replay : Entity<Replay>
     {
         public Battle Battle { get; }
         
@@ -11,9 +13,13 @@ namespace LibProShip.Domain.Decode
 
         public DateTime DateTime { get; }
 
-        public ICollection<Packet> Packets { get; }
+        public IReadOnlyCollection<Packet> Packets { get; }
 
-        public Guid Identity { get; }
-        
+        public Replay(Guid id, Battle battle, DateTime dateTime, IEnumerable<Packet> packets) : base(id)
+        {
+            this.Battle = battle;
+            this.DateTime = dateTime;
+            this.Packets = new ReadOnlyCollection<Packet>(packets.ToList());
+        }
     }
 }

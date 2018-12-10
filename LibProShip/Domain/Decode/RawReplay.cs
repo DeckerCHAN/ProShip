@@ -2,7 +2,7 @@ using System.IO;
 
 namespace LibProShip.Domain.Decode
 {
-    public sealed class RawReplay : IValueObject<RawReplay>
+    public sealed class RawReplay : ValueObject<RawReplay>
     {
         public RawReplay(Battle battle, Stream stream)
         {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace LibProShip.Domain.Decode
 {
-    public class Vehicle : IValueObject<Vehicle>
+    public class Vehicle : ValueObject<Vehicle>
     {
         public Vehicle(string playerName, long playerId, int teamId, long shipId)
         {
@@ -24,7 +24,7 @@ namespace LibProShip.Domain.Decode
         }
     }
 
-    public class Battle : IValueObject<Battle>
+    public class Battle : ValueObject<Battle>
     {
         public IReadOnlyDictionary<Player, Vehicle> PlayerShips { get; }
         public Player ControlPlayer { get; }

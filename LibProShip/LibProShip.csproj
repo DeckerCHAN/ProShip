@@ -85,7 +85,7 @@
     <Compile Include="Domain\FileSystem\FileManager.cs" />
     <Compile Include="Domain\FileSystem\Installer.cs" />
     <Compile Include="Domain\FileSystem\Interface\IBattleMonitor.cs" />
-    <Compile Include="Domain\IEntity.cs" />
+    <Compile Include="Domain\Entity.cs" />
     <Compile Include="Domain\IDecoder.cs" />
     <Compile Include="Domain\IInit.cs" />
     <Compile Include="Domain\Parse\Events\NewReplaySavedEvent.cs" />
@@ -93,7 +93,7 @@
     <Compile Include="Domain\Parse\IReplayProcessor.cs" />
     <Compile Include="Domain\Parse\NewRawReplayHandler.cs" />
     <Compile Include="Domain\Parse\Version\V1710\ReplayProcessor.cs" />
-    <Compile Include="Domain\IValueObject.cs" />
+    <Compile Include="Domain\ValueObject.cs" />
     <Compile Include="Infrastructure\BlowFish.cs" />
     <Compile Include="Infrastructure\Configs\IDynamicConfig.cs" />
     <Compile Include="Infrastructure\Configs\IStaticConfig.cs" />
@@ -107,7 +107,7 @@
     <Compile Include="Infrastructure\Logging\DefaultLogger.cs" />
     <Compile Include="Infrastructure\Logging\ILogger.cs" />
     <Compile Include="Infrastructure\Repo\IRepository.cs" />
-    <Compile Include="Infrastructure\Repo\RepositoryBase.cs" />
+    <Compile Include="Infrastructure\Repo\Repository.cs" />
     <Compile Include="Infrastructure\Utils\VersionUtils.cs" />
     <Compile Include="IService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

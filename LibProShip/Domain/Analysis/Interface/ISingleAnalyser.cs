@@ -19,9 +19,13 @@ namespace LibProShip.Domain.Analysis.Interface
         T GetAnalysisResult(IEnumerable<Replay> replays);
     }
 
-    public class SingleValueResult : IAnalysisResult, IEntity<SingleValueResult>
+    public class SingleValueResult :Entity<SingleValueResult>, IAnalysisResult 
     {
-        public Guid Identity { get; }
         public DateTime ProducedDate { get; }
+
+        public SingleValueResult(Guid id, DateTime producedDate) : base(id)
+        {
+            this.ProducedDate = producedDate;
+        }
     }
 }

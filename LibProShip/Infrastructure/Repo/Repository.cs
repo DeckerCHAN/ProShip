@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using LibProShip.Domain;
 using LibProShip.Domain.Decode;
 using LiteDB;
 
 namespace LibProShip.Infrastructure.Repo
 {
-    public  class RepositoryBase<T> : IDisposable
+    public class Repository<T> : IDisposable, IRepository<T> where T : Entity<T>
     {
-        public RepositoryBase()
+        public Repository()
         {
             var fileName = $"{typeof(T).Name}.ldb";
             if (!File.Exists(fileName))
@@ -30,17 +31,17 @@ namespace LibProShip.Infrastructure.Repo
 
         public void Insert(T item)
         {
-            throw new NotImplementedException();
+            this.collection.Insert(item);
         }
 
         public void Update(T item)
         {
-            throw new NotImplementedException();
+            this.collection.Update(item);
         }
 
-        public void Remote(T item)
+        public void Remove(T item)
         {
-            throw new NotImplementedException();
+            this.collection.Delete(arg => Equals(arg, item));
         }
 
         public IEnumerable<T> GetAll()

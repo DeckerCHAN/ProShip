@@ -18,7 +18,7 @@ namespace LibProShip.Domain.Decode
             container.Register(Component.For<IInit, IDomainEventHandler<FileChangeEvent>,RawFileProcessor>()
                 .ImplementedBy<RawFileProcessor>().LifestyleSingleton());
 
-            container.Register(Component.For<IRepository<Replay>>().ImplementedBy<RepositoryBase<Replay>>()
+            container.Register(Component.For<IRepository<Replay>>().ImplementedBy<Repository<Replay>>()
                 .LifestyleSingleton());
 
             var decoderTypes = Assembly.GetExecutingAssembly().GetTypes().ToList()

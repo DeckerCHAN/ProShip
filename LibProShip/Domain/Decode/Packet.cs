@@ -1,6 +1,6 @@
 namespace LibProShip.Domain.Decode
 {
-    public sealed class Packet : IValueObject<Packet>
+    public sealed class Packet : ValueObject<Packet>
     {
         public Packet(long time, dynamic data)
         {

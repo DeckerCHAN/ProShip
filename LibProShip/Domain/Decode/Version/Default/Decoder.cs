@@ -80,7 +80,6 @@ namespace LibProShip.Domain.Decode.Version.Default
                 var version = jobj.SelectToken("clientVersionFromExe").First.ToObject<string>();
                 var mapName = jobj.SelectToken("mapDisplayName").First.ToObject<string>();
                 var duration = jobj.SelectToken("duration").First.ToObject<int>();
-                var 
                     var resultRawPlay = new RawReplay(battle, resStream);
                 return resultRawPlay;
 //
