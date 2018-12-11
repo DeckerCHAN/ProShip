@@ -2,13 +2,20 @@ using System.Collections.Generic;
 
 namespace LibProShip.Domain.Decode
 {
-    public class Player :ValueObject<Player>
+    public class Player : ValueObject<Player>
     {
-        public string Id { get;  }
-        public string Name{ get; }
-        public bool SameAs(Player other)
+        public string Name { get; private set; }
+
+        public Player()
         {
-            throw new System.NotImplementedException();
         }
+
+        public Player(long id, string name)
+        {
+            this.Id = id;
+            this.Name = name;
+        }
+
+        
     }
 }

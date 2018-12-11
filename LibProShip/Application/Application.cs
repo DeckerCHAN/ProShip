@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -45,16 +46,17 @@ namespace LibProShip.Application
 
         public async Task<IReadOnlyCollection<ReplayAbstract>> GetReplays()
         {
-            return await Task.Run((() =>
-            {
-
-                var replayAbstractReplayAbstracts = this.Container.Resolve<IRepository<Replay>>().GetAll().Select(x =>
-                    new ReplayAbstract(x.DateTime.ToString("f"),
-                        x.Battle.PlayerShips[x.Battle.ControlPlayer].ToString()));
-                
-                return new ReadOnlyCollection<ReplayAbstract>(replayAbstractReplayAbstracts.ToList());
-                
-            }));
+            throw new NotImplementedException();
+//            return await Task.Run((() =>
+//            {
+//
+//                var replayAbstractReplayAbstracts = this.Container.Resolve<IRepository<Replay>>().GetAll().Select(x =>
+//                    new ReplayAbstract(x.DateTime.ToString("f"),
+//                        x.Battle.PlayerVehicles[x.Battle.ControlPlayer].ToString()));
+//                
+//                return new ReadOnlyCollection<ReplayAbstract>(replayAbstractReplayAbstracts.ToList());
+//                
+//            }));
         }
     }
 }

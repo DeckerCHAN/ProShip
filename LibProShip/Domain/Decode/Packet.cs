@@ -2,10 +2,15 @@ namespace LibProShip.Domain.Decode
 {
     public sealed class Packet : ValueObject<Packet>
     {
-        public Packet(long time, dynamic data)
+        public Packet(long id, long time, dynamic data)
         {
-            Time = time;
-            Data = data;
+            this.Id = id;
+            this.Time = time;
+            this.Data = data;
+        }
+
+        public Packet()
+        {
         }
 
         public long Time { get; }

@@ -7,13 +7,20 @@ namespace LibProShip.Domain.Decode
 {
     public sealed class Replay : Entity<Replay>
     {
-        public Battle Battle { get; }
-        
-        public string Version { get; }
+        public Battle Battle { get; private set; }
 
-        public DateTime DateTime { get; }
+        public string Version => this.Battle.Version;
 
-        public IReadOnlyCollection<Packet> Packets { get; }
+        public DateTime DateTime { get; private set; }
+
+        public IReadOnlyCollection<Packet> Packets { get; private set; }
+
+        public Replay()
+        {
+            this.Battle = new Battle();
+            this.DateTime = DateTime.MinValue;
+            this.Packets = new ReadOnlyCollection<Packet>(new List<Packet>());
+        }
 
         public Replay(Guid id, Battle battle, DateTime dateTime, IEnumerable<Packet> packets) : base(id)
         {
