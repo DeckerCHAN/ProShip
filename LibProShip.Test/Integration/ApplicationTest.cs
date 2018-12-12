@@ -14,9 +14,7 @@ namespace LibProShip.Test.Integration
         [Fact]
         public async Task Test1()
         {
-            await Task.Delay(500000);
-            
-
+            await Task.Delay(90000);
 
         }
         

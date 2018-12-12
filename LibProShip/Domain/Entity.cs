@@ -9,12 +9,13 @@ namespace LibProShip.Domain
             this.Id = id;
         }
 
-        public Entity()
+        protected Entity()
         {
-            
+            this.Id = Guid.Empty;
         }
 
-        public Guid Id { get; set; }
+        public Guid Id { get; private set; }
+
         public override bool Equals(object obj)
         {
             return obj is Entity<T> item && this.Id.Equals(item.Id);
@@ -25,6 +26,4 @@ namespace LibProShip.Domain
             return this.Id.GetHashCode();
         }
     }
-    
-    
 }

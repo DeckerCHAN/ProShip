@@ -77,10 +77,28 @@ namespace LibProShip.Domain.Decode.Version.Default
 
                 var battle = JsonConvert.DeserializeObject<Battle>(areaInfoString);
                 var jobj = JObject.Parse(areaInfoString);
-                var version = jobj.SelectToken("clientVersionFromExe").First.ToObject<string>();
-                var mapName = jobj.SelectToken("mapDisplayName").First.ToObject<string>();
-                var duration = jobj.SelectToken("duration").First.ToObject<int>();
-                    var resultRawPlay = new RawReplay(battle, resStream);
+                var version = jobj.SelectToken("clientVersionFromExe").ToObject<string>();
+                var mapName = jobj.SelectToken("mapDisplayName").ToObject<string>();
+                var duration = jobj.SelectToken("duration").ToObject<int>();
+                var vehiclesJToken = jobj.SelectToken("vehicles");
+                    
+
+                for (int i = 0; i < vehiclesJToken.Children().Count(); i++)
+                {
+                    var child = vehiclesJToken.Children()[i] as JToken;
+                    var playerId = child.SelectToken("id").ToObject<long>();
+                    var teamId = child.SelectToken("relation").ToObject<int>();
+                    var shipId = child.SelectToken("shipId").ToObject<long>();
+                    var playerName = child.SelectToken("name").ToObject<string>();
+
+                    var player = new Player(playerId, playerName);
+                    var vehlcle = new Vehicle(i,teamId, shipId, player);
+                }
+                
+                
+
+                battle = new Battle();
+                var resultRawPlay = new RawReplay(battle, resStream);
                 return resultRawPlay;
 //
 //                    var resBytes = new byte[resStream.Length];

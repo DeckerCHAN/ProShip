@@ -5,18 +5,25 @@ namespace LibProShip.Domain.Decode
 {
     public class Vehicle : ValueObject<Vehicle>
     {
-        public Vehicle(string playerName, long playerId, int teamId, long shipId)
+        public Vehicle(long id, int teamId, long shipId, Player player)
         {
-            PlayerName = playerName;
-            PlayerId = playerId;
+            this.Id = id;
             TeamId = teamId;
             ShipId = shipId;
+            Player = player;
         }
 
-        public long ShipId { get; }
-        public int TeamId { get; }
-        public long PlayerId { get; }
-        public string PlayerName { get; }
+        public Vehicle()
+        {
+        }
+
+
+        public int TeamId { get; private set; }
+
+        public long ShipId { get; private set; }
+
+        public Player Player { get; private set; }
+
 
         public bool SameAs(Vehicle other)
         {
@@ -26,10 +33,22 @@ namespace LibProShip.Domain.Decode
 
     public class Battle : ValueObject<Battle>
     {
-        public IReadOnlyDictionary<Player, Vehicle> PlayerShips { get; }
-        public Player ControlPlayer { get; }
-        public string Version { get; }
-        public int Duration { get; }
+        public Battle(string version, int duration, Player controlPlayer, IReadOnlyCollection<Vehicle> vehicles)
+        {
+            Version = version;
+            Duration = duration;
+            ControlPlayer = controlPlayer;
+            Vehicles = vehicles;
+        }
+
+        public Battle()
+        {
+        }
+
+        public IReadOnlyCollection<Vehicle> Vehicles { get; private set; }
+        public Player ControlPlayer { get; private set; }
+        public string Version { get; private set; }
+        public int Duration { get; private set; }
 
 
         public bool SameAs(Battle other)
