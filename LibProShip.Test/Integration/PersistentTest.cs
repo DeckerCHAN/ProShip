@@ -62,7 +62,7 @@ namespace LibProShip.Test.Integration
         }
 
         [Fact]
-        public async Task TestSaveReplay()
+        public void TestSaveReplay()
         {
             var vehicles = new List<Vehicle>();
             var player = new Player(1, "TestUser");
@@ -80,17 +80,17 @@ namespace LibProShip.Test.Integration
     public class RawReplay : Entity<RawReplay>
     {
         public Battle Battle { get; private set; }
-        public byte[] Bytes { get; private set; }
+        public byte[] Data { get; private set; }
         public string FileName { get; private set; }
 
         public RawReplay()
         {
         }
 
-        public RawReplay(Guid id, String filename, Battle battle, byte[] bytes) : base(id)
+        public RawReplay(Guid id, String filename, Battle battle, byte[] data) : base(id)
         {
             this.Battle = battle;
-            this.Bytes = bytes;
+            this.Data = data;
             this.FileName = filename;
         }
     }
@@ -118,14 +118,18 @@ namespace LibProShip.Test.Integration
 
         public void Insert(RawReplay item)
         {
-            var bytes = item.Bytes;
+            var bytes = item.Data;
             var simpReplay = new RawReplay(item.Id, item.FileName, item.Battle, null);
             this.Collection.Insert(simpReplay);
-            using (var zipedStream = this.Compress(bytes))
-            using (var stream = this.FileStorage.OpenWrite(simpReplay.Id.ToString(), simpReplay.FileName))
+            using (var zipedStream = new MemoryStream())
             {
-                zipedStream.CopyTo(stream);
+                var streamToSave = new MemoryStream();
+                this.Compress(bytes, streamToSave);
+                this.FileStorage.Upload(simpReplay.Id.ToString(), simpReplay.FileName, zipedStream);
+
             }
+
+            
         }
 
         public void Update(RawReplay item)
@@ -144,29 +148,26 @@ namespace LibProShip.Test.Integration
         }
 
 
-        private byte[] Decompress(Stream gzipData)
+        private byte[] Decompress(Stream gzipedData)
         {
-//            var output = new MemoryStream();
-//            using (var compressedStream = new MemoryStream(new ArraySegment<byte>(data, 2, data.Length - 2).ToArray()))
-//            using (var zipStream = new DeflateStream(compressedStream, CompressionMode.Decompress))
-//            {
-//                zipStream.CopyTo(output);
-//                zipStream.Close();
-//                output.Position = 0;
-//                return output;
-//            }
-            throw new NotImplementedException();
+            
+            using (var output = new MemoryStream())
+            using (var def = new DeflateStream(gzipedData, CompressionMode.Decompress))
+            {
+                def.CopyTo(output);
+                var data = new byte [output.Length];
+                output.Read(data, 0, data.Length);
+                return data;
+            }
         }
 
-        private Stream Compress(byte[] data)
+        private void Compress(byte[] data, Stream output)
         {
-            var output = new MemoryStream();
 
             using (var originStream = new MemoryStream(data))
             using (var def = new DeflateStream(output, CompressionLevel.Optimal))
             {
                 originStream.CopyTo(def);
-                return output;
             }
         }
     }
