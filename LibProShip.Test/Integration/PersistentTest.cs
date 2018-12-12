@@ -24,8 +24,8 @@ namespace LibProShip.Test.Integration
     
     public class TestEntity : Entity<TestEntity>
     {
-        public string Name { get; set; }
-        public TestValueObject TestValueObject { get; set; }
+        public string Name { get; private set; }
+        public TestValueObject TestValueObject { get;private set; }
         
         public TestEntity()
         {
