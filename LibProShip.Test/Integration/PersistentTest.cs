@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using LibProShip.Domain;
 using LibProShip.Domain.Decode;
@@ -71,7 +72,7 @@ namespace LibProShip.Test.Integration
             var battle = new Battle("1.7.10", 1200, player, vehicles);
             var rawReplay = new RawReplay(Guid.NewGuid(), "F:/Filename.wowsreplay", battle,
                 new byte[] {123, 45, 2, 34, 56, 77, 12});
-            
+
             var repo = new RawReplayRepo();
             repo.Insert(rawReplay);
         }
@@ -95,7 +96,11 @@ namespace LibProShip.Test.Integration
         }
     }
 
-    public sealed class RawReplayRepo : IRepository<RawReplay>
+    public interface IFileRepository<T>
+    {
+    }
+
+    public sealed class RawReplayRepo : IFileRepository<RawReplay>
     {
         private LiteStorage FileStorage { get; set; }
 
@@ -142,9 +147,15 @@ namespace LibProShip.Test.Integration
             throw new NotImplementedException();
         }
 
-        public IEnumerable<RawReplay> GetAll()
+        public IEnumerable<RawReplay> GetAll(Expression<Func<RawReplay, bool>> predict)
         {
-            throw new NotImplementedException();
+            var collection = this.Collection.Find(predict).ToArray();
+
+            var resCollection = new LinkedList<RawReplay>();
+            foreach (var rawReplay in collection)
+            {
+                this.
+            }
         }
 
 
