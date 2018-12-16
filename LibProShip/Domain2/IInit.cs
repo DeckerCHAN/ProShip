@@ -1,4 +1,4 @@
-namespace LibProShip.Domain
+namespace LibProShip.Domain2
 {
     public interface IInit
     {

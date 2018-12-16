@@ -1,38 +1,23 @@
+using System;
 using System.IO;
 
 namespace LibProShip.Domain.Decode
 {
-    public sealed class RawReplay : ValueObject<RawReplay>
+    public sealed class RawReplay : Entity<RawReplay>
     {
-        public RawReplay(Battle battle, Stream stream)
+        public Battle Battle { get; private set; }
+        public byte[] Data { get; private set; }
+        public string FileName { get; private set; }
+
+        public RawReplay()
         {
-            this.Stream = stream;
+        }
+
+        public RawReplay(Guid id, String filename, Battle battle, byte[] data) : base(id)
+        {
             this.Battle = battle;
+            this.Data = data;
+            this.FileName = filename;
         }
-
-        private Stream BackedStream;
-
-        public Stream Stream
-        {
-            get
-            {
-                var st = new MemoryStream();
-                this.BackedStream.CopyTo(st);
-                st.Seek(0, SeekOrigin.Begin);
-                this.BackedStream.Seek(0, SeekOrigin.Begin);
-                return st;
-            }
-
-
-            private set => this.BackedStream = value;
-        }
-
-        public Battle Battle { get; }
-
-        public bool SameAs(RawReplay other)
-        {
-            throw new System.NotImplementedException();
-        }
-
     }
 }

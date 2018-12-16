@@ -33,7 +33,7 @@ namespace LibProShip.Domain.Decode
 
     public class Battle : ValueObject<Battle>
     {
-        public Battle(string version, int duration, Player controlPlayer, IReadOnlyCollection<Vehicle> vehicles)
+        public Battle(string version, int duration, Player controlPlayer, ICollection<Vehicle> vehicles)
         {
             Version = version;
             Duration = duration;
@@ -45,7 +45,7 @@ namespace LibProShip.Domain.Decode
         {
         }
 
-        public IReadOnlyCollection<Vehicle> Vehicles { get; private set; }
+        public ICollection<Vehicle> Vehicles { get; private set; }
         public Player ControlPlayer { get; private set; }
         public string Version { get; private set; }
         public int Duration { get; private set; }

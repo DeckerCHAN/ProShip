@@ -23,14 +23,14 @@ namespace LibProShip.Domain.Parse
 
         public void Handle(NewRawReplayEvent e)
         {
-            var rawReplay = e.RawReplay;
-            var replay = this.Processors
-                .Select(x => x.Process(rawReplay))
-                .Where(x => x != null)
-                .DefaultIfEmpty(null)
-                .FirstOrDefault();
-            this.Repository.Insert(replay);
-            this.EventBus.Raise(new NewReplaySavedEvent(this));
+//            var rawReplay = e.RawReplay;
+//            var replay = this.Processors
+//                .Select(x => x.Process(rawReplay))
+//                .Where(x => x != null)
+//                .DefaultIfEmpty(null)
+//                .FirstOrDefault();
+//            this.Repository.Insert(replay);
+//            this.EventBus.Raise(new NewReplaySavedEvent(this));
         }
 
         public void Init()

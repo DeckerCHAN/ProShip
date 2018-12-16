@@ -2,6 +2,7 @@ using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using LibProShip.Domain;
+using LibProShip.Domain2;
 using LibProShip.Infrastructure.Eventing;
 
 namespace LibProShip.Application

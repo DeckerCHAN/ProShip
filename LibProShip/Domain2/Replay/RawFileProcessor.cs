@@ -3,23 +3,24 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using LibProShip.Domain;
 using LibProShip.Domain.Decode.Event;
-using LibProShip.Domain.FileSystem;
+using LibProShip.Domain2.Events;
 using LibProShip.Infrastructure.Eventing;
 using LibProShip.Infrastructure.Logging;
 using LibProShip.Infrastructure.Repo;
 
-namespace LibProShip.Domain.Decode.Handler
+namespace LibProShip.Domain2.Replay
 {
     public class RawFileProcessor : IDomainEventHandler<FileChangeEvent>
     {
-        private readonly IEnumerable<IDecoder> Decoders;
-        private readonly IRepository<Replay> Repository;
+        private readonly IEnumerable<Decoding.IDecoder> Decoders;
+        private readonly ReplayRepository Repository;
         private readonly IEventBus EventBus;
         private readonly Queue<FileInfo> UnProcessedFilePool;
         private readonly ILogger Logger;
 
-        public RawFileProcessor(IRepository<Replay> repository, IEventBus eventBus, IEnumerable<IDecoder> decoders,
+        public RawFileProcessor(ReplayRepository repository, IEventBus eventBus, IEnumerable<Decoding.IDecoder> decoders,
             ILogger logger)
         {
             this.Repository = repository;
@@ -38,7 +39,7 @@ namespace LibProShip.Domain.Decode.Handler
             }
 
 
-            var raw = this.Decoders.Select(x =>
+            var replay = this.Decoders.Select(x =>
             {
                 try
                 {
@@ -50,10 +51,10 @@ namespace LibProShip.Domain.Decode.Handler
                 }
             }).DefaultIfEmpty(null).FirstOrDefault(x => x != null);
 
-            if (raw != null)
+            if (replay != null)
             {
                 this.Logger.Info($"{repFile.Name} Processed");
-                this.EventBus.Raise(new NewRawReplayEvent(this, raw));
+                this.EventBus.Raise(new NewRawReplayEvent(this));
             }
             else
             {

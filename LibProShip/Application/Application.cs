@@ -10,8 +10,8 @@ using Castle.Windsor.Installer;
 using LibProShip.Application.VisualObject;
 using LibProShip.Domain;
 using LibProShip.Domain.Decode;
-using LibProShip.Domain.Decode.Handler;
 using LibProShip.Domain.Parse;
+using LibProShip.Domain2;
 using LibProShip.Infrastructure.Eventing;
 using LibProShip.Infrastructure.Repo;
 

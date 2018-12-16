@@ -3,9 +3,10 @@ using System.Reflection;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using LibProShip.Domain.Decode.Handler;
-using LibProShip.Domain.FileSystem;
 using LibProShip.Domain.Parse;
+using LibProShip.Domain2;
+using LibProShip.Domain2.Events;
+using LibProShip.Domain2.Replay;
 using LibProShip.Infrastructure.Eventing;
 using LibProShip.Infrastructure.Repo;
 

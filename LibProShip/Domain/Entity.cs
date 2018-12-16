@@ -14,7 +14,7 @@ namespace LibProShip.Domain
             this.Id = Guid.Empty;
         }
 
-        public Guid Id { get; private set; }
+        public Guid Id { get; protected set; }
 
         public override bool Equals(object obj)
         {

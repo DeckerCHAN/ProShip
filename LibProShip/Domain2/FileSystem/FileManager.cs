@@ -2,23 +2,25 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using LibProShip.Domain;
+using LibProShip.Domain2.Events;
 using LibProShip.Infrastructure.Configs;
 using LibProShip.Infrastructure.Eventing;
 
-namespace LibProShip.Domain.FileSystem
+namespace LibProShip.Domain2.FileSystem
 {
-    public interface IFileManager
+    public interface IFileMonitor
     {
         void TriggerScan();
     }
 
-    public class FileManager : IFileManager, IInit
+    public class FileMonitor : IFileMonitor, IInit
     {
         private readonly IEventBus EventBus;
         private readonly ISystemConfig Config;
         private ISet<string> RaisedFiles { get; }
 
-        public FileManager(IEventBus eventBus, ISystemConfig config)
+        public FileMonitor(IEventBus eventBus, ISystemConfig config)
         {
             this.EventBus = eventBus;
             this.Config = config;

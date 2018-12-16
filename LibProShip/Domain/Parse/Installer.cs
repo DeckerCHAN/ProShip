@@ -5,6 +5,7 @@ using Castle.MicroKernel.Resolvers.SpecializedResolvers;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using LibProShip.Domain.Decode.Event;
+using LibProShip.Domain2;
 using LibProShip.Infrastructure.Eventing;
 
 namespace LibProShip.Domain.Parse

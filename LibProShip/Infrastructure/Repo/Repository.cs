@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq.Expressions;
 using LibProShip.Domain;
 using LibProShip.Domain.Decode;
 using LiteDB;
@@ -39,9 +40,19 @@ namespace LibProShip.Infrastructure.Repo
             this.collection.Update(item);
         }
 
+        public void Remove(Expression<Func<T, bool>> predict)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Remove(T item)
         {
             this.collection.Delete(arg => Equals(arg, item));
+        }
+
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>> predict)
+        {
+            throw new NotImplementedException();
         }
 
         public IEnumerable<T> GetAll()

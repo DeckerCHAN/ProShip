@@ -1,19 +1,23 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
+using LibProShip.Domain.Decode;
+using LibProShip.Domain2.Analysis;
 using LibProShip.Infrastructure;
+using LibProShip.Infrastructure.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace LibProShip.Domain.Decode.Version.Default
+namespace LibProShip.Domain2.Decoding
 {
-    public class Decoder : IDecoder
+    public class BlowFishDecoder : IDecoder
     {
         private readonly Blowfish BlowFish;
 
-        public Decoder()
+        public BlowFishDecoder()
         {
             var key = new byte[]
                 {0x29, 0xB7, 0xC9, 0x09, 0x38, 0x3F, 0x84, 0x88, 0xFA, 0x98, 0xEC, 0x4E, 0x13, 0x19, 0x79, 0xFB};
@@ -22,7 +26,7 @@ namespace LibProShip.Domain.Decode.Version.Default
         }
 
 
-        public RawReplay DecodeReplay(FileInfo replayFile)
+        public Replay.Replay DecodeReplay(FileInfo replayFile)
         {
             using (var f =
                 new FileStream(replayFile.FullName, FileMode.Open))
@@ -97,8 +101,13 @@ namespace LibProShip.Domain.Decode.Version.Default
                 
                 
 
-//                battle = new Battle();
-//                var resultRawPlay = new RawReplay(battle, resStream);
+                battle = new Battle();
+                var data = new byte[resStream.Length];
+                resStream.Read(data, 0, data.Length);
+
+                var md5 = HashUtils.Hash(data);
+                
+                var resultRawPlay = new Replay.Replay(md5,null,new Dictionary<string, AnalysisResult>());
 //                return resultRawPlay;
 
 

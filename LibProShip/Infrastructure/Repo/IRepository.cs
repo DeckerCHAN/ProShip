@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using LibProShip.Domain;
 
 namespace LibProShip.Infrastructure.Repo
@@ -9,8 +11,8 @@ namespace LibProShip.Infrastructure.Repo
 
         void Update(T item);
 
-        void Remove(T item);
+        void Remove(Expression<Func<T, bool>> predict);
 
-        IEnumerable<T> GetAll();
+        IEnumerable<T> GetAll(Expression<Func<T, bool>> predict);
     }
 }

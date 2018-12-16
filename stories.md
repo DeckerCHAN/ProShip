@@ -20,3 +20,7 @@ As app developer, I need to interpret stream so that I can retrieve detailed bat
 
 As user, I need app can be automatically updated so that I have the latest features.
 _This can be done by check github api remotely_
+
+# Team
+
+As clan battle player, I would like to analysis team play.
