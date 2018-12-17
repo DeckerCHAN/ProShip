@@ -82,6 +82,7 @@
     <Compile Include="Domain2\Replay\Replay.cs" />
     <Compile Include="Domain2\Replay\ReplayVo.cs" />
     <Compile Include="Domain2\Replay\ReplayRepository.cs" />
+    <Compile Include="Domain2\StreamProcessor\IStreamProcessor.cs" />
     <Compile Include="Domain2\ValueObject.cs" />
     <Compile Include="Domain\Analysis\SingleDamageReceivingSphere.cs" />
     <Compile Include="Domain\Analysis\Interface\ISingleAnalyser.cs" />
@@ -133,7 +134,6 @@
     <Content Include="Infrastructure\Configs\config.json" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Domain2\StreamProcessor" />
     <Folder Include="Domain\Decode\Handler" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

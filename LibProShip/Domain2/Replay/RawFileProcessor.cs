@@ -5,10 +5,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using LibProShip.Domain;
 using LibProShip.Domain.Decode.Event;
+using LibProShip.Domain2.Analysis;
 using LibProShip.Domain2.Events;
 using LibProShip.Infrastructure.Eventing;
 using LibProShip.Infrastructure.Logging;
 using LibProShip.Infrastructure.Repo;
+using LibProShip.Infrastructure.Utils;
 
 namespace LibProShip.Domain2.Replay
 {
@@ -20,7 +22,8 @@ namespace LibProShip.Domain2.Replay
         private readonly Queue<FileInfo> UnProcessedFilePool;
         private readonly ILogger Logger;
 
-        public RawFileProcessor(ReplayRepository repository, IEventBus eventBus, IEnumerable<Decoding.IDecoder> decoders,
+        public RawFileProcessor(ReplayRepository repository, IEventBus eventBus,
+            IEnumerable<Decoding.IDecoder> decoders,
             ILogger logger)
         {
             this.Repository = repository;
@@ -39,7 +42,7 @@ namespace LibProShip.Domain2.Replay
             }
 
 
-            var replay = this.Decoders.Select(x =>
+            var decoded = this.Decoders.Select(x =>
             {
                 try
                 {
@@ -51,9 +54,13 @@ namespace LibProShip.Domain2.Replay
                 }
             }).DefaultIfEmpty(null).FirstOrDefault(x => x != null);
 
-            if (replay != null)
+            if (decoded != null)
             {
                 this.Logger.Info($"{repFile.Name} Processed");
+                var replay = new Replay(HashUtils.Hash(decoded.Item2), repFile.Name, decoded.Item1,
+                    new Dictionary<string, AnalysisResult>());
+
+                this.Repository.Insert(replay, decoded.Item2);
                 this.EventBus.Raise(new NewRawReplayEvent(this));
             }
             else
@@ -75,11 +82,16 @@ namespace LibProShip.Domain2.Replay
             {
                 foreach (var file in files)
                 {
+                    if (this.Repository.Find(x => x.FileName.Equals(file.Name)).Any())
+                    {
+                        //This file been processed already
+                        continue;
+                    }
+
                     //TODO: Something went wrong here
                     this.UnProcessedFilePool.Enqueue(file);
                 }
             }
-           
         }
 
 
