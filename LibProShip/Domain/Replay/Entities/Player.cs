@@ -1,4 +1,4 @@
-namespace LibProShip.Domain2.Replay.Entities
+namespace LibProShip.Domain.Replay.Entities
 {
     public sealed class Player : ValueObject
     {

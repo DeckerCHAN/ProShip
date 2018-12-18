@@ -1,4 +1,4 @@
-namespace LibProShip.Domain2.Replay
+namespace LibProShip.Domain.Replay
 {
     public class ReplayVo
     {

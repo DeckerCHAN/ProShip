@@ -1,6 +1,6 @@
 using LibProShip.Infrastructure.Eventing;
 
-namespace LibProShip.Domain.Decode.Event
+namespace LibProShip.Domain.Events
 {
     public class NewRawReplayEvent : IDomainEvent
     {

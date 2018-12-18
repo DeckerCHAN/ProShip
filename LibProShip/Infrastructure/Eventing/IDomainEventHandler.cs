@@ -1,5 +1,4 @@
 using LibProShip.Domain;
-using LibProShip.Domain2;
 
 namespace LibProShip.Infrastructure.Eventing
 {

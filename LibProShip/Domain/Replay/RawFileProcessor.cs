@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using LibProShip.Domain;
-using LibProShip.Domain.Decode.Event;
-using LibProShip.Domain2.Analysis;
-using LibProShip.Domain2.Events;
+using LibProShip.Domain.Analysis;
+using LibProShip.Domain.Events;
 using LibProShip.Infrastructure.Eventing;
 using LibProShip.Infrastructure.Logging;
 using LibProShip.Infrastructure.Utils;
 
-namespace LibProShip.Domain2.Replay
+namespace LibProShip.Domain.Replay
 {
     public class RawFileProcessor : IDomainEventHandler<FileChangeEvent>
     {
@@ -102,7 +100,14 @@ namespace LibProShip.Domain2.Replay
                 while (true)
                 {
                     await Task.Delay(10000);
-                    this.ProcessQueuedFile();
+                    try
+                    {
+                        this.ProcessQueuedFile();
+                    }
+                    catch (Exception e)
+                    {
+                        this.Logger.Error(e);
+                    }
                 }
             }));
         }

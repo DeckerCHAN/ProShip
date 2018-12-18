@@ -1,13 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Linq.Expressions;
-using LibProShip.Domain.Decode;
 using LiteDB;
 
-namespace LibProShip.Domain2.Replay
+namespace LibProShip.Domain.Replay
 {
     public class ReplayRepository : IDisposable
     {

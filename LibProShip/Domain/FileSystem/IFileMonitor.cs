@@ -1,4 +1,4 @@
-namespace LibProShip.Domain2.FileSystem
+namespace LibProShip.Domain.FileSystem
 {
     public interface IFileMonitor
     {

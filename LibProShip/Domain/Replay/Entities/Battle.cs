@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace LibProShip.Domain2.Replay.Entities
+namespace LibProShip.Domain.Replay.Entities
 {
     public class Vehicle : ValueObject
     {

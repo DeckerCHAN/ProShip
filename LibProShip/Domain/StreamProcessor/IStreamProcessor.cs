@@ -1,4 +1,4 @@
-namespace LibProShip.Domain2.StreamProcessor
+namespace LibProShip.Domain.StreamProcessor
 {
     public interface IStreamProcessor
     {

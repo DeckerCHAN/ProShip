@@ -1,6 +1,6 @@
 using LibProShip.Infrastructure.Eventing;
 
-namespace LibProShip.Domain.Parse.Events
+namespace LibProShip.Domain.Events
 {
     public class NewReplaySavedEvent : IDomainEvent
     {

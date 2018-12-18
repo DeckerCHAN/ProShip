@@ -4,15 +4,12 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
-using LibProShip.Domain.Decode;
-using LibProShip.Domain2.Analysis;
-using LibProShip.Domain2.Replay.Entities;
+using LibProShip.Domain.Replay.Entities;
 using LibProShip.Infrastructure;
-using LibProShip.Infrastructure.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace LibProShip.Domain2.Decoding
+namespace LibProShip.Domain.Decoding
 {
     public class BlowFishDecoder : IDecoder
     {
@@ -48,12 +45,38 @@ namespace LibProShip.Domain2.Decoding
                 var areaInfoBytes = new byte [areaBlockSize];
                 f.Read(areaInfoBytes, 0, areaInfoBytes.Length);
                 var areaInfoString = Encoding.UTF8.GetString(areaInfoBytes);
+                var battle = JsonConvert.DeserializeObject<Battle>(areaInfoString);
+                var jobj = JObject.Parse(areaInfoString);
+                var version = jobj.SelectToken("clientVersionFromExe").ToObject<string>();
+                var mapName = jobj.SelectToken("mapDisplayName").ToObject<string>();
+                var duration = jobj.SelectToken("duration").ToObject<int>();
+                var vehiclesJToken = jobj.SelectToken("vehicles");
 
+                var vehicleSet = new List<Vehicle>();
+
+                foreach (var child in vehiclesJToken.Children())
+                {
+                    var playerId = child.SelectToken("id").ToObject<long>();
+                    var teamId = child.SelectToken("relation").ToObject<int>();
+                    var shipId = child.SelectToken("shipId").ToObject<long>();
+                    var playerName = child.SelectToken("name").ToObject<string>();
+
+                    var player = new Player(playerId, playerName);
+                    var vehicle = new Vehicle(teamId, shipId, player);
+                    vehicleSet.Add(vehicle);
+                }
+
+
+                battle = new Battle(version, duration, null, vehicleSet);
 
                 var zLibBytes = new byte[f.Length - f.Position];
                 f.Read(zLibBytes, 0, zLibBytes.Length);
 
-                var s = zLibBytes.Length % 8;
+                if (zLibBytes.Length % 8 != 0)
+                {
+                    //Something went wrong
+                    return null;
+                }
 
 
                 var resStream = new MemoryStream();
@@ -80,54 +103,21 @@ namespace LibProShip.Domain2.Decoding
                     Array.Copy(xorBytes, previousChunk, 8);
                 }
 
-                var battle = JsonConvert.DeserializeObject<Battle>(areaInfoString);
-                var jobj = JObject.Parse(areaInfoString);
-                var version = jobj.SelectToken("clientVersionFromExe").ToObject<string>();
-                var mapName = jobj.SelectToken("mapDisplayName").ToObject<string>();
-                var duration = jobj.SelectToken("duration").ToObject<int>();
-                var vehiclesJToken = jobj.SelectToken("vehicles");
+              
+                
+                    var resBytes = new byte[resStream.Length];
+
+                    resStream.Position = 0;
+                    resStream.Read(resBytes, 0, resBytes.Length);
 
 
-                for (int i = 0; i < vehiclesJToken.Children().Count(); i++)
-                {
-                    var child = vehiclesJToken.Children()[i] as JToken;
-                    var playerId = child.SelectToken("id").ToObject<long>();
-                    var teamId = child.SelectToken("relation").ToObject<int>();
-                    var shipId = child.SelectToken("shipId").ToObject<long>();
-                    var playerName = child.SelectToken("name").ToObject<string>();
-
-                    var player = new Player(playerId, playerName);
-                    var vehlcle = new Vehicle(teamId, shipId, player);
-                }
-
-
-                battle = new Battle(version, duration, null, null);
-                var data = new byte[resStream.Length];
-                resStream.Read(data, 0, data.Length);
+                    var resST = this.Decompress(resBytes);
+                
+                var data = new byte[resST.Length];
+                resST.Read(data, 0, data.Length);
 
 
                 return new Tuple<Battle, byte[]>(battle, data);
-//                return resultRawPlay;
-
-
-                return null;
-//
-//                    var resBytes = new byte[resStream.Length];
-//
-//                    resStream.Position = 0;
-//                    resStream.Read(resBytes, 0, resBytes.Length);
-//
-//
-//                    var resST = this.Decompress(resBytes);
-
-
-//                var msSinkDecompressed = new System.IO.MemoryStream();
-//                var zOut = new ZlibStream(msSinkDecompressed, Ionic.Zlib.CompressionMode.Decompress, true);
-//                CopyStream(zlibStream, zOut);
-//
-//                Console.Write(zOut.Length);
-//
-//                //new Blowfish()
             }
         }
 

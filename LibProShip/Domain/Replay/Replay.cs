@@ -1,9 +1,8 @@
 using System.Collections.Generic;
-using LibProShip.Domain.Decode;
-using LibProShip.Domain2.Analysis;
-using LibProShip.Domain2.Replay.Entities;
+using LibProShip.Domain.Analysis;
+using LibProShip.Domain.Replay.Entities;
 
-namespace LibProShip.Domain2.Replay
+namespace LibProShip.Domain.Replay
 {
     public sealed class Replay : Entity
     {
@@ -15,7 +14,7 @@ namespace LibProShip.Domain2.Replay
         public Replay(string id, string fileName, Battle battle, IDictionary<string, AnalysisResult> analysisResult) : base(id)
         {
             this.AnalysisResult = analysisResult;
-            FileName = fileName;
+            this.FileName = fileName;
             this.Battle = battle;
         }
 

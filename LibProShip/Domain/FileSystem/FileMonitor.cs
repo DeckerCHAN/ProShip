@@ -2,12 +2,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using LibProShip.Domain;
-using LibProShip.Domain2.Events;
+using LibProShip.Domain.Events;
 using LibProShip.Infrastructure.Configs;
 using LibProShip.Infrastructure.Eventing;
 
-namespace LibProShip.Domain2.FileSystem
+namespace LibProShip.Domain.FileSystem
 {
     public class FileMonitor : IFileMonitor, IInit
     {

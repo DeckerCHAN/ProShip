@@ -1,5 +1,5 @@
 using System;
-using LibProShip.Domain.Parse.Events;
+using LibProShip.Domain.Events;
 using LibProShip.Infrastructure.Eventing;
 
 namespace LibProShip.Application

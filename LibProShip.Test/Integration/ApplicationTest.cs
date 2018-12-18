@@ -12,10 +12,9 @@ namespace LibProShip.Test.Integration
         }
 
         [Fact]
-        public async Task Test1()
+        public async Task Run90Seconds()
         {
             await Task.Delay(90000);
-
         }
         
     }

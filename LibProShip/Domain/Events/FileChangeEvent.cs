@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using LibProShip.Infrastructure.Eventing;
 
-namespace LibProShip.Domain2.Events
+namespace LibProShip.Domain.Events
 {
     public class FileChangeEvent : IDomainEvent
     {

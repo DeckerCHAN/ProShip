@@ -1,10 +1,10 @@
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using LibProShip.Domain2.Events;
+using LibProShip.Domain.Events;
 using LibProShip.Infrastructure.Eventing;
 
-namespace LibProShip.Domain2.Replay
+namespace LibProShip.Domain.Replay
 {
     public class Installer: IWindsorInstaller
     {

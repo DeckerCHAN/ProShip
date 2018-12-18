@@ -1,4 +1,4 @@
-namespace LibProShip.Domain2.Analysis
+namespace LibProShip.Domain.Analysis
 {
     public sealed class SphereSample : ValueObject
     {

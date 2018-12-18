@@ -1,4 +1,4 @@
-namespace LibProShip.Domain2.StreamProcessor.Version
+namespace LibProShip.Domain.StreamProcessor.Version
 {
     public class DefaultStreamProcessor : IStreamProcessor
     {

@@ -1,4 +1,4 @@
-namespace LibProShip.Domain2
+namespace LibProShip.Domain
 {
     public abstract class ValueObject
     {
