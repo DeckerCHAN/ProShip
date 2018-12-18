@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using LibProShip.Domain.Decode;
 using LibProShip.Domain2.Analysis;
+using LibProShip.Domain2.Replay.Entities;
 
 namespace LibProShip.Domain2.Replay
 {

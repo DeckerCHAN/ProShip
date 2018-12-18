@@ -1,19 +1,6 @@
-using System;
-
-namespace LibProShip.Domain
+namespace LibProShip.Domain2
 {
-    public abstract class ValueObject<T>
+    public abstract class ValueObject
     {
-        public long Id { get; protected set; }
-
-        protected ValueObject()
-        {
-            
-        }
-
-        protected ValueObject(long id)
-        {
-            this.Id = id;
-        }
     }
 }

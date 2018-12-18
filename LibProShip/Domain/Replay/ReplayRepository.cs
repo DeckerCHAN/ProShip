@@ -13,7 +13,7 @@ namespace LibProShip.Domain2.Replay
     {
         public ReplayRepository()
         {
-            var fileName = $"RawReplay3.ldb";
+            var fileName = $"RawReplay4.ldb";
             this.Context = new LiteDatabase(fileName);
             this.Collection = this.Context.GetCollection<Replay>();
             this.FileStorage = this.Context.FileStorage;
@@ -29,7 +29,7 @@ namespace LibProShip.Domain2.Replay
         public void Insert(Replay replay, byte[] replayFile)
         {
             this.Collection.Insert(replay);
-            this.FileStorage.Upload(replay.Id, replay.Id, new MemoryStream(replayFile));
+            this.FileStorage.Upload(replay.Id, replay.FileName, new MemoryStream(replayFile));
         }
 
         public IEnumerable<Replay> Find(Expression<Func<Replay, bool>> predict)

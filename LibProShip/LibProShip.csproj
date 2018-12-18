@@ -66,46 +66,29 @@
     <Compile Include="Application\DomainEventPublisher.cs" />
     <Compile Include="Application\Installer.cs" />
     <Compile Include="Application\VisualObject\ReplayAbstract.cs" />
-    <Compile Include="Domain2\Analysis\AnalysisResult.cs" />
-    <Compile Include="Domain2\Analysis\SphereChart.cs" />
-    <Compile Include="Domain2\Analysis\SphereSample.cs" />
-    <Compile Include="Domain2\Decoding\BlowFishDecoder.cs" />
-    <Compile Include="Domain2\Decoding\IDecoder.cs" />
-    <Compile Include="Domain2\Decoding\Installer.cs" />
-    <Compile Include="Domain2\Entity.cs" />
-    <Compile Include="Domain2\Events\FileChangeEvent.cs" />
-    <Compile Include="Domain2\FileSystem\FileManager.cs" />
-    <Compile Include="Domain2\FileSystem\Installer.cs" />
-    <Compile Include="Domain2\FileSystem\Monitor.cs" />
-    <Compile Include="Domain2\IInit.cs" />
-    <Compile Include="Domain2\Replay\RawFileProcessor.cs" />
-    <Compile Include="Domain2\Replay\Replay.cs" />
-    <Compile Include="Domain2\Replay\ReplayVo.cs" />
-    <Compile Include="Domain2\Replay\ReplayRepository.cs" />
-    <Compile Include="Domain2\StreamProcessor\IStreamProcessor.cs" />
-    <Compile Include="Domain2\ValueObject.cs" />
-    <Compile Include="Domain\Analysis\SingleDamageReceivingSphere.cs" />
-    <Compile Include="Domain\Analysis\Interface\ISingleAnalyser.cs" />
-    <Compile Include="Domain\Decode2\RawReplayRepo.cs" />
-    <Compile Include="Domain\Decode\Event\NewRawReplayEvent.cs" />
-    <Compile Include="Domain\Decode\Factory\IDecoderFactory.cs" />
-    <Compile Include="Domain\Decode\Battle.cs" />
-    <Compile Include="Domain\Decode\Installer.cs" />
-    <Compile Include="Domain\Decode\Interface\IStreamParser.cs" />
-    <Compile Include="Domain\Decode\Packet.cs" />
-    <Compile Include="Domain\Decode\Player.cs" />
-    <Compile Include="Domain\Decode\RawReplay.cs" />
-    <Compile Include="Domain\Decode\Replay.cs" />
-    <Compile Include="Domain\Decode\ReplayStatus.cs" />
-    <Compile Include="Domain\Decode\Repo\ReplayRepo.cs" />
-    <Compile Include="Domain\Decode\Version\Default\Decoder.cs" />
+    <Compile Include="Domain\Analysis\AnalysisResult.cs" />
+    <Compile Include="Domain\Analysis\SphereChart.cs" />
+    <Compile Include="Domain\Analysis\SphereSample.cs" />
+    <Compile Include="Domain\Decoding\BlowFishDecoder.cs" />
+    <Compile Include="Domain\Decoding\IDecoder.cs" />
+    <Compile Include="Domain\Decoding\Installer.cs" />
     <Compile Include="Domain\Entity.cs" />
-    <Compile Include="Domain\IDecoder.cs" />
-    <Compile Include="Domain\Parse\Events\NewReplaySavedEvent.cs" />
-    <Compile Include="Domain\Parse\Installer.cs" />
-    <Compile Include="Domain\Parse\IReplayProcessor.cs" />
-    <Compile Include="Domain\Parse\NewRawReplayHandler.cs" />
-    <Compile Include="Domain\Parse\Version\V1710\ReplayProcessor.cs" />
+    <Compile Include="Domain\Events\FileChangeEvent.cs" />
+    <Compile Include="Domain\Events\NewRawReplayEvent.cs" />
+    <Compile Include="Domain\Events\NewReplaySavedEvent.cs" />
+    <Compile Include="Domain\FileSystem\FileMonitor.cs" />
+    <Compile Include="Domain\FileSystem\IFileMonitor.cs" />
+    <Compile Include="Domain\FileSystem\Installer.cs" />
+    <Compile Include="Domain\IInit.cs" />
+    <Compile Include="Domain\Replay\Entities\Battle.cs" />
+    <Compile Include="Domain\Replay\Entities\Player.cs" />
+    <Compile Include="Domain\Replay\Installer.cs" />
+    <Compile Include="Domain\Replay\RawFileProcessor.cs" />
+    <Compile Include="Domain\Replay\Replay.cs" />
+    <Compile Include="Domain\Replay\ReplayVo.cs" />
+    <Compile Include="Domain\Replay\ReplayRepository.cs" />
+    <Compile Include="Domain\StreamProcessor\IStreamProcessor.cs" />
+    <Compile Include="Domain\StreamProcessor\Version\DefaultStreamProcessor.cs" />
     <Compile Include="Domain\ValueObject.cs" />
     <Compile Include="Infrastructure\BlowFish.cs" />
     <Compile Include="Infrastructure\Configs\IDynamicConfig.cs" />
@@ -119,8 +102,6 @@
     <Compile Include="Infrastructure\Installer.cs" />
     <Compile Include="Infrastructure\Logging\DefaultLogger.cs" />
     <Compile Include="Infrastructure\Logging\ILogger.cs" />
-    <Compile Include="Infrastructure\Repo\IRepository.cs" />
-    <Compile Include="Infrastructure\Repo\Repository.cs" />
     <Compile Include="Infrastructure\Utils\HashUtils.cs" />
     <Compile Include="Infrastructure\Utils\VersionUtils.cs" />
     <Compile Include="IService.cs" />
@@ -132,9 +113,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Infrastructure\Configs\config.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Domain\Decode\Handler" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

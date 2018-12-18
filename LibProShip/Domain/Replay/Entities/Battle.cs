@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
 
-namespace LibProShip.Domain.Decode
+namespace LibProShip.Domain2.Replay.Entities
 {
-    public class Vehicle : ValueObject<Vehicle>
+    public class Vehicle : ValueObject
     {
-        public Vehicle(long id, int teamId, long shipId, Player player)
+        public Vehicle( int teamId, long shipId, Player player)
         {
-            this.Id = id;
-            TeamId = teamId;
-            ShipId = shipId;
-            Player = player;
+            this.TeamId = teamId;
+            this.ShipId = shipId;
+            this.Player = player;
         }
 
         public Vehicle()
@@ -31,14 +30,14 @@ namespace LibProShip.Domain.Decode
         }
     }
 
-    public class Battle : ValueObject<Battle>
+    public class Battle : ValueObject
     {
         public Battle(string version, int duration, Player controlPlayer, ICollection<Vehicle> vehicles)
         {
-            Version = version;
-            Duration = duration;
-            ControlPlayer = controlPlayer;
-            Vehicles = vehicles;
+            this.Version = version;
+            this.Duration = duration;
+            this.ControlPlayer = controlPlayer;
+            this.Vehicles = vehicles;
         }
 
         public Battle()
@@ -50,10 +49,5 @@ namespace LibProShip.Domain.Decode
         public string Version { get; private set; }
         public int Duration { get; private set; }
 
-
-        public bool SameAs(Battle other)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

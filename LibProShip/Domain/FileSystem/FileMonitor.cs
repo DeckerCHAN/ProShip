@@ -9,11 +9,6 @@ using LibProShip.Infrastructure.Eventing;
 
 namespace LibProShip.Domain2.FileSystem
 {
-    public interface IFileMonitor
-    {
-        void TriggerScan();
-    }
-
     public class FileMonitor : IFileMonitor, IInit
     {
         private readonly IEventBus EventBus;

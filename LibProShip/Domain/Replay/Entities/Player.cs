@@ -1,8 +1,6 @@
-using System.Collections.Generic;
-
-namespace LibProShip.Domain.Decode
+namespace LibProShip.Domain2.Replay.Entities
 {
-    public class Player : ValueObject<Player>
+    public sealed class Player : ValueObject
     {
         public string Name { get; private set; }
 
@@ -16,6 +14,6 @@ namespace LibProShip.Domain.Decode
             this.Name = name;
         }
 
-        
+        public long Id { get; private set; }
     }
 }

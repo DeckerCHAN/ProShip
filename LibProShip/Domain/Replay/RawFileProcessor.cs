@@ -9,7 +9,6 @@ using LibProShip.Domain2.Analysis;
 using LibProShip.Domain2.Events;
 using LibProShip.Infrastructure.Eventing;
 using LibProShip.Infrastructure.Logging;
-using LibProShip.Infrastructure.Repo;
 using LibProShip.Infrastructure.Utils;
 
 namespace LibProShip.Domain2.Replay

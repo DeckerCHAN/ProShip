@@ -1,29 +1,17 @@
-using System;
-
-namespace LibProShip.Domain
+namespace LibProShip.Domain2
 {
-    public abstract class Entity<T>
+    public abstract class Entity
     {
-        protected Entity(Guid id)
+        public string Id { get; protected set; }
+
+
+        protected Entity(string id)
         {
             this.Id = id;
         }
 
         protected Entity()
         {
-            this.Id = Guid.Empty;
-        }
-
-        public Guid Id { get; protected set; }
-
-        public override bool Equals(object obj)
-        {
-            return obj is Entity<T> item && this.Id.Equals(item.Id);
-        }
-
-        public override int GetHashCode()
-        {
-            return this.Id.GetHashCode();
         }
     }
 }

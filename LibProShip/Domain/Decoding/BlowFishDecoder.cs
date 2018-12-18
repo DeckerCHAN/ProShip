@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using LibProShip.Domain.Decode;
 using LibProShip.Domain2.Analysis;
+using LibProShip.Domain2.Replay.Entities;
 using LibProShip.Infrastructure;
 using LibProShip.Infrastructure.Utils;
 using Newtonsoft.Json;
@@ -26,7 +27,7 @@ namespace LibProShip.Domain2.Decoding
         }
 
 
-        public Replay.Replay DecodeReplay(FileInfo replayFile)
+        public Tuple<Battle, byte[]> DecodeReplay(FileInfo replayFile)
         {
             using (var f =
                 new FileStream(replayFile.FullName, FileMode.Open))
@@ -85,7 +86,7 @@ namespace LibProShip.Domain2.Decoding
                 var mapName = jobj.SelectToken("mapDisplayName").ToObject<string>();
                 var duration = jobj.SelectToken("duration").ToObject<int>();
                 var vehiclesJToken = jobj.SelectToken("vehicles");
-                    
+
 
                 for (int i = 0; i < vehiclesJToken.Children().Count(); i++)
                 {
@@ -96,20 +97,17 @@ namespace LibProShip.Domain2.Decoding
                     var playerName = child.SelectToken("name").ToObject<string>();
 
                     var player = new Player(playerId, playerName);
-                    var vehlcle = new Vehicle(i,teamId, shipId, player);
+                    var vehlcle = new Vehicle(teamId, shipId, player);
                 }
-                
-                
 
-                battle = new Battle();
+
+                battle = new Battle(version, duration, null, null);
                 var data = new byte[resStream.Length];
                 resStream.Read(data, 0, data.Length);
 
-                var md5 = HashUtils.Hash(data);
-                
-                var resultRawPlay = new Replay.Replay(md5,null,new Dictionary<string, AnalysisResult>());
-//                return resultRawPlay;
 
+                return new Tuple<Battle, byte[]>(battle, data);
+//                return resultRawPlay;
 
 
                 return null;

@@ -4,7 +4,6 @@ using Castle.Windsor;
 using LibProShip.Infrastructure.Configs;
 using LibProShip.Infrastructure.Eventing;
 using LibProShip.Infrastructure.Logging;
-using LibProShip.Infrastructure.Repo;
 
 namespace LibProShip.Infrastructure
 {

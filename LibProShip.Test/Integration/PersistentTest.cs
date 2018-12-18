@@ -9,7 +9,6 @@ using LibProShip.Domain;
 using LibProShip.Domain.Decode;
 using LibProShip.Domain2.Analysis;
 using LibProShip.Domain2.Replay;
-using LibProShip.Infrastructure.Repo;
 using LibProShip.Infrastructure.Utils;
 using LiteDB;
 using Xunit;
@@ -193,7 +192,7 @@ namespace LibProShip.Test.Integration
         {
             var rpData = new byte[] {12, 3, 45, 67, 1, 23, 42, 134, 55, 12};
 
-            var rp = new Replay(HashUtils.Hash(rpData), null, new Dictionary<string, AnalysisResult>());
+            var rp = new Replay(HashUtils.Hash(rpData), "abc.wowosreplay", null, new Dictionary<string, AnalysisResult>());
 
             var repo = new ReplayRepository();
             repo.Insert(rp, rpData);
