@@ -81,7 +81,7 @@ namespace LibProShip.Domain.Decoding
 
                 var resStream = new MemoryStream();
                 var secondChunk = new ArraySegment<byte>(zLibBytes, 8, 8).ToArray();
-                this.BlowFish.Decipher(secondChunk);
+                secondChunk =  this.BlowFish.Decipher(secondChunk);
                 resStream.Write(secondChunk, 0, secondChunk.Length);
 
                 var previousChunk = new byte[8];
@@ -91,7 +91,7 @@ namespace LibProShip.Domain.Decoding
                 for (int i = 16; i < zLibBytes.Length; i += 8)
                 {
                     var chunk = new ArraySegment<byte>(zLibBytes, i, 8).ToArray();
-                    this.BlowFish.Decipher(chunk);
+                    chunk = this.BlowFish.Decipher(chunk);
 
                     var thisChunkLong = BitConverter.ToInt64(chunk, 0);
                     var previousChunkLong = BitConverter.ToInt64(previousChunk, 0);
@@ -103,19 +103,22 @@ namespace LibProShip.Domain.Decoding
                     Array.Copy(xorBytes, previousChunk, 8);
                 }
 
-              
-                
-                    var resBytes = new byte[resStream.Length];
 
-                    resStream.Position = 0;
-                    resStream.Read(resBytes, 0, resBytes.Length);
+                var resBytes = new byte[resStream.Length];
 
+                resStream.Position = 0;
+                resStream.Read(resBytes, 0, resBytes.Length);
 
-                    var resST = this.Decompress(resBytes);
-                
+                                    
+                var resST = this.Decompress(resBytes);
+
                 var data = new byte[resST.Length];
                 resST.Read(data, 0, data.Length);
 
+                using (var st = new FileStream("binaryFileForTest.bin", FileMode.CreateNew))
+                {
+                    st.Write(data, 0, data.Length);
+                }
 
                 return new Tuple<Battle, byte[]>(battle, data);
             }
