@@ -88,6 +88,7 @@
     <Compile Include="Domain\Replay\ReplayVo.cs" />
     <Compile Include="Domain\Replay\ReplayRepository.cs" />
     <Compile Include="Domain\StreamProcessor\IStreamProcessor.cs" />
+    <Compile Include="Domain\StreamProcessor\PositionPacket.cs" />
     <Compile Include="Domain\StreamProcessor\Version\DefaultStreamProcessor.cs" />
     <Compile Include="Domain\ValueObject.cs" />
     <Compile Include="Infrastructure\BlowFish.cs" />

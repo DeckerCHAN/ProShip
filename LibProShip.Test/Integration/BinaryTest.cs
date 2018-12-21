@@ -1,0 +1,43 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Xunit;
+
+namespace LibProShip.Test.Integration
+{
+    public class BinaryTest
+    {
+        [Fact]
+        public void StreamProcessTest()
+        {
+            byte[] data = null;
+            using (var st = new FileStream("binaryFileForTest.bin", FileMode.Open))
+            {
+                data = new byte[st.Length];
+                st.Read(data, 0, data.Length);
+            }
+
+            List<byte[]> pac = new List<byte[]>();
+
+
+            int i = 0;
+            while (i < data.Length)
+            {
+                var size = BitConverter.ToInt32(new[] {data[i], data[i + 1], data[i + 2], data[i + 3]}, 0);
+                size += 12;
+
+                ArraySegment<byte> ina = new ArraySegment<byte>(data, i, size);
+                pac.Add(ina.ToArray());
+
+
+                i += size;
+            }
+
+            var enumerable = pac.Where(x => BitConverter.ToInt32(new ArraySegment<byte>(x, 4, 4).ToArray(), 0) == 43).ToArray();
+            
+            
+        }
+    }
+}
