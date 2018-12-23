@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace LibProShip.Domain.Analysis
+namespace LibProShip.Domain.Analysis.Dto
 {
     public sealed class AnalysisResult : ValueObject
     {

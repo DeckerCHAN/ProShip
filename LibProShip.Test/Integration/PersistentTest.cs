@@ -1,15 +1,8 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using LibProShip.Domain;
-using LibProShip.Domain.Analysis;
+using LibProShip.Domain.Analysis.Dto;
 using LibProShip.Domain.Replay;
 using LibProShip.Infrastructure.Utils;
-using LiteDB;
 using Xunit;
 using Replay = LibProShip.Domain.Replay.Replay;
 

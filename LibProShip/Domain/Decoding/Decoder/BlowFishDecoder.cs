@@ -9,7 +9,7 @@ using LibProShip.Infrastructure;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace LibProShip.Domain.Decoding
+namespace LibProShip.Domain.Decoding.Decoder
 {
     public class BlowFishDecoder : IDecoder
     {
