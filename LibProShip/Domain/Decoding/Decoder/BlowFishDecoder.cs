@@ -115,10 +115,6 @@ namespace LibProShip.Domain.Decoding.Decoder
                 var data = new byte[resST.Length];
                 resST.Read(data, 0, data.Length);
 
-                using (var st = new FileStream("binaryFileForTest.bin", FileMode.CreateNew))
-                {
-                    st.Write(data, 0, data.Length);
-                }
 
                 return new Tuple<Battle, byte[]>(battle, data);
             }

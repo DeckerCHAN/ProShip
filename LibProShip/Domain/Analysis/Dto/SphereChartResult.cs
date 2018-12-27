@@ -2,14 +2,14 @@ using System.Collections.Generic;
 
 namespace LibProShip.Domain.Analysis.Dto
 {
-    public sealed class SphereChart : ValueObject
+    public sealed class SphereChartResult : ValueObject,IAnalysisResult
     {
-        public SphereChart()
+        public SphereChartResult()
         {
             //For ORM
         }
 
-        public SphereChart(IDictionary<int, SphereSample> samples)
+        public SphereChartResult(IDictionary<int, SphereSample> samples)
         {
             this.Samples = samples;
         }

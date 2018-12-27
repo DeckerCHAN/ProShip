@@ -13,11 +13,11 @@ namespace LibProShip.Domain.Analysis.Analyser
             var types = Assembly.GetExecutingAssembly().GetTypes().ToList()
                 .Where(x => !x.IsAbstract)
                 .Where(x => !x.IsInterface)
-                .Where(x => typeof(ISphereAnalyser).IsAssignableFrom(x));
+                .Where(x => typeof(IAnalyser).IsAssignableFrom(x));
 
             foreach (var type in types)
             {
-                container.Register(Component.For<ISphereAnalyser>().ImplementedBy(type).LifestyleTransient());
+                container.Register(Component.For<IAnalyser>().ImplementedBy(type).LifestyleTransient());
             }
         }
     }

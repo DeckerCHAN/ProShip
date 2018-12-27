@@ -55,7 +55,7 @@ namespace LibProShip.Domain.Replay
             {
                 this.Logger.Info($"{repFile.Name} Processed");
                 var replay = new Replay(HashUtils.Hash(decoded.Item2), repFile.Name, decoded.Item1,
-                    new Dictionary<string, AnalysisResult>());
+                    new Dictionary<string, AnalysisCollection>());
 
                 this.Repository.Insert(replay, decoded.Item2);
                 this.EventBus.Raise(new NewRawReplayEvent(this));

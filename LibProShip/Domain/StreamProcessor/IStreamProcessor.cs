@@ -1,8 +1,10 @@
+using LibProShip.Domain.StreamProcessor.Packet;
+
 namespace LibProShip.Domain.StreamProcessor
 {
     public interface IStreamProcessor
     {
-        Packets.Packets ProcessStream(byte[] data);
+        BattleRecord ProcessStream(byte[] data);
     }
 
 }

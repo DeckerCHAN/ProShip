@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using LibProShip.Domain.StreamProcessor;
+using LibProShip.Domain.StreamProcessor.Version;
 using Xunit;
 
 namespace LibProShip.Test.Integration
 {
-    public class BinaryTest
+    public class ProcessorTest
     {
         [Fact]
         public void StreamProcessTest()
@@ -37,6 +39,22 @@ namespace LibProShip.Test.Integration
             var enumerable = pac.Where(x => BitConverter.ToInt32(new ArraySegment<byte>(x, 4, 4).ToArray(), 0) == 43).ToArray();
             
             
+        }
+        
+        
+        [Fact]
+        public void Test1()
+        {
+            IStreamProcessor processor = new DefaultStreamProcessor();
+            byte[] data = null;
+            using (var st = new FileStream("binaryFileForTest.bin", FileMode.Open))
+            {
+                data = new byte[st.Length];
+                st.Read(data, 0, data.Length);
+            }
+
+           var pac =  processor.ProcessStream(data);
+
         }
     }
 }

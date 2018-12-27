@@ -69,14 +69,17 @@
     <Compile Include="Domain\Analysis\Analyser\DamageSphereAnalyser.cs" />
     <Compile Include="Domain\Analysis\Analyser\Installer.cs" />
     <Compile Include="Domain\Analysis\AnalysisManager.cs" />
-    <Compile Include="Domain\Analysis\Dto\AnalysisResult.cs" />
-    <Compile Include="Domain\Analysis\Dto\SphereChart.cs" />
+    <Compile Include="Domain\Analysis\Dto\AnalysisCollection.cs" />
+    <Compile Include="Domain\Analysis\Dto\SphereChartResult.cs" />
     <Compile Include="Domain\Analysis\Dto\SphereSample.cs" />
+    <Compile Include="Domain\Analysis\IAnalysisManager.cs" />
+    <Compile Include="Domain\Analysis\Installer.cs" />
     <Compile Include="Domain\Analysis\ISphereAnalyser.cs" />
     <Compile Include="Domain\Decoding\Decoder\BlowFishDecoder.cs" />
     <Compile Include="Domain\Decoding\Decoder\Installer.cs" />
     <Compile Include="Domain\Decoding\IDecoder.cs" />
     <Compile Include="Domain\Entity.cs" />
+    <Compile Include="Domain\Events\AnalysisUpdatedEvent.cs" />
     <Compile Include="Domain\Events\FileChangeEvent.cs" />
     <Compile Include="Domain\Events\NewRawReplayEvent.cs" />
     <Compile Include="Domain\Events\NewReplaySavedEvent.cs" />
@@ -93,7 +96,9 @@
     <Compile Include="Domain\Replay\ReplayVo.cs" />
     <Compile Include="Domain\Replay\ReplayRepository.cs" />
     <Compile Include="Domain\StreamProcessor\IStreamProcessor.cs" />
-    <Compile Include="Domain\StreamProcessor\Packets\PositionPacket.cs" />
+    <Compile Include="Domain\StreamProcessor\Packet\Map.cs" />
+    <Compile Include="Domain\StreamProcessor\Packet\Matrix3.cs" />
+    <Compile Include="Domain\StreamProcessor\Packet\PositionRecord.cs" />
     <Compile Include="Domain\StreamProcessor\Version\DefaultStreamProcessor.cs" />
     <Compile Include="Domain\ValueObject.cs" />
     <Compile Include="Infrastructure\BlowFish.cs" />
@@ -119,6 +124,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Infrastructure\Configs\config.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Domain\Shared" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

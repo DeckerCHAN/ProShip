@@ -8,18 +8,19 @@ namespace LibProShip.Domain.Replay
     {
         public Replay()
         {
-            //For ORM
+            // For ORM
         }
 
-        public Replay(string id, string fileName, Battle battle, IDictionary<string, AnalysisResult> analysisResult) : base(id)
+        public Replay(string id, string fileName, Battle battle,
+            IDictionary<string, AnalysisCollection> analysisResults) : base(id)
         {
-            this.AnalysisResult = analysisResult;
+            this.AnalysisResults = analysisResults;
             this.FileName = fileName;
             this.Battle = battle;
         }
 
         public Battle Battle { get; private set; }
         public string FileName { get; private set; }
-        public IDictionary<string, AnalysisResult> AnalysisResult { get; private set; }
+        public IDictionary<string, AnalysisCollection> AnalysisResults { get; private set; }
     }
 }
