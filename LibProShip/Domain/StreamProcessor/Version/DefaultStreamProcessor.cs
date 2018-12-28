@@ -77,6 +77,16 @@ namespace LibProShip.Domain.StreamProcessor.Version
             this.Map = new Map(arenaId, spaceId);
         }
 
+        private void DecodeMethod(BinaryReader data)
+        {
+            var entityId = data.ReadUInt32();
+            var methodId = data.ReadUInt32();
+        }
+
+        private void DecodePlayers(BinaryReader data)
+        {
+            
+        }
 
         private void CellPlayerCreate(BinaryReader data)
         {
