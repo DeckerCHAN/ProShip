@@ -46,14 +46,6 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
-    <Reference Include="Razorvine.Pyrolite, Version=4.21.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Razorvine.Pyrolite.4.21.0\lib\netstandard2.0\Razorvine.Pyrolite.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Razorvine.Serpent, Version=1.25.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Razorvine.Serpent.1.25.0\lib\netstandard2.0\Razorvine.Serpent.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />

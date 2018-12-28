@@ -45,6 +45,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="mscorlib" />
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
       <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -54,6 +55,11 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Runtime.Serialization.Primitives, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <HintPath>..\packages\System.Runtime.Serialization.Primitives.4.3.0\lib\net46\System.Runtime.Serialization.Primitives.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="YamlDotNet, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -113,6 +119,27 @@
     <Compile Include="Infrastructure\Installer.cs" />
     <Compile Include="Infrastructure\Logging\DefaultLogger.cs" />
     <Compile Include="Infrastructure\Logging\ILogger.cs" />
+    <Compile Include="Infrastructure\Unpickling\InvalidOpcodeException.cs" />
+    <Compile Include="Infrastructure\Unpickling\IObjectConstructor.cs" />
+    <Compile Include="Infrastructure\Unpickling\IObjectPickler.cs" />
+    <Compile Include="Infrastructure\Unpickling\Objects\AnyClassConstructor.cs" />
+    <Compile Include="Infrastructure\Unpickling\Objects\ArrayConstructor.cs" />
+    <Compile Include="Infrastructure\Unpickling\Objects\ByteArrayConstructor.cs" />
+    <Compile Include="Infrastructure\Unpickling\Objects\ClassDictConstructor.cs" />
+    <Compile Include="Infrastructure\Unpickling\Objects\ComplexNumber.cs" />
+    <Compile Include="Infrastructure\Unpickling\Objects\DateTimeConstructor.cs" />
+    <Compile Include="Infrastructure\Unpickling\Objects\DecimalConstructor.cs" />
+    <Compile Include="Infrastructure\Unpickling\Objects\ExceptionConstructor.cs" />
+    <Compile Include="Infrastructure\Unpickling\Objects\SetConstructor.cs" />
+    <Compile Include="Infrastructure\Unpickling\Objects\StringConstructor.cs" />
+    <Compile Include="Infrastructure\Unpickling\Opcodes.cs" />
+    <Compile Include="Infrastructure\Unpickling\PickleException.cs" />
+    <Compile Include="Infrastructure\Unpickling\Pickler.cs" />
+    <Compile Include="Infrastructure\Unpickling\PickleUtils.cs" />
+    <Compile Include="Infrastructure\Unpickling\PrettyPrint.cs" />
+    <Compile Include="Infrastructure\Unpickling\PythonException.cs" />
+    <Compile Include="Infrastructure\Unpickling\Unpickler.cs" />
+    <Compile Include="Infrastructure\Unpickling\UnpickleStack.cs" />
     <Compile Include="Infrastructure\Utils\HashUtils.cs" />
     <Compile Include="Infrastructure\Utils\VersionUtils.cs" />
     <Compile Include="IService.cs" />
