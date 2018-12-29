@@ -28,11 +28,13 @@ namespace LibProShip.Domain.StreamProcessor.Version
         public List<PositionRecord> PositionRecords = new List<PositionRecord>();
         public BattleRecord Res { get; private set; }
         private int AvatarId;
+        private List<int> ShipEntityIds;
         public Map Map { get; private set; }
 
         public InnerProcessor(byte[] data)
         {
             this.Data = data;
+            this.ShipEntityIds = new List<int>();
         }
 
         public BattleRecord GetRecord()
@@ -54,6 +56,9 @@ namespace LibProShip.Domain.StreamProcessor.Version
                             case 0:
                                 this.BasePlayerCrate(reader);
                                 break;
+                            case 0x5:
+                                this.Entity(reader);
+                                break;
                             case 1:
                                 this.CellPlayerCreate(reader);
                                 break;
@@ -71,6 +76,25 @@ namespace LibProShip.Domain.StreamProcessor.Version
             }
 
             throw new NotImplementedException();
+        }
+
+        private void Entity(BinaryReader reader)
+        {
+            var entityId = reader.ReadInt32();
+            var entityType = reader.ReadInt16();
+            var spaceId = reader.ReadUInt32();
+            var vehicleId = reader.ReadInt32();
+            var position = this.Read3D(reader);
+            var rotation = this.Read3D(reader);
+
+            switch (entityType)
+            {
+                case 2:
+                    this.ShipEntityIds.Add(entityId);
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void BasePlayerCrate(BinaryReader reader)
@@ -96,7 +120,6 @@ namespace LibProShip.Domain.StreamProcessor.Version
 
         private void DecodePlayers(BinaryReader data)
         {
-            
         }
 
         private void CellPlayerCreate(BinaryReader data)
@@ -106,8 +129,8 @@ namespace LibProShip.Domain.StreamProcessor.Version
             var vehicleId = data.ReadInt32();
             var position = this.Read3D(data);
             var direction = this.Read3D(data);
-            
-            
+
+
             var ply = new Player();
             var valueSize = data.ReadUInt32();
             var hex = data.ReadBytes((int) valueSize);
@@ -117,7 +140,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
         {
             var id1 = data.ReadInt32();
             var id2 = data.ReadInt32();
-            
+
 //            this.PositionRecords.Add(new PositionRecord());
             throw new NotImplementedException();
         }

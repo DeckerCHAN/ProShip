@@ -12,5 +12,11 @@ namespace LibProShip.Domain.StreamProcessor.Packet
         public float X { get; }
         public float Y { get; }
         public float Z { get; }
+
+
+        public override string ToString()
+        {
+            return $"x:{this.X} y:{this.Y} z:{this.Z}";
+        }
     }
 }
