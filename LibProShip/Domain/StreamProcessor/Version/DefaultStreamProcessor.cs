@@ -27,6 +27,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
         public List<Player> Players = new List<Player>();
         public List<PositionRecord> PositionRecords = new List<PositionRecord>();
         public BattleRecord Res { get; private set; }
+        private int AvatarId;
         public Map Map { get; private set; }
 
         public InnerProcessor(byte[] data)
@@ -50,6 +51,9 @@ namespace LibProShip.Domain.StreamProcessor.Version
                     {
                         switch (type)
                         {
+                            case 0:
+                                this.BasePlayerCrate(reader);
+                                break;
                             case 1:
                                 this.CellPlayerCreate(reader);
                                 break;
@@ -67,6 +71,13 @@ namespace LibProShip.Domain.StreamProcessor.Version
             }
 
             throw new NotImplementedException();
+        }
+
+        private void BasePlayerCrate(BinaryReader reader)
+        {
+            var entityId = reader.ReadInt32();
+            var entityType = reader.ReadInt16();
+            this.AvatarId = entityId;
         }
 
         private void DecodeMap(BinaryReader binaryReader)
