@@ -107,6 +107,10 @@ namespace LibProShip.Domain.StreamProcessor.Version
         {
             var length = reader.ReadInt32();
 
+            var areadId = reader.ReadInt64();
+            var teamBuiltId = reader.Read();
+            var playersStates = this.ReadBlob(reader);
+
             var pklData = reader.ReadBytes(length);
             using (var pkl = new Unpickler())
             {
@@ -231,6 +235,19 @@ namespace LibProShip.Domain.StreamProcessor.Version
             var y = data.ReadSingle();
             var z = data.ReadSingle();
             return new Matrix3(x, y, z);
+        }
+
+        private byte[] ReadBlob(BinaryReader reader)
+        {
+            var length = reader.Read();
+            if (length == 0xFF)
+            {
+                length = reader.ReadUInt16();
+                //Skip 1 useless byte
+                reader.Read();
+            }
+
+            reader.ReadBytes(length);    
         }
     }
 }
