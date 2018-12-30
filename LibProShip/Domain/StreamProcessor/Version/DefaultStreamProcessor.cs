@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using LibProShip.Domain.StreamProcessor.Packet;
+using LibProShip.Infrastructure.Unpickling;
 
 namespace LibProShip.Domain.StreamProcessor.Version
 {
@@ -59,6 +60,9 @@ namespace LibProShip.Domain.StreamProcessor.Version
                             case 0x5:
                                 this.Entity(reader);
                                 break;
+                            case 0x8:
+                                this.EntityMethod(reader);
+                                break;
                             case 1:
                                 this.CellPlayerCreate(reader);
                                 break;
@@ -78,6 +82,40 @@ namespace LibProShip.Domain.StreamProcessor.Version
             throw new NotImplementedException();
         }
 
+        private void EntityMethod(BinaryReader reader)
+        {
+            var entityId = Convert.ToInt32(reader.ReadUInt32());
+            var messageId = Convert.ToInt32(reader.ReadUInt32());
+
+            if (entityId == this.AvatarId)
+            {
+                switch (messageId)
+                {
+                    case 84:
+                        this.AddPlayer(reader);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+            throw new NotImplementedException();
+        }
+
+        private void AddPlayer(BinaryReader reader)
+        {
+            var length = reader.ReadInt32();
+
+            var pklData = reader.ReadBytes(length);
+            using (var pkl = new Unpickler())
+            {
+               var pObject =   pkl.loads(pklData);
+               pObject.GetType();
+            }
+            
+        }
+
         private void Entity(BinaryReader reader)
         {
             var entityId = reader.ReadInt32();
@@ -91,9 +129,51 @@ namespace LibProShip.Domain.StreamProcessor.Version
             {
                 case 2:
                     this.ShipEntityIds.Add(entityId);
+                    this.ShipPropertyMap(reader);
+
+
                     break;
                 default:
                     break;
+            }
+        }
+
+        private void ShipPropertyMap(BinaryReader reader)
+        {
+            var length = reader.ReadInt32();
+            var count = Convert.ToInt32(reader.ReadChar());
+
+            if (count != 37)
+            {
+                throw new Exception();
+            }
+
+            var curse = 0;
+
+            if (Convert.ToInt32(reader.ReadByte()) != curse++)
+            {
+                throw new Exception();
+            }
+
+            var isAntiAirMode = reader.ReadBoolean();
+
+            if (Convert.ToInt32(reader.ReadByte()) != curse++)
+            {
+                throw new Exception();
+            }
+
+            var burningFlag = reader.Read();
+
+            if (Convert.ToInt32(reader.ReadByte()) != curse++)
+            {
+                throw new Exception();
+            }
+
+            var buoyancyCurrentState = reader.Read();
+
+            if (Convert.ToInt32(reader.ReadByte()) != curse++)
+            {
+                throw new Exception();
             }
         }
 
