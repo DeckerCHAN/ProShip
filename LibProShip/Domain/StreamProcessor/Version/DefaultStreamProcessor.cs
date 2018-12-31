@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -25,7 +26,8 @@ namespace LibProShip.Domain.StreamProcessor.Version
     internal class InnerProcessor
     {
         private readonly byte[] Data;
-        public List<Player> Players = new List<Player>();
+        public IList<Player> Enemy = new List<Player>();
+        public IList<Player> Alies = new List<Player>();
         public List<PositionRecord> PositionRecords = new List<PositionRecord>();
         public BattleRecord Res { get; private set; }
         private int AvatarId;
@@ -108,17 +110,32 @@ namespace LibProShip.Domain.StreamProcessor.Version
             var length = reader.ReadInt32();
 
             var areadId = reader.ReadInt64();
-            var teamBuiltId = reader.Read();
+            this.ArenaId = areadId;
+            var teamBuiltId = Convert.ToInt32(reader.ReadByte());
             var playersStates = this.ReadBlob(reader);
 
-            var pklData = reader.ReadBytes(length);
-            using (var pkl = new Unpickler())
+            foreach (var playersState in playersStates)
             {
-               var pObject =   pkl.loads(pklData);
-               pObject.GetType();
+                var name = playersState[20][1];
+                var id = playersState[8][1];
+                var shipId = playersState[27][1];
+                var player = new Player(name, id, shipId);
+                var team = playersState[30][1];
+                switch (team)
+                {
+                    case 0:
+                        this.Alies.Add(player);
+                        break;
+                    case 1:
+                        this.Enemy.Add(player);
+                        break;
+                    default:
+                        throw new NotSupportedException($"Unsupported team id {team}");
+                }
             }
-            
         }
+
+        public long ArenaId { get; set; }
 
         private void Entity(BinaryReader reader)
         {
@@ -215,7 +232,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
             var direction = this.Read3D(data);
 
 
-            var ply = new Player();
+//            var ply = new Player();
             var valueSize = data.ReadUInt32();
             var hex = data.ReadBytes((int) valueSize);
         }
@@ -237,9 +254,9 @@ namespace LibProShip.Domain.StreamProcessor.Version
             return new Matrix3(x, y, z);
         }
 
-        private byte[] ReadBlob(BinaryReader reader)
+        private dynamic ReadBlob(BinaryReader reader)
         {
-            var length = reader.Read();
+            var length = Convert.ToInt32(reader.ReadByte());
             if (length == 0xFF)
             {
                 length = reader.ReadUInt16();
@@ -247,7 +264,11 @@ namespace LibProShip.Domain.StreamProcessor.Version
                 reader.Read();
             }
 
-            reader.ReadBytes(length);    
+            using (var pkl = new Unpickler())
+            {
+                var pObject = pkl.loads(reader.ReadBytes(length));
+                return pObject;
+            }
         }
     }
 }

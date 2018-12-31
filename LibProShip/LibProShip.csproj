@@ -136,7 +136,6 @@
     <Compile Include="Infrastructure\Unpickling\PickleException.cs" />
     <Compile Include="Infrastructure\Unpickling\Pickler.cs" />
     <Compile Include="Infrastructure\Unpickling\PickleUtils.cs" />
-    <Compile Include="Infrastructure\Unpickling\PrettyPrint.cs" />
     <Compile Include="Infrastructure\Unpickling\PythonException.cs" />
     <Compile Include="Infrastructure\Unpickling\Unpickler.cs" />
     <Compile Include="Infrastructure\Unpickling\UnpickleStack.cs" />

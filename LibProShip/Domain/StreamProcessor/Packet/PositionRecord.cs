@@ -10,9 +10,16 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 
     public sealed class Player
     {
+        public Player(string name, int id, int shipId)
+        {
+            Name = name;
+            Id = id;
+            ShipId = shipId;
+        }
+
         public string Name { get; }
-        public string Id { get; }
-        public string ShipName { get; }
+        public int Id { get; }
+        public int ShipId { get; }
     }
 
     public sealed class BattleRecord

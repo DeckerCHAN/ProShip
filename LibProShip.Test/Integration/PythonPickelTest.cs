@@ -56,11 +56,11 @@ namespace LibProShip.Test.Integration
             };
 
 
-            using (var stream = new FileStream("arena.pxl", FileMode.Open))
-            {
-                pythonpickle = new Byte [stream.Length];
-                stream.Read(pythonpickle, 0, pythonpickle.Length);
-            }
+//            using (var stream = new FileStream("arena.pxl", FileMode.Open))
+//            {
+//                pythonpickle = new Byte [stream.Length];
+//                stream.Read(pythonpickle, 0, pythonpickle.Length);
+//            }
 
             var unpickler = new Unpickler();
             object result = unpickler.loads(pythonpickle);

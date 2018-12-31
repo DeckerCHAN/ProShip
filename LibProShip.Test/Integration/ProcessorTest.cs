@@ -43,7 +43,7 @@ namespace LibProShip.Test.Integration
         
         
         [Fact]
-        public void Test1()
+        public void ItShouldProcessDataFromFileWithoutError()
         {
             IStreamProcessor processor = new DefaultStreamProcessor();
             byte[] data = null;
