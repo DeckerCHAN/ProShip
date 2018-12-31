@@ -31,11 +31,11 @@ public class Unpickler : IDisposable {
 
 	protected const int HIGHEST_PROTOCOL = 4;
 
-	protected readonly IDictionary<int, object> memo;
+	protected readonly IDictionary<int, dynamic> memo;
 	protected UnpickleStack stack;
 	protected Stream input;
 	protected static readonly IDictionary<string, IObjectConstructor> objectConstructors;
-	protected static readonly object NO_RETURN_VALUE = new object();
+	protected static readonly dynamic NO_RETURN_VALUE = new object();
 
 	static Unpickler() {
 		objectConstructors = new Dictionary<string, IObjectConstructor>
@@ -63,7 +63,7 @@ public class Unpickler : IDisposable {
 	 * Create an unpickler.
 	 */
 	public Unpickler() {
-		memo = new Dictionary<int, object>();
+		memo = new Dictionary<int, dynamic>();
 	}
 
 	/**
@@ -78,23 +78,23 @@ public class Unpickler : IDisposable {
 	 * 
 	 * @return the reconstituted object hierarchy specified in the file.
 	 */
-	public object load(Stream stream) {
+	public dynamic load(Stream stream) {
 		input = stream;
 		stack = new UnpickleStack();
 		while (true) {
 			byte key = PickleUtils.readbyte(input);
-			object value = dispatch(key);
+			dynamic value = dispatch(key);
 			if(value != NO_RETURN_VALUE)
 				return value;
 		}
 	}
 
 	/**
-	 * Read a pickled object representation from the given pickle data bytes.
+	 * Read a pickled dynamic representation from the given pickle data bytes.
 	 * 
-	 * @return the reconstituted object hierarchy specified in the file.
+	 * @return the reconstituted dynamic hierarchy specified in the file.
 	 */
-	public object loads(byte[] pickledata) {
+	public dynamic loads(byte[] pickledata) {
 		return load(new MemoryStream(pickledata));
 	}
 
@@ -110,13 +110,13 @@ public class Unpickler : IDisposable {
 	/**
 	 * Process a single pickle stream opcode.
 	 */
-	protected object dispatch(short key) {
+	protected dynamic dispatch(short key) {
 		switch (key) {
 		case Opcodes.MARK:
 			load_mark();
 			break;
 		case Opcodes.STOP:
-			object value = stack.pop();
+			dynamic value = stack.pop();
 			stack.clear();
 			return value;		// final result value
 		case Opcodes.POP:
@@ -318,9 +318,9 @@ public class Unpickler : IDisposable {
 	}
 
 	private void load_build() {
-		object args=stack.pop();
-		object target=stack.peek();
-		object[] arguments={args};
+		dynamic args=stack.pop();
+		dynamic target=stack.peek();
+		dynamic[] arguments={args};
 		Type[] argumentTypes={args.GetType()};
 		
 		// call the __setstate__ method with the given arguments
@@ -355,7 +355,7 @@ public class Unpickler : IDisposable {
 
 	private void load_int() {
 		string data = PickleUtils.readline(input, true);
-		object val;
+		dynamic val;
 		if (data==Opcodes.FALSE.Substring(1))
 			val = false;
 		else if (data==Opcodes.TRUE.Substring(1))
@@ -499,7 +499,7 @@ public class Unpickler : IDisposable {
 	}
 
 	private void load_empty_tuple() {
-		stack.add(new object[0]);
+		stack.add(new dynamic[0]);
 	}
 
 	private void load_tuple1() {
@@ -507,15 +507,15 @@ public class Unpickler : IDisposable {
 	}
 
 	private void load_tuple2() {
-		object o2 = stack.pop();
-		object o1 = stack.pop();
+		dynamic o2 = stack.pop();
+		dynamic o1 = stack.pop();
 		stack.add(new [] { o1, o2 });
 	}
 
 	private void load_tuple3() {
-		object o3 = stack.pop();
-		object o2 = stack.pop();
-		object o1 = stack.pop();
+		dynamic o3 = stack.pop();
+		dynamic o2 = stack.pop();
+		dynamic o1 = stack.pop();
 		stack.add(new [] { o1, o2, o3 });
 	}
 
@@ -528,7 +528,7 @@ public class Unpickler : IDisposable {
 	}
 
 	private void load_empty_set() {
-		stack.add(new HashSet<object>());
+		stack.add(new HashSet<dynamic>());
 	}
 
 	private void load_list() {
@@ -540,8 +540,8 @@ public class Unpickler : IDisposable {
 		ArrayList top = stack.pop_all_since_marker();
 		Hashtable map=new Hashtable(top.Count);
 		for (int i = 0; i < top.Count; i += 2) {
-			object key = top[i];
-			object value = top[i+1];
+			dynamic key = top[i];
+			dynamic value = top[i+1];
 			map[key]=value;
 		}
 		stack.add(map);
@@ -549,7 +549,7 @@ public class Unpickler : IDisposable {
 
 	private void load_frozenset() {
 		ArrayList top = stack.pop_all_since_marker();
-		var set = new HashSet<object>();
+		var set = new HashSet<dynamic>();
 		foreach(var element in top)
 			set.Add(element);
 		stack.add(set);
@@ -557,8 +557,8 @@ public class Unpickler : IDisposable {
 
 	private void load_additems() {
 		ArrayList top = stack.pop_all_since_marker();
-		var set = (HashSet<object>) stack.pop();
-		foreach(object item in top)
+		var set = (HashSet<dynamic>) stack.pop();
+		foreach(dynamic item in top)
 			set.Add(item);
 		stack.add(set);
 	}
@@ -618,7 +618,7 @@ public class Unpickler : IDisposable {
 	}
 
 	private void load_pop_mark() {
-		object o;
+		dynamic o;
 		do {
 			o = stack.pop();
 		} while (o != stack.MARKER);
@@ -667,7 +667,7 @@ public class Unpickler : IDisposable {
 	}
 
 	private void load_append() {
-		object value = stack.pop();
+		dynamic value = stack.pop();
 		ArrayList list = (ArrayList) stack.peek();
 		list.Add(value);
 	}
@@ -680,18 +680,18 @@ public class Unpickler : IDisposable {
 	}
 
 	private void load_setitem() {
-		object value = stack.pop();
-		object key = stack.pop();
+		dynamic value = stack.pop();
+		dynamic key = stack.pop();
 		Hashtable dict=(Hashtable)stack.peek();
 		dict[key]=value;
 	}
 
 	private void load_setitems() {
-		var newitems=new List<KeyValuePair<object,object>>();
-		object value = stack.pop();
+		var newitems=new List<KeyValuePair<dynamic,dynamic>>();
+		dynamic value = stack.pop();
 		while (value != stack.MARKER) {
-			object key = stack.pop();
-			newitems.Add(new KeyValuePair<object,object>(key,value));
+			dynamic key = stack.pop();
+			newitems.Add(new KeyValuePair<dynamic,dynamic>(key,value));
 			value = stack.pop();
 		}
 		
@@ -706,7 +706,7 @@ public class Unpickler : IDisposable {
 	}
 
 	private void load_reduce() {
-		var args = (object[]) stack.pop();
+		var args = (dynamic[]) stack.pop();
 		IObjectConstructor constructor = (IObjectConstructor) stack.pop();
 		stack.add(constructor.construct(args));
 	}
@@ -717,7 +717,7 @@ public class Unpickler : IDisposable {
 
 	private void load_newobj_ex() {
 		Hashtable kwargs = (Hashtable) stack.pop();
-		var args = (object[]) stack.pop();
+		var args = (dynamic[]) stack.pop();
 		IObjectConstructor constructor = (IObjectConstructor) stack.pop();
 		if(kwargs.Count==0)
 			stack.add(constructor.construct(args));
@@ -746,7 +746,7 @@ public class Unpickler : IDisposable {
 		ArrayList args = stack.pop_all_since_marker();
 		IObjectConstructor constructor = (IObjectConstructor)args[0];
 		args = args.GetRange(1, args.Count-1);
-		object obj = constructor.construct(args.ToArray());
+		dynamic obj = constructor.construct(args.ToArray());
 		stack.add(obj);
 	}
 
@@ -762,11 +762,11 @@ public class Unpickler : IDisposable {
 			constructor = new ClassDictConstructor(module, classname);
 			args.Clear();  // classdict doesn't have constructor args... so we may lose info here, hmm.
 		}
-		object obj = constructor.construct(args.ToArray());
+		dynamic obj = constructor.construct(args.ToArray());
 		stack.add(obj);
 	}
 	
-	protected virtual object persistentLoad(string pid)
+	protected virtual dynamic persistentLoad(string pid)
 	{
 		throw new PickleException("A load persistent id instruction was encountered, but no persistentLoad function was specified. (implement it in custom Unpickler subclass)");
 	}

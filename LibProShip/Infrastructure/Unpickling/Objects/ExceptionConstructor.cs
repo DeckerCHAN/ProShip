@@ -28,19 +28,19 @@ public class ExceptionConstructor : IObjectConstructor {
 		_type = type;
 	}
 
-	public object construct(object[] args) {
+	public dynamic construct(dynamic[] args) {
 		try {
 			if(!string.IsNullOrEmpty(_pythonExceptionType)) {
 				// put the python exception type somewhere in the message
 				if(args==null || args.Length==0) {
-					args = new object[] { "["+_pythonExceptionType+"]" };
+					args = new dynamic[] { "["+_pythonExceptionType+"]" };
 				} else {
 					string msg = (string)args[0];
 					msg = $"[{_pythonExceptionType}] {msg}";
-					args = new object[] {msg};
+					args = new dynamic[] {msg};
 				}
 			}
-			object ex = Activator.CreateInstance(_type, args);
+			dynamic ex = Activator.CreateInstance(_type, args);
 			
 			PropertyInfo prop=ex.GetType().GetProperty("PythonExceptionType");
 			if(prop!=null) {

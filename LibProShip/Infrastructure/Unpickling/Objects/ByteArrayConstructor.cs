@@ -17,7 +17,7 @@ namespace LibProShip.Infrastructure.Unpickling.Objects
 /// </summary>
 public class ByteArrayConstructor : IObjectConstructor {
 
-	public object construct(object[] args) {
+	public dynamic construct(dynamic[] args) {
 		// args for bytearray constructor: [ String string, String encoding ]
 		// args for bytearray constructor (from python3 bytes): [ ArrayList ] or just [byte[]] (when it uses BINBYTES opcode)
 		if (args.Length != 1 && args.Length != 2)

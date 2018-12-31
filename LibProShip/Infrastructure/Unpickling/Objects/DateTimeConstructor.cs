@@ -31,7 +31,7 @@ public class DateTimeConstructor : IObjectConstructor {
 		_pythontype = pythontype;
 	}
 
-	public object construct(object[] args) {
+	public dynamic construct(dynamic[] args) {
 		switch(_pythontype)
 		{
 			case PythonType.Date:
@@ -43,11 +43,11 @@ public class DateTimeConstructor : IObjectConstructor {
 			case PythonType.TimeDelta:
 				return CreateTimedelta(args);
 			default:
-				throw new PickleException("invalid object type");
+				throw new PickleException("invalid dynamic type");
 		}
 	}
 
-	private static TimeSpan CreateTimedelta(object[] args) {
+	private static TimeSpan CreateTimedelta(dynamic[] args) {
 		// python datetime.timedelta -> TimeSpan
 		// args is a tuple of 3 ints: days,seconds,microseconds
 		if (args.Length != 3)
@@ -58,7 +58,7 @@ public class DateTimeConstructor : IObjectConstructor {
 		return new TimeSpan(days, 0, 0, seconds, micro/1000);
 	}
 
-	private static DateTime CreateDateTime(object[] args) {
+	private static DateTime CreateDateTime(dynamic[] args) {
 		// python datetime.time --> DateTime
 		// args is 10 bytes: yhi, ylo, month, day, hour, minute, second, ms1, ms2, ms3
 		// (can be String or byte[])
@@ -115,7 +115,7 @@ public class DateTimeConstructor : IObjectConstructor {
 		return new DateTime(yhi * 256 + ylo, month, day, hour, minute, second, microsec/1000);
 	}
 
-	private static TimeSpan CreateTime(object[] args) {
+	private static TimeSpan CreateTime(dynamic[] args) {
 		// python datetime.time --> TimeSpan since midnight
 		// args is 6 bytes: hour, minute, second, ms1,ms2,ms3  (String or byte[])
 		// alternate constructor passes 4 integers args: hour, minute, second, microsecond)
@@ -156,7 +156,7 @@ public class DateTimeConstructor : IObjectConstructor {
 		return new TimeSpan(0, hour, minute, second, microsec/1000);
 	}
 
-	private static DateTime CreateDate(object[] args) {
+	private static DateTime CreateDate(dynamic[] args) {
 		// python datetime.date --> DateTime
 		// args is a string of 4 bytes yhi, ylo, month, day (String or byte[])
 		if (args.Length != 1)

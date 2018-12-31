@@ -21,7 +21,7 @@ public class AnyClassConstructor : IObjectConstructor {
 		_type = type;
 	}
 
-	public object construct(object[] args) {
+	public dynamic construct(dynamic[] args) {
 		try {
 			return Activator.CreateInstance(_type, args);
 		} catch (Exception x) {

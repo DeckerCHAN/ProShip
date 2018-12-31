@@ -18,7 +18,7 @@ public interface IObjectConstructor {
 	/**
 	 * Create an object. Use the given args as parameters for the constructor.
 	 */
-	object construct(object[] args);
+	dynamic construct(dynamic[] args);
 }
 
 }

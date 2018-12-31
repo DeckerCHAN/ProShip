@@ -21,7 +21,7 @@ namespace LibProShip.Infrastructure.Unpickling.Objects
 [SuppressMessage("ReSharper", "MemberCanBeMadeStatic.Global")]
 public class ArrayConstructor : IObjectConstructor {
 
-	public object construct(object[] args) {
+	public dynamic construct(dynamic[] args) {
 		// args for array constructor: [ string typecode, ArrayList values ]
 		// or: [ constructor_class, typecode, machinecode_type, byte[] ]
 		if (args.Length==4) {
@@ -152,7 +152,7 @@ public class ArrayConstructor : IObjectConstructor {
 	/**
 	 * Create an object based on machine code type
 	 */
-	public object construct(char typecode, int machinecode, byte[] data) {
+	public dynamic construct(char typecode, int machinecode, byte[] data) {
 		// Machine format codes.
 		// Search for "enum machine_format_code" in Modules/arraymodule.c to get
 		// the authoritative values.

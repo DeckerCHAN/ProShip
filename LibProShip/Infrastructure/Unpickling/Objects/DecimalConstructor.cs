@@ -17,7 +17,7 @@ namespace LibProShip.Infrastructure.Unpickling.Objects
 /// </summary>
 public class DecimalConstructor : IObjectConstructor
 {
-	public object construct(object[] args)
+	public dynamic construct(dynamic[] args)
 	{
 		if(args.Length==1 && args[0] is string) {
 			return Convert.ToDecimal((string)args[0], CultureInfo.InvariantCulture);

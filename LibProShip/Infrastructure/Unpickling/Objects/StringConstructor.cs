@@ -16,7 +16,7 @@ namespace LibProShip.Infrastructure.Unpickling.Objects
 /// </summary>
 public class StringConstructor : IObjectConstructor
 {
-	public object construct(object[] args)
+	public dynamic construct(dynamic[] args)
 	{
 		if(args.Length==0) {
 			return "";

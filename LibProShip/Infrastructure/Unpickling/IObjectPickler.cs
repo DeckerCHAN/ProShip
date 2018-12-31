@@ -19,7 +19,7 @@ public interface IObjectPickler {
 	/**
 	 * Pickle an object.
 	 */
-	void pickle(object o, Stream outs, Pickler currentPickler);
+	void pickle(dynamic o, Stream outs, Pickler currentPickler);
 }
 
 }
