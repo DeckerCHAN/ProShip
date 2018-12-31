@@ -30,6 +30,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
         public IList<Player> Alies = new List<Player>();
         public List<PositionRecord> PositionRecords = new List<PositionRecord>();
         public BattleRecord Res { get; private set; }
+        private IDictionary<int, Player> EntityIdPlayer = new Dictionary<int, Player>();
         private int AvatarId;
         private List<int> ShipEntityIds;
         public Map Map { get; private set; }
@@ -93,6 +94,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
             {
                 switch (messageId)
                 {
+                    //Avatar 
                     case 84:
                         this.AddPlayer(reader);
                         break;
@@ -121,6 +123,8 @@ namespace LibProShip.Domain.StreamProcessor.Version
                 var shipId = playersState[27][1];
                 var player = new Player(name, id, shipId);
                 var team = playersState[30][1];
+                var avatarId = playersState[1][1];
+                this.EntityIdPlayer[avatarId] = player;
                 switch (team)
                 {
                     case 0:
