@@ -2,8 +2,6 @@ using System.Collections.Generic;
 
 namespace LibProShip.Domain.StreamProcessor.Packet
 {
- 
-
     public sealed class Arena
     {
     }
@@ -38,21 +36,34 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 
     public class PositionRecord
     {
-        public PositionRecord(Matrix3 matrix3, Player player, float time)
+        public PositionRecord(float time, Player player, Matrix3 position, Matrix3 rotation)
         {
-            this.Matrix3 = matrix3;
+            this.Position = position;
             this.Player = player;
             this.Time = time;
+            this.Rotation = rotation;
         }
 
         public float Time { get; }
         public Player Player { get; }
-        public Matrix3 Matrix3 { get; }
-        
+        public Matrix3 Position { get; }
+        public Matrix3 Rotation { get; }
     }
 
 
-    public class ProjectilePacket
+    public enum ProjectileType
     {
+        Unknown = 0,
+        Gun = 1,
+        Torpedol = 2
+    }
+
+    public class ProjectileRecord
+    {
+        public ProjectileType ProjectileType { get; }
+        public Player SourcePlayer { get; }
+        public float ShootTime { get; }
+        public Player TargetPlayer { get; }
+        public float DentonateTime { get; }
     }
 }

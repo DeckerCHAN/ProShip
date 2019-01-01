@@ -69,7 +69,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
                             case 1:
                                 this.CellPlayerCreate(reader);
                                 break;
-                            case 34:
+                            case 43:
                                 this.DecodeOtherPosition(time, reader);
                                 break;
                             case 0x27:
@@ -98,12 +98,18 @@ namespace LibProShip.Domain.StreamProcessor.Version
                     case 84:
                         this.AddPlayer(reader);
                         break;
-
+                    case 73:
+                        this.AddGunAndTorpedo(reader);
+                        break;
                     default:
                         break;
                 }
             }
+        }
 
+        private void AddGunAndTorpedo(BinaryReader reader)
+        {
+            var shotLength = Convert.ToInt32(reader.ReadByte());
             throw new NotImplementedException();
         }
 
@@ -119,7 +125,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
             foreach (var playersState in playersStates)
             {
                 var name = playersState[20][1];
-                var id = playersState[8][1];
+                var id = playersState[0][1];
                 var shipId = playersState[27][1];
                 var player = new Player(name, id, shipId);
                 var team = playersState[30][1];
@@ -241,13 +247,18 @@ namespace LibProShip.Domain.StreamProcessor.Version
             var hex = data.ReadBytes((int) valueSize);
         }
 
-        private void DecodeOtherPosition(float time, BinaryReader data)
+        private void DecodeOtherPosition(float time, BinaryReader reader)
         {
-            var id1 = data.ReadInt32();
-            var id2 = data.ReadInt32();
+            var id1 = reader.ReadInt32();
+            var id2 = reader.ReadInt32();
 
-//            this.PositionRecords.Add(new PositionRecord());
-            throw new NotImplementedException();
+            if (id2 == 0)
+            {
+                var position = this.Read3D(reader);
+                var rotation = this.Read3D(reader);
+
+                this.PositionRecords.Add(new PositionRecord(time, this.EntityIdPlayer[id1], position, rotation));
+            }
         }
 
         private Matrix3 Read3D(BinaryReader data)
