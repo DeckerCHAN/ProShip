@@ -63,28 +63,56 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 
     public abstract class ProjectileShootRecord
     {
-        protected ProjectileShootRecord(Player owner, float shootTime)
+        protected ProjectileShootRecord(Player owner, float shootTime, int shotId, int salvoId, Matrix3 position,
+            Matrix3 direction)
         {
-            this.Owner = owner;
-            this.ShootTime = shootTime;
+            Owner = owner;
+            ShootTime = shootTime;
+            ShotId = shotId;
+            SalvoId = salvoId;
+            Position = position;
+            Direction = direction;
         }
 
         public Player Owner { get; }
         public float ShootTime { get; }
-    }
-
-    public class GunShootShootRecord: ProjectileShootRecord
-    {
+        public int ShotId { get; }
+        public int SalvoId { get; }
         public Matrix3 Position { get; }
         public Matrix3 Direction { get; }
-        public Matrix3 TargetPosition { get; }
-        public GunShootShootRecord(Player owner, float shootTime, Matrix3 position, Matrix3 direction, Matrix3 targetPosition) : base(owner, shootTime)
-        {
-            this.Position = position;
-            this.Direction = direction;
-            this.TargetPosition = targetPosition;
-        }
     }
-    
-    
+
+    public class GunShootShootRecord : ProjectileShootRecord
+    {
+        public GunShootShootRecord(Player owner, float shootTime, int shotId, int salvoId, Matrix3 position,
+            Matrix3 direction, Matrix3 targetPosition, float hitDistance, int gunBarrelId) : base(owner, shootTime,
+            shotId, salvoId, position, direction)
+        {
+            TargetPosition = targetPosition;
+            HitDistance = hitDistance;
+            GunBarrelId = gunBarrelId;
+        }
+
+        public Matrix3 TargetPosition { get; }
+        public float HitDistance { get; }
+        public int GunBarrelId { get; }
+    }
+
+    public class Hit
+    {
+        public Hit(Player owner, float hitTime, Matrix3 position, int shotId, int hitType)
+        {
+            Position = position;
+            Owner = owner;
+            ShotId = shotId;
+            HitType = hitType;
+            HitTime = hitTime;
+        }
+        public float HitTime { get; }
+        public Matrix3 Position { get; }
+
+        public Player Owner { get; }
+        public int ShotId { get; }
+        public int HitType { get; }
+    }
 }

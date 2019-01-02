@@ -28,7 +28,8 @@ namespace LibProShip.Domain.StreamProcessor.Version
         private readonly byte[] Data;
         public IList<Player> Enemy;
         public IList<Player> Alies;
-        public List<PositionRecord> PositionRecords;
+        public IList<PositionRecord> PositionRecords;
+        public IList<GunShootShootRecord> GunShootShootRecords;
         public BattleRecord Res { get; private set; }
         private IDictionary<int, Player> EntityIdPlayer;
         private int AvatarId;
@@ -43,6 +44,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
             this.Enemy = new List<Player>();
             this.EntityIdPlayer = new Dictionary<int, Player>();
             this.PositionRecords = new List<PositionRecord>();
+            this.GunShootShootRecords = new List<GunShootShootRecord>();
         }
 
         public BattleRecord GetRecord()
@@ -68,7 +70,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
                                 this.Entity(reader);
                                 break;
                             case 0x8:
-                                this.EntityMethod(reader);
+                                this.EntityMethod(time, reader);
                                 break;
                             case 1:
                                 this.CellPlayerCreate(reader);
@@ -89,7 +91,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
             throw new NotImplementedException();
         }
 
-        private void EntityMethod(BinaryReader reader)
+        private void EntityMethod(float time, BinaryReader reader)
         {
             var entityId = Convert.ToInt32(reader.ReadUInt32());
             var messageId = Convert.ToInt32(reader.ReadUInt32());
@@ -103,7 +105,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
                         this.AddPlayer(reader);
                         break;
                     case 73:
-                        this.AddGunAndTorpedo(reader);
+                        this.AddGunAndTorpedo(time, reader);
                         break;
                     default:
                         break;
@@ -111,20 +113,48 @@ namespace LibProShip.Domain.StreamProcessor.Version
             }
         }
 
-        private void AddGunAndTorpedo(BinaryReader reader)
+        private void AddGunAndTorpedo(float time, BinaryReader reader)
         {
             var dataLength = reader.ReadInt32();
             var shotLength = Convert.ToInt32(reader.ReadByte());
-            for (int i = 0; i < shotLength; i++)
+            for (var i = 0; i < shotLength; i++)
             {
-                this.AddGun(reader);
+                this.AddGun(time, reader);
+            }
+
+            var torpedoLength = Convert.ToInt32(reader.ReadByte());
+            for (int i = 0; i < torpedoLength; i++)
+            {
+                this.AddTorpedo(time, reader);
+            }
+
+            var hitLength = Convert.ToInt32(reader.ReadByte());
+            for (int i = 0; i < hitLength; i++)
+            {
+                this.AddHit(time, reader);
             }
             throw new NotImplementedException();
         }
 
-        private void AddGun(BinaryReader reader)
+        private void AddHit(float time, BinaryReader reader)
         {
-            var gameparamsId = Convert.ToInt32(reader.ReadUInt32());
+            throw new NotImplementedException();
+        }
+
+        private void AddTorpedo(float time, BinaryReader reader)
+        {
+            var gameparamsId = reader.ReadUInt32();
+            var pos = this.Read3D(reader);
+            var dir = this.Read3D(reader);
+            var ownerId = reader.ReadInt32();
+            var salvoId = reader.ReadInt32();
+            var shotId = Convert.ToInt32(reader.ReadUInt16());
+            var skinId = reader.ReadUInt32();
+        }
+
+        private void AddGun(float time, BinaryReader reader)
+        {
+            var gameparamsId = reader.ReadUInt32();
             var pos = this.Read3D(reader);
             var dir = this.Read3D(reader);
             var tarPos = this.Read3D(reader);
@@ -135,7 +165,11 @@ namespace LibProShip.Domain.StreamProcessor.Version
             var serverTimeLeft = reader.ReadSingle();
             var shooterHeight = reader.ReadSingle();
             var hitDistance = reader.ReadSingle();
-            
+
+            var player = this.EntityIdPlayer[ownerId];
+
+            this.GunShootShootRecords.Add(new GunShootShootRecord(player, time, shotId, salvoId, pos, dir, tarPos,
+                hitDistance, gunBarrelId));
         }
 
         private void AddPlayer(BinaryReader reader)
@@ -237,16 +271,13 @@ namespace LibProShip.Domain.StreamProcessor.Version
             {
                 throw new Exception();
             }
-            
+
             var teamId = Convert.ToInt32(reader.ReadByte());
-            
+
             if (Convert.ToInt32(reader.ReadByte()) != curse++)
             {
                 throw new Exception();
             }
-            
-
-            
         }
 
         private void BasePlayerCrate(BinaryReader reader)
@@ -263,8 +294,6 @@ namespace LibProShip.Domain.StreamProcessor.Version
 
             this.Map = new Map(arenaId, spaceId);
         }
-
-
 
 
         private void CellPlayerCreate(BinaryReader data)
