@@ -82,9 +82,9 @@ namespace LibProShip.Domain.StreamProcessor.Packet
         public Matrix3 Direction { get; }
     }
 
-    public class GunShootShootRecord : ProjectileShootRecord
+    public class GunShootRecord : ProjectileShootRecord
     {
-        public GunShootShootRecord(Player owner, float shootTime, int shotId, int salvoId, Matrix3 position,
+        public GunShootRecord(Player owner, float shootTime, int shotId, int salvoId, Matrix3 position,
             Matrix3 direction, Matrix3 targetPosition, float hitDistance, int gunBarrelId) : base(owner, shootTime,
             shotId, salvoId, position, direction)
         {
@@ -98,9 +98,16 @@ namespace LibProShip.Domain.StreamProcessor.Packet
         public int GunBarrelId { get; }
     }
 
-    public class Hit
+    public class TorpedoShootRecord:ProjectileShootRecord
     {
-        public Hit(Player owner, float hitTime, Matrix3 position, int shotId, int hitType)
+        public TorpedoShootRecord(Player owner, float shootTime, int shotId, int salvoId, Matrix3 position, Matrix3 direction) : base(owner, shootTime, shotId, salvoId, position, direction)
+        {
+        }
+    }
+
+    public class HitRecord
+    {
+        public HitRecord(Player owner, float hitTime, Matrix3 position, int shotId, int hitType)
         {
             Position = position;
             Owner = owner;

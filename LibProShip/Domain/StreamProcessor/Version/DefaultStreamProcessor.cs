@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
 using LibProShip.Domain.StreamProcessor.Packet;
 using LibProShip.Infrastructure.Unpickling;
@@ -29,12 +30,15 @@ namespace LibProShip.Domain.StreamProcessor.Version
         public IList<Player> Enemy;
         public IList<Player> Alies;
         public IList<PositionRecord> PositionRecords;
-        public IList<GunShootShootRecord> GunShootShootRecords;
+        public IList<GunShootRecord> GunShootRecords;
+        public List<HitRecord> HitRecords;
+        public IList<TorpedoShootRecord> TorpedoShootRecords;
         public BattleRecord Res { get; private set; }
         private IDictionary<int, Player> EntityIdPlayer;
         private int AvatarId;
         private List<int> ShipEntityIds;
         public Map Map { get; private set; }
+
 
         public InnerProcessor(byte[] data)
         {
@@ -44,7 +48,9 @@ namespace LibProShip.Domain.StreamProcessor.Version
             this.Enemy = new List<Player>();
             this.EntityIdPlayer = new Dictionary<int, Player>();
             this.PositionRecords = new List<PositionRecord>();
-            this.GunShootShootRecords = new List<GunShootShootRecord>();
+            this.GunShootRecords = new List<GunShootRecord>();
+            this.TorpedoShootRecords = new List<TorpedoShootRecord>();
+            this.HitRecords = new List<HitRecord>();
         }
 
         public BattleRecord GetRecord()
@@ -123,22 +129,39 @@ namespace LibProShip.Domain.StreamProcessor.Version
             }
 
             var torpedoLength = Convert.ToInt32(reader.ReadByte());
-            for (int i = 0; i < torpedoLength; i++)
+            for (var i = 0; i < torpedoLength; i++)
             {
                 this.AddTorpedo(time, reader);
             }
 
             var hitLength = Convert.ToInt32(reader.ReadByte());
-            for (int i = 0; i < hitLength; i++)
+            for (var i = 0; i < hitLength; i++)
             {
                 this.AddHit(time, reader);
             }
-            throw new NotImplementedException();
         }
 
         private void AddHit(float time, BinaryReader reader)
         {
-            throw new NotImplementedException();
+            var pos = this.Read3D(reader);
+            var ownerId = reader.ReadInt32();
+            var shotId = Convert.ToInt32(reader.ReadUInt16());
+            var hitType = Convert.ToInt32(reader.ReadByte());
+
+            var player = this.EntityIdPlayer[ownerId];
+
+            this.HitRecords.Add(new HitRecord(player, time, pos, shotId, hitType));
+        }
+
+        private void AddDamage(float time, BinaryReader reader)
+        {
+            var dataLength = reader.ReadInt32();
+            var damageLength = Convert.ToInt32(reader.ReadByte());
+
+            for (var i = 0; i < damageLength; i++)
+            {
+                
+            }
         }
 
         private void AddTorpedo(float time, BinaryReader reader)
@@ -150,6 +173,9 @@ namespace LibProShip.Domain.StreamProcessor.Version
             var salvoId = reader.ReadInt32();
             var shotId = Convert.ToInt32(reader.ReadUInt16());
             var skinId = reader.ReadUInt32();
+            var player = this.EntityIdPlayer[ownerId];
+
+            this.TorpedoShootRecords.Add(new TorpedoShootRecord(player, time, shotId, salvoId, pos, dir));
         }
 
         private void AddGun(float time, BinaryReader reader)
@@ -168,7 +194,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
 
             var player = this.EntityIdPlayer[ownerId];
 
-            this.GunShootShootRecords.Add(new GunShootShootRecord(player, time, shotId, salvoId, pos, dir, tarPos,
+            this.GunShootRecords.Add(new GunShootRecord(player, time, shotId, salvoId, pos, dir, tarPos,
                 hitDistance, gunBarrelId));
         }
 
