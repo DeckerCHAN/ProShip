@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using LibProShip.Domain.StreamProcessor.Packet;
@@ -27,8 +28,11 @@ namespace LibProShip.Domain.StreamProcessor.Version
     internal class InnerProcessor
     {
         private readonly byte[] Data;
-        public IList<Player> Enemy;
-        public IList<Player> Alies;
+        public ICollection<Vehicle> Enemy { get; private set; }
+        public ICollection<Vehicle> Alies{ get; private set; }
+
+        public ICollection<Vehicle> Ships => this.Enemy.Concat(this.Alies).ToList();
+
         public IList<PositionRecord> PositionRecords;
         public IList<GunShootRecord> GunShootRecords;
         public List<HitRecord> HitRecords;
@@ -44,8 +48,8 @@ namespace LibProShip.Domain.StreamProcessor.Version
         {
             this.Data = data;
             this.ShipEntityIds = new List<int>();
-            this.Alies = new List<Player>();
-            this.Enemy = new List<Player>();
+            this.Alies = new List<Vehicle>();
+            this.Enemy = new List<Vehicle>();
             this.EntityIdPlayer = new Dictionary<int, Player>();
             this.PositionRecords = new List<PositionRecord>();
             this.GunShootRecords = new List<GunShootRecord>();
