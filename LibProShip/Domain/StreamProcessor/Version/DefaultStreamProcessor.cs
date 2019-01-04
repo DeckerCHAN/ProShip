@@ -99,10 +99,10 @@ namespace LibProShip.Domain.StreamProcessor.Version
             }
 
 
-            if (Res == null)
-            {
-                this.Res = new BattleRecord();
-            }
+//            if (Res == null)
+//            {
+//                this.Res = new BattleRecord();
+//            }
 
             return Res;
         }
@@ -120,12 +120,25 @@ namespace LibProShip.Domain.StreamProcessor.Version
                     case 84:
                         this.AddPlayer(reader);
                         break;
+                    case 51:
+                        this.AddDamage(time, entityId, reader);
+                        break;
                     case 73:
                         this.AddGunAndTorpedo(time, reader);
                         break;
                     default:
                         break;
                 }
+            }
+        }
+
+        private void AddDamage(float time, int entityId, BinaryReader reader)
+        {
+            var dataLength = reader.ReadInt32();
+            var damageLength = Convert.ToInt32(reader.ReadByte());
+
+            for (var i = 0; i < damageLength; i++)
+            {
             }
         }
 
@@ -161,16 +174,6 @@ namespace LibProShip.Domain.StreamProcessor.Version
             this.HitRecords.Add(new HitRecord(vehicle, time, pos, shotId, hitType));
         }
 
-        private void AddDamage(float time, BinaryReader reader)
-        {
-            var dataLength = reader.ReadInt32();
-            var damageLength = Convert.ToInt32(reader.ReadByte());
-
-            for (var i = 0; i < damageLength; i++)
-            {
-                
-            }
-        }
 
         private void AddTorpedo(float time, BinaryReader reader)
         {
@@ -266,7 +269,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
         private void VehicleEntityCreate(BinaryReader reader)
         {
             var length = reader.ReadInt32();
-            var count = Convert.ToInt32(reader.ReadChar());
+            var count = Convert.ToInt32(reader.ReadByte());
 
             if (count != 37)
             {
@@ -275,44 +278,108 @@ namespace LibProShip.Domain.StreamProcessor.Version
 
             var curse = 0;
 
-            if (Convert.ToInt32(reader.ReadByte()) != curse++)
+
+            var isAntiAirMode = reader.ReadByte() == curse++ ? reader.ReadBoolean() : throw new Exception();
+            var burningFlag = reader.ReadByte() == curse++ ? reader.ReadByte() : throw new Exception();
+            var buoyancyCurrentState = reader.ReadByte() == curse++ ? reader.ReadByte() : throw new Exception();
+            var isOnForsage = reader.ReadByte() == curse++ ? reader.ReadBoolean() : throw new Exception();
+            var teamId = reader.ReadByte() == curse++ ? reader.ReadByte() : throw new Exception();
+            var uiEnabled = reader.ReadByte() == curse++ ? reader.ReadBoolean() : throw new Exception();
+            var isAlive = reader.ReadByte() == curse++ ? reader.ReadBoolean() : throw new Exception();
+            var speedSignDir = reader.ReadByte() == curse++ ? reader.ReadSByte() : throw new Exception();
+            var enginePower = reader.ReadByte() == curse++ ? reader.ReadByte() : throw new Exception();
+            var isInOfflineMode = reader.ReadByte() == curse++ ? reader.ReadBoolean() : throw new Exception();
+            var ignoreMapBorders = reader.ReadByte() == curse++ ? reader.ReadBoolean() : throw new Exception();
+            var isBot = reader.ReadByte() == curse++ ? reader.ReadBoolean() : throw new Exception();
+            var isFogHornOn = reader.ReadByte() == curse++ ? reader.ReadBoolean() : throw new Exception();
+            var blockedControls = reader.ReadByte() == curse++ ? reader.ReadBoolean() : throw new Exception();
+            var targetLocalPos = reader.ReadByte() == curse++ ? reader.ReadUInt16() : throw new Exception();
+            var torpedoLocalPos = reader.ReadByte() == curse++ ? reader.ReadUInt16() : throw new Exception();
+            var weaponLockFlags = reader.ReadByte() == curse++ ? reader.ReadUInt16() : throw new Exception();
+            var serverSpeedRaw = reader.ReadByte() == curse++ ? reader.ReadUInt16() : throw new Exception();
+            var airDefenseDispRadius = reader.ReadByte() == curse++ ? reader.ReadSingle() : throw new Exception();
+            var health = reader.ReadByte() == curse++ ? reader.ReadSingle() : throw new Exception();
+            var regenerationHealth = reader.ReadByte() == curse++ ? reader.ReadSingle() : throw new Exception();
+            var regeneratedHealth = reader.ReadByte() == curse++ ? reader.ReadSingle() : throw new Exception();
+            var oxygen = reader.ReadByte() == curse++ ? reader.ReadSingle() : throw new Exception();
+            var buoyancyCurrentWaterline = reader.ReadByte() == curse++ ? reader.ReadSingle() : throw new Exception();
+            var regenCrewHpLimit = reader.ReadByte() == curse++ ? reader.ReadSingle() : throw new Exception();
+            var buoyancy = reader.ReadByte() == curse++ ? reader.ReadSingle() : throw new Exception();
+            var owner = reader.ReadByte() == curse++ ? reader.ReadInt32() : throw new Exception();
+            var selectedWeapon =reader.ReadByte() == curse++ ? reader.ReadUInt32() : throw new Exception();
+          
+            var draught = reader.ReadByte() == curse++ ? reader.ReadSingle(): throw new Exception();
+            float effectiveness = 0;
+            ulong learnedSkills = 0;
+            uint paramsId = 0;
+
+            if (reader.ReadByte() == curse++)
+            {
+                effectiveness = reader.ReadSingle();
+                learnedSkills = reader.ReadUInt64();
+                paramsId = reader.ReadUInt32();
+            }
+            else
+            {
+                throw new Exception();
+            }
+            var atbaTargets = new uint [0];
+            
+            if (reader.ReadByte() == curse++)
+            {
+                atbaTargets = new uint[reader.ReadByte()];
+                for (var i = 0; i < atbaTargets.Length; i++)
+                {
+                    atbaTargets[i] = reader.ReadUInt32();
+                }
+            }
+            else
             {
                 throw new Exception();
             }
 
-            var isAntiAirMode = reader.ReadBoolean();
-
-            if (Convert.ToInt32(reader.ReadByte()) != curse++)
+            var airDefenceTargetIds = new long[0];
+            if (reader.ReadByte() == curse++)
+            {
+                airDefenceTargetIds = new long[reader.ReadByte()];
+                for (var i = 0; i < airDefenceTargetIds.Length; i++)
+                {
+                    airDefenceTargetIds[i] = reader.ReadInt64();
+                }
+            }
+            else
             {
                 throw new Exception();
             }
 
-            var burningFlag = Convert.ToInt32(reader.ReadByte());
-
-            if (Convert.ToInt32(reader.ReadByte()) != curse++)
+            var airDefenceAuraId = -1;
+            var airDefenceAuraEnabled = false;
+            
+            if (reader.ReadByte() == curse++)
+            {
+                airDefenceAuraId = reader.ReadSByte();
+                airDefenceAuraEnabled = reader.ReadBoolean();
+            }
+            else
             {
                 throw new Exception();
             }
 
-            var buoyancyCurrentState = Convert.ToInt32(reader.ReadByte());
 
-            if (Convert.ToInt32(reader.ReadByte()) != curse++)
+            if (reader.ReadByte() == curse++)
+            {
+                
+            }
+            else
             {
                 throw new Exception();
             }
 
-            var isOnForsage = reader.ReadBoolean();
-            if (Convert.ToInt32(reader.ReadByte()) != curse++)
-            {
-                throw new Exception();
-            }
-
-            var teamId = Convert.ToInt32(reader.ReadByte());
-
-            if (Convert.ToInt32(reader.ReadByte()) != curse++)
-            {
-                throw new Exception();
-            }
+//            switch (teamId)
+//            {
+//                case 0:
+//                    this.Alies.Add(new Vehicle());
+//            }
         }
 
         private void BasePlayerCrate(BinaryReader reader)
@@ -359,11 +426,6 @@ namespace LibProShip.Domain.StreamProcessor.Version
 
 
                 this.PositionRecords.Add(new PositionRecord(time, vehicle, position, rotation));
-            }
-            else
-            {
-                // Projection packet
-                this.EntityIdPlayer[id2] = this.EntityIdPlayer[id1];
             }
         }
 
