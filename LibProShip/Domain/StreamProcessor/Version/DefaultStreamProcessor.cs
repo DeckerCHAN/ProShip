@@ -28,16 +28,16 @@ namespace LibProShip.Domain.StreamProcessor.Version
     internal class InnerProcessor
     {
         private readonly byte[] Data;
-        public ICollection<Vehicle> Enemy { get; private set; }
-        public ICollection<Vehicle> Alies{ get; private set; }
+        private ICollection<Vehicle> Enemy { get; set; }
+        private ICollection<Vehicle> Alies{ get; set; }
 
-        public ICollection<Vehicle> Ships => this.Enemy.Concat(this.Alies).ToList();
+        private ICollection<Vehicle> Vehicles => this.Enemy.Concat(this.Alies).ToList();
 
-        public IList<PositionRecord> PositionRecords;
-        public IList<GunShootRecord> GunShootRecords;
-        public List<HitRecord> HitRecords;
-        public IList<TorpedoShootRecord> TorpedoShootRecords;
-        public BattleRecord Res { get; private set; }
+        private IList<PositionRecord> PositionRecords;
+        private IList<GunShootRecord> GunShootRecords;
+        private IList<HitRecord> HitRecords;
+        private IList<TorpedoShootRecord> TorpedoShootRecords;
+        private BattleRecord Res { get;  set; }
         private IDictionary<int, Player> EntityIdPlayer;
         private int AvatarId;
         private List<int> ShipEntityIds;
@@ -98,7 +98,13 @@ namespace LibProShip.Domain.StreamProcessor.Version
                 }
             }
 
-            throw new NotImplementedException();
+
+            if (Res == null)
+            {
+                this.Res = new BattleRecord();
+            }
+
+            return Res;
         }
 
         private void EntityMethod(float time, BinaryReader reader)
@@ -151,10 +157,8 @@ namespace LibProShip.Domain.StreamProcessor.Version
             var ownerId = reader.ReadInt32();
             var shotId = Convert.ToInt32(reader.ReadUInt16());
             var hitType = Convert.ToInt32(reader.ReadByte());
-
-            var player = this.EntityIdPlayer[ownerId];
-
-            this.HitRecords.Add(new HitRecord(player, time, pos, shotId, hitType));
+            var vehicle = this.Vehicles.SingleOrDefault(x => x.VehicleId == ownerId)?? throw new Exception();
+            this.HitRecords.Add(new HitRecord(vehicle, time, pos, shotId, hitType));
         }
 
         private void AddDamage(float time, BinaryReader reader)
@@ -177,9 +181,9 @@ namespace LibProShip.Domain.StreamProcessor.Version
             var salvoId = reader.ReadInt32();
             var shotId = Convert.ToInt32(reader.ReadUInt16());
             var skinId = reader.ReadUInt32();
-            var player = this.EntityIdPlayer[ownerId];
+            var vehicle = this.Vehicles.SingleOrDefault(x => x.VehicleId == ownerId)?? throw new Exception();
 
-            this.TorpedoShootRecords.Add(new TorpedoShootRecord(player, time, shotId, salvoId, pos, dir));
+            this.TorpedoShootRecords.Add(new TorpedoShootRecord(vehicle, time, shotId, salvoId, pos, dir));
         }
 
         private void AddGun(float time, BinaryReader reader)
@@ -196,9 +200,10 @@ namespace LibProShip.Domain.StreamProcessor.Version
             var shooterHeight = reader.ReadSingle();
             var hitDistance = reader.ReadSingle();
 
-            var player = this.EntityIdPlayer[ownerId];
+            var vehicle = this.Vehicles.SingleOrDefault(x => x.VehicleId == ownerId)?? throw new Exception();
 
-            this.GunShootRecords.Add(new GunShootRecord(player, time, shotId, salvoId, pos, dir, tarPos,
+
+            this.GunShootRecords.Add(new GunShootRecord(vehicle, time, shotId, salvoId, pos, dir, tarPos,
                 hitDistance, gunBarrelId));
         }
 
@@ -220,17 +225,17 @@ namespace LibProShip.Domain.StreamProcessor.Version
                 var team = playersState[30][1];
                 var avatarId = playersState[1][1];
                 this.EntityIdPlayer[avatarId] = player;
-                switch (team)
-                {
-                    case 0:
-                        this.Alies.Add(player);
-                        break;
-                    case 1:
-                        this.Enemy.Add(player);
-                        break;
-                    default:
-                        throw new NotSupportedException($"Unsupported team id {team}");
-                }
+//                switch (team)
+//                {
+//                    case 0:
+//                        this.Alies.Add(player);
+//                        break;
+//                    case 1:
+//                        this.Enemy.Add(player);
+//                        break;
+//                    default:
+//                        throw new NotSupportedException($"Unsupported team id {team}");
+//                }
             }
         }
 
@@ -349,8 +354,11 @@ namespace LibProShip.Domain.StreamProcessor.Version
             {
                 var position = this.Read3D(reader);
                 var rotation = this.Read3D(reader);
+                
+                var vehicle = this.Vehicles.SingleOrDefault(x => x.VehicleId == id1)?? throw new Exception();
 
-                this.PositionRecords.Add(new PositionRecord(time, this.EntityIdPlayer[id1], position, rotation));
+
+                this.PositionRecords.Add(new PositionRecord(time, vehicle, position, rotation));
             }
             else
             {

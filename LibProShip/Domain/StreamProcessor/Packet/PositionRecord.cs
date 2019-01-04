@@ -13,7 +13,7 @@ namespace LibProShip.Domain.StreamProcessor.Packet
             ControlPlayer = controlPlayer;
             VehicleId = vehicleId;
         }
-        
+
         public int VehicleId { get; }
         public Player ControlPlayer { get; }
     }
@@ -51,8 +51,9 @@ namespace LibProShip.Domain.StreamProcessor.Packet
             this.Players = players;
         }
 
-        public Map Map { get; private set; }
-        public IEnumerable<Player> Players { get; private set; }
+        public Map Map { get; }
+        public IEnumerable<Player> Players { get; }
+        public IEnumerable<Vehicle> Vehicles { get; }
         public IEnumerable<PositionRecord> PositionRecords { get; private set; }
     }
 
@@ -118,9 +119,9 @@ namespace LibProShip.Domain.StreamProcessor.Packet
         }
     }
 
-    public class HitRecord
+    public sealed class HitRecord
     {
-        public HitRecord(Player owner, float hitTime, Matrix3 position, int shotId, int hitType)
+        public HitRecord(Vehicle owner, float hitTime, Matrix3 position, int shotId, int hitType)
         {
             Position = position;
             Owner = owner;
@@ -131,9 +132,24 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 
         public float HitTime { get; }
         public Matrix3 Position { get; }
-
-        public Player Owner { get; }
+        public Vehicle Owner { get; }
         public int ShotId { get; }
         public int HitType { get; }
+    }
+
+    public sealed class DamageRecord
+    {
+        public DamageRecord(float time, Vehicle source, Vehicle target, float amount)
+        {
+            Time = time;
+            Source = source;
+            Target = target;
+            Amount = amount;
+        }
+
+        public float Time { get; }
+        public Vehicle Source { get; }
+        public Vehicle Target { get; }
+        public float Amount { get; }
     }
 }
