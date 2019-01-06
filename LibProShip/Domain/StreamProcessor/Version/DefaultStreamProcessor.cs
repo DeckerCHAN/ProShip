@@ -29,18 +29,19 @@ namespace LibProShip.Domain.StreamProcessor.Version
     {
         private readonly byte[] Data;
         private ICollection<Vehicle> Enemy { get; set; }
-        private ICollection<Vehicle> Alies{ get; set; }
+        private ICollection<Vehicle> Alies { get; set; }
 
         private ICollection<Vehicle> Vehicles => this.Enemy.Concat(this.Alies).ToList();
 
-        private IList<PositionRecord> PositionRecords;
-        private IList<GunShootRecord> GunShootRecords;
-        private IList<HitRecord> HitRecords;
-        private IList<TorpedoShootRecord> TorpedoShootRecords;
-        private BattleRecord Res { get;  set; }
-        private IDictionary<int, Player> EntityIdPlayer;
-        private int AvatarId;
-        private List<int> ShipEntityIds;
+        private IList<PositionRecord> PositionRecords{ get; set; }
+        private IList<GunShootRecord> GunShootRecords{ get; set; }
+        private IList<HitRecord> HitRecords{ get; set; }
+        private IList<TorpedoShootRecord> TorpedoShootRecords{ get; set; }
+        private BattleRecord Res { get; set; }
+        private IDictionary<int, Player> EntityIdPlayer{ get; set; }
+        private IDictionary<int, Vehicle> EntityIdVehicle { get; set; }
+        private int AvatarId{ get; set; }
+        private List<int> ShipEntityIds{ get; set; }
         public Map Map { get; private set; }
 
 
@@ -51,6 +52,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
             this.Alies = new List<Vehicle>();
             this.Enemy = new List<Vehicle>();
             this.EntityIdPlayer = new Dictionary<int, Player>();
+            this.EntityIdVehicle = new Dictionary<int, Vehicle>();
             this.PositionRecords = new List<PositionRecord>();
             this.GunShootRecords = new List<GunShootRecord>();
             this.TorpedoShootRecords = new List<TorpedoShootRecord>();
@@ -170,8 +172,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
             var ownerId = reader.ReadInt32();
             var shotId = Convert.ToInt32(reader.ReadUInt16());
             var hitType = Convert.ToInt32(reader.ReadByte());
-            var vehicle = this.Vehicles.SingleOrDefault(x => x.VehicleId == ownerId)?? throw new Exception();
-            this.HitRecords.Add(new HitRecord(vehicle, time, pos, shotId, hitType));
+            this.HitRecords.Add(new HitRecord(ownerId, time, pos, shotId, hitType));
         }
 
 
@@ -184,9 +185,8 @@ namespace LibProShip.Domain.StreamProcessor.Version
             var salvoId = reader.ReadInt32();
             var shotId = Convert.ToInt32(reader.ReadUInt16());
             var skinId = reader.ReadUInt32();
-            var vehicle = this.Vehicles.SingleOrDefault(x => x.VehicleId == ownerId)?? throw new Exception();
 
-            this.TorpedoShootRecords.Add(new TorpedoShootRecord(vehicle, time, shotId, salvoId, pos, dir));
+            this.TorpedoShootRecords.Add(new TorpedoShootRecord(ownerId, time, shotId, salvoId, pos, dir));
         }
 
         private void AddGun(float time, BinaryReader reader)
@@ -203,10 +203,9 @@ namespace LibProShip.Domain.StreamProcessor.Version
             var shooterHeight = reader.ReadSingle();
             var hitDistance = reader.ReadSingle();
 
-            var vehicle = this.Vehicles.SingleOrDefault(x => x.VehicleId == ownerId)?? throw new Exception();
 
 
-            this.GunShootRecords.Add(new GunShootRecord(vehicle, time, shotId, salvoId, pos, dir, tarPos,
+            this.GunShootRecords.Add(new GunShootRecord(ownerId, time, shotId, salvoId, pos, dir, tarPos,
                 hitDistance, gunBarrelId));
         }
 
@@ -223,22 +222,19 @@ namespace LibProShip.Domain.StreamProcessor.Version
             {
                 var name = playersState[20][1];
                 var id = playersState[0][1];
-                var shipId = playersState[27][1];
+                var vehicleId = playersState[27][1];
+                var shipId = playersState[29][1];
                 var player = new Player(name, id, shipId);
                 var team = playersState[30][1];
                 var avatarId = playersState[1][1];
                 this.EntityIdPlayer[avatarId] = player;
-//                switch (team)
-//                {
-//                    case 0:
-//                        this.Alies.Add(player);
-//                        break;
-//                    case 1:
-//                        this.Enemy.Add(player);
-//                        break;
-//                    default:
-//                        throw new NotSupportedException($"Unsupported team id {team}");
-//                }
+                
+//                var vehicle = new Vehicle();
+                
+                switch (team)
+                {
+                    
+                }
             }
         }
 
@@ -257,7 +253,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
             {
                 case 2:
                     this.ShipEntityIds.Add(entityId);
-                    this.VehicleEntityCreate(reader);
+                    this.VehicleEntityCreate(entityId,reader);
 
 
                     break;
@@ -266,7 +262,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
             }
         }
 
-        private void VehicleEntityCreate(BinaryReader reader)
+        private void VehicleEntityCreate(int entityId,BinaryReader reader)
         {
             var length = reader.ReadInt32();
             var count = Convert.ToInt32(reader.ReadByte());
@@ -306,9 +302,9 @@ namespace LibProShip.Domain.StreamProcessor.Version
             var regenCrewHpLimit = reader.ReadByte() == curse++ ? reader.ReadSingle() : throw new Exception();
             var buoyancy = reader.ReadByte() == curse++ ? reader.ReadSingle() : throw new Exception();
             var owner = reader.ReadByte() == curse++ ? reader.ReadInt32() : throw new Exception();
-            var selectedWeapon =reader.ReadByte() == curse++ ? reader.ReadUInt32() : throw new Exception();
-          
-            var draught = reader.ReadByte() == curse++ ? reader.ReadSingle(): throw new Exception();
+            var selectedWeapon = reader.ReadByte() == curse++ ? reader.ReadUInt32() : throw new Exception();
+
+            var draught = reader.ReadByte() == curse++ ? reader.ReadSingle() : throw new Exception();
             float effectiveness = 0;
             ulong learnedSkills = 0;
             uint paramsId = 0;
@@ -323,8 +319,9 @@ namespace LibProShip.Domain.StreamProcessor.Version
             {
                 throw new Exception();
             }
+
             var atbaTargets = new uint [0];
-            
+
             if (reader.ReadByte() == curse++)
             {
                 atbaTargets = new uint[reader.ReadByte()];
@@ -354,11 +351,15 @@ namespace LibProShip.Domain.StreamProcessor.Version
 
             var airDefenceAuraId = -1;
             var airDefenceAuraEnabled = false;
-            
+
             if (reader.ReadByte() == curse++)
             {
-                airDefenceAuraId = reader.ReadSByte();
-                airDefenceAuraEnabled = reader.ReadBoolean();
+                var airDefenceAuras = new Tuple<int, bool>[reader.ReadByte()];
+                for (var i = 0; i < airDefenceAuras.Length; i++)
+                {
+                    var tup = new Tuple<int, bool>(reader.ReadSByte(), reader.ReadBoolean());
+                    airDefenceAuras[i] = tup;
+                }
             }
             else
             {
@@ -368,17 +369,57 @@ namespace LibProShip.Domain.StreamProcessor.Version
 
             if (reader.ReadByte() == curse++)
             {
-                
+                var effects = new Tuple<int, string, string>[reader.ReadByte()];
+                for (int i = 0; i < effects.Length; i++)
+                {
+                    var id = reader.ReadInt16();
+                    var name = reader.ReadString();
+                    var node = reader.ReadString();
+                    var tup = new Tuple<int, string, string>(id, name, node);
+                    effects[i] = tup;
+                }
             }
             else
             {
                 throw new Exception();
             }
 
+            uint shipId = 0;
+
+
+            if (reader.ReadByte() == curse++)
+            {
+                switch (reader.ReadByte())
+                {
+                    case 0x00:
+                        //Empty dict
+
+                        break;
+                    case 0x01:
+                        // not empty dict
+                        shipId = reader.ReadUInt32();
+                        this.ReadBlob(reader, false);
+                        break;
+                    default:
+                        throw new Exception();
+                        break;
+                }
+            }
+
+            var vehicle  =  new Vehicle(shipId, this.EntityIdPlayer[owner]);
+//            this.EntityIdVehicle[entityId] = vehicle;
+//            this.EntityIdVehicle[owner] = vehicle;
 //            switch (teamId)
 //            {
 //                case 0:
-//                    this.Alies.Add(new Vehicle());
+//                    this.Alies.Add(vehicle);
+//                    break;
+//                case 1:
+//                    this.Enemy.Add(vehicle);
+//                    break;
+//                default:
+//                    throw new Exception($"Unsupported team id {teamId}");
+//                    break;
 //            }
         }
 
@@ -421,9 +462,9 @@ namespace LibProShip.Domain.StreamProcessor.Version
             {
                 var position = this.Read3D(reader);
                 var rotation = this.Read3D(reader);
-                
-                var vehicle = this.Vehicles.SingleOrDefault(x => x.VehicleId == id1)?? throw new Exception();
 
+                var vehicle = this.EntityIdVehicle[id1];
+                
 
                 this.PositionRecords.Add(new PositionRecord(time, vehicle, position, rotation));
             }
@@ -437,7 +478,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
             return new Matrix3(x, y, z);
         }
 
-        private dynamic ReadBlob(BinaryReader reader)
+        private dynamic ReadBlob(BinaryReader reader, bool load = true)
         {
             var length = Convert.ToInt32(reader.ReadByte());
             if (length == 0xFF)
@@ -447,10 +488,17 @@ namespace LibProShip.Domain.StreamProcessor.Version
                 reader.Read();
             }
 
-            using (var pkl = new Unpickler())
+            if (load)
             {
-                var pObject = pkl.loads(reader.ReadBytes(length));
-                return pObject;
+                using (var pkl = new Unpickler())
+                {
+                    var pObject = pkl.loads(reader.ReadBytes(length));
+                    return pObject;
+                }
+            }
+            else
+            {
+                return null;
             }
         }
     }

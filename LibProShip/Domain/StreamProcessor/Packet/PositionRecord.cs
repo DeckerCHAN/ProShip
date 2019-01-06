@@ -8,37 +8,37 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 
     public sealed class Vehicle
     {
-        public Vehicle(int vehicleId, Player controlPlayer)
+        public Vehicle(long vehicleId, Player controlPlayer)
         {
             ControlPlayer = controlPlayer;
             VehicleId = vehicleId;
         }
 
-        public int VehicleId { get; }
+        public long VehicleId { get; }
         public Player ControlPlayer { get; }
     }
 
     public sealed class Player
     {
-        public Player(string name, int id, int shipId)
+        public Player(string name, int accountId, int shipId)
         {
             this.Name = name;
-            this.Id = id;
+            this.AccountId = accountId;
             this.ShipId = shipId;
         }
 
         public string Name { get; }
-        public int Id { get; }
+        public int AccountId { get; }
         public int ShipId { get; }
 
         public override bool Equals(object obj)
         {
-            return obj is Player item && this.Id.Equals(item.Id);
+            return obj is Player item && this.AccountId.Equals(item.AccountId);
         }
 
         public override int GetHashCode()
         {
-            return this.Id.GetHashCode();
+            return this.AccountId.GetHashCode();
         }
     }
 
@@ -76,10 +76,10 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 
     public abstract class ProjectileShootRecord
     {
-        protected ProjectileShootRecord(Vehicle owner, float shootTime, int shotId, int salvoId, Matrix3 position,
+        protected ProjectileShootRecord(int ownerId, float shootTime, int shotId, int salvoId, Matrix3 position,
             Matrix3 direction)
         {
-            Owner = owner;
+            this.OwnerId = ownerId;
             ShootTime = shootTime;
             ShotId = shotId;
             SalvoId = salvoId;
@@ -87,7 +87,7 @@ namespace LibProShip.Domain.StreamProcessor.Packet
             Direction = direction;
         }
 
-        public Vehicle Owner { get; }
+        public int OwnerId { get; }
         public float ShootTime { get; }
         public int ShotId { get; }
         public int SalvoId { get; }
@@ -97,8 +97,8 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 
     public class GunShootRecord : ProjectileShootRecord
     {
-        public GunShootRecord(Vehicle owner, float shootTime, int shotId, int salvoId, Matrix3 position,
-            Matrix3 direction, Matrix3 targetPosition, float hitDistance, int gunBarrelId) : base(owner, shootTime,
+        public GunShootRecord(int ownerId, float shootTime, int shotId, int salvoId, Matrix3 position,
+            Matrix3 direction, Matrix3 targetPosition, float hitDistance, int gunBarrelId) : base(ownerId, shootTime,
             shotId, salvoId, position, direction)
         {
             TargetPosition = targetPosition;
@@ -113,18 +113,18 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 
     public class TorpedoShootRecord : ProjectileShootRecord
     {
-        public TorpedoShootRecord(Vehicle owner, float shootTime, int shotId, int salvoId, Matrix3 position,
-            Matrix3 direction) : base(owner, shootTime, shotId, salvoId, position, direction)
+        public TorpedoShootRecord(int ownerId, float shootTime, int shotId, int salvoId, Matrix3 position,
+            Matrix3 direction) : base(ownerId, shootTime, shotId, salvoId, position, direction)
         {
         }
     }
 
     public sealed class HitRecord
     {
-        public HitRecord(Vehicle owner, float hitTime, Matrix3 position, int shotId, int hitType)
+        public HitRecord(int ownerId, float hitTime, Matrix3 position, int shotId, int hitType)
         {
             Position = position;
-            Owner = owner;
+            this.OwnerId = ownerId;
             ShotId = shotId;
             HitType = hitType;
             HitTime = hitTime;
@@ -132,7 +132,7 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 
         public float HitTime { get; }
         public Matrix3 Position { get; }
-        public Vehicle Owner { get; }
+        public int OwnerId { get; }
         public int ShotId { get; }
         public int HitType { get; }
     }
