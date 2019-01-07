@@ -44,17 +44,33 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 
     public sealed class BattleRecord
     {
-        public BattleRecord(IEnumerable<PositionRecord> positionRecords, Map map, IEnumerable<Player> players)
+        public BattleRecord(long arenaId, Map map,
+            IEnumerable<Player> players,
+            IEnumerable<Vehicle> vehicles, IEnumerable<PositionRecord> positionRecords,
+            IEnumerable<TorpedoShootRecord> torpedoShootRecords,
+            IEnumerable<GunShootRecord> gunShootRecords, IEnumerable<HitRecord> hitRecords,
+            IEnumerable<DamageRecord> damageRecords)
         {
             this.PositionRecords = positionRecords;
             this.Map = map;
             this.Players = players;
+            Vehicles = vehicles;
+            ArenaId = arenaId;
+            TorpedoShootRecords = torpedoShootRecords;
+            GunShootRecords = gunShootRecords;
+            HitRecords = hitRecords;
+            DamageRecords = damageRecords;
         }
 
         public Map Map { get; }
         public IEnumerable<Player> Players { get; }
         public IEnumerable<Vehicle> Vehicles { get; }
-        public IEnumerable<PositionRecord> PositionRecords { get; private set; }
+        public IEnumerable<PositionRecord> PositionRecords { get; }
+        public long ArenaId { get; }
+        public IEnumerable<TorpedoShootRecord> TorpedoShootRecords { get; }
+        public IEnumerable<GunShootRecord> GunShootRecords { get; }
+        public IEnumerable<HitRecord> HitRecords { get; }
+        public IEnumerable<DamageRecord> DamageRecords { get; }
     }
 
     public class PositionRecord
@@ -76,7 +92,8 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 
     public abstract class ProjectileShootRecord
     {
-        protected ProjectileShootRecord(Vehicle ownerVehicle, float shootTime, int shotId, int salvoId, Matrix3 position,
+        protected ProjectileShootRecord(Vehicle ownerVehicle, float shootTime, int shotId, int salvoId,
+            Matrix3 position,
             Matrix3 direction)
         {
             this.OwnerVehicle = ownerVehicle;
@@ -98,7 +115,8 @@ namespace LibProShip.Domain.StreamProcessor.Packet
     public class GunShootRecord : ProjectileShootRecord
     {
         public GunShootRecord(Vehicle ownerVehicle, float shootTime, int shotId, int salvoId, Matrix3 position,
-            Matrix3 direction, Matrix3 targetPosition, float hitDistance, int gunBarrelId) : base(ownerVehicle, shootTime,
+            Matrix3 direction, Matrix3 targetPosition, float hitDistance, int gunBarrelId) : base(ownerVehicle,
+            shootTime,
             shotId, salvoId, position, direction)
         {
             TargetPosition = targetPosition;

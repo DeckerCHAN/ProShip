@@ -34,6 +34,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
         private ICollection<Vehicle> Vehicles => this.Enemy.Concat(this.Alies).ToList();
 
         private IList<PositionRecord> PositionRecords { get; set; }
+        public IList<DamageRecord> DamageRecords { get; set; }
         private IList<GunShootRecord> GunShootRecords { get; set; }
         private IList<HitRecord> HitRecords { get; set; }
         private IList<TorpedoShootRecord> TorpedoShootRecords { get; set; }
@@ -101,10 +102,10 @@ namespace LibProShip.Domain.StreamProcessor.Version
             }
 
 
-//            if (Res == null)
-//            {
-//                this.Res = new BattleRecord();
-//            }
+            if (Res == null)
+            {
+                this.Res = new BattleRecord(this.ArenaId,this.Map,this.EntityIdPlayer.Values,this.Vehicles,this.PositionRecords,this.TorpedoShootRecords,this.GunShootRecords,this.HitRecords, this.DamageRecords);
+            }
 
             return Res;
         }
@@ -147,6 +148,11 @@ namespace LibProShip.Domain.StreamProcessor.Version
 
             for (var i = 0; i < damageLength; i++)
             {
+                var vehicleId = reader.ReadInt32();
+                var damageAmount = reader.ReadSingle();
+
+                this.DamageRecords.Add(new DamageRecord(time, this.EntityIdVehicle[vehicleId],
+                    this.EntityIdVehicle[entityId], damageAmount));
             }
         }
 
