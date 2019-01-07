@@ -16,6 +16,16 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 
         public int VehicleId { get; }
         public Player ControlPlayer { get; }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Vehicle item && this.VehicleId.Equals(item.VehicleId);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.VehicleId.GetHashCode();
+        }
     }
 
     public sealed class Player
@@ -139,10 +149,10 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 
     public sealed class HitRecord
     {
-        public HitRecord(Vehicle ownerId, float hitTime, Matrix3 position, int shotId, int hitType)
+        public HitRecord(Vehicle ownerVehicle, float hitTime, Matrix3 position, int shotId, int hitType)
         {
             Position = position;
-            this.OwnerId = ownerId;
+            this.OwnerVehicle = ownerVehicle;
             ShotId = shotId;
             HitType = hitType;
             HitTime = hitTime;
@@ -150,24 +160,24 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 
         public float HitTime { get; }
         public Matrix3 Position { get; }
-        public Vehicle OwnerId { get; }
+        public Vehicle OwnerVehicle { get; }
         public int ShotId { get; }
         public int HitType { get; }
     }
 
     public sealed class DamageRecord
     {
-        public DamageRecord(float time, Vehicle source, Vehicle target, float amount)
+        public DamageRecord(float time, Vehicle sourceVehicle, Vehicle targetVehicle, float amount)
         {
             Time = time;
-            Source = source;
-            Target = target;
+            SourceVehicle = sourceVehicle;
+            TargetVehicle = targetVehicle;
             Amount = amount;
         }
 
         public float Time { get; }
-        public Vehicle Source { get; }
-        public Vehicle Target { get; }
+        public Vehicle SourceVehicle { get; }
+        public Vehicle TargetVehicle { get; }
         public float Amount { get; }
     }
 }
