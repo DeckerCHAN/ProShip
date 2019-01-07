@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Xml;
 
 namespace LibProShip.Domain.StreamProcessor.Packet
 {
@@ -16,6 +17,26 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 
         public int VehicleId { get; }
         public Player ControlPlayer { get; }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Vehicle item && this.VehicleId.Equals(item.VehicleId);
+        }
+
+        public static bool operator ==(Vehicle vehicle1, Vehicle vehicle2)
+        {
+            return vehicle1 != null && vehicle1.Equals(vehicle2);
+        }
+
+        public static bool operator !=(Vehicle vehicle1, Vehicle vehicle2)
+        {
+            return !(vehicle1 == vehicle2);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.VehicleId.GetHashCode();
+        }
     }
 
     public sealed class Player
@@ -30,6 +51,16 @@ namespace LibProShip.Domain.StreamProcessor.Packet
         public string Name { get; }
         public int AccountId { get; }
         public long ShipId { get; }
+
+        public static bool operator ==(Player p1, Player p2)
+        {
+            return p1 != null && p1.Equals(p2);
+        }
+
+        public static bool operator !=(Player p1, Player p2)
+        {
+            return !(p1 == p2);
+        }
 
         public override bool Equals(object obj)
         {
@@ -139,10 +170,10 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 
     public sealed class HitRecord
     {
-        public HitRecord(Vehicle ownerId, float hitTime, Matrix3 position, int shotId, int hitType)
+        public HitRecord(Vehicle ownerVehicle, float hitTime, Matrix3 position, int shotId, int hitType)
         {
             Position = position;
-            this.OwnerId = ownerId;
+            this.OwnerVehicle = ownerVehicle;
             ShotId = shotId;
             HitType = hitType;
             HitTime = hitTime;
@@ -150,24 +181,24 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 
         public float HitTime { get; }
         public Matrix3 Position { get; }
-        public Vehicle OwnerId { get; }
+        public Vehicle OwnerVehicle { get; }
         public int ShotId { get; }
         public int HitType { get; }
     }
 
     public sealed class DamageRecord
     {
-        public DamageRecord(float time, Vehicle source, Vehicle target, float amount)
+        public DamageRecord(float time, Vehicle sourceVehicle, Vehicle targetVehicle, float amount)
         {
             Time = time;
-            Source = source;
-            Target = target;
+            SourceVehicle = sourceVehicle;
+            TargetVehicle = targetVehicle;
             Amount = amount;
         }
 
         public float Time { get; }
-        public Vehicle Source { get; }
-        public Vehicle Target { get; }
+        public Vehicle SourceVehicle { get; }
+        public Vehicle TargetVehicle { get; }
         public float Amount { get; }
     }
 }
