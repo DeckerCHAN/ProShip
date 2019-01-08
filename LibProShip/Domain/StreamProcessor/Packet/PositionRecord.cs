@@ -37,6 +37,10 @@ namespace LibProShip.Domain.StreamProcessor.Packet
         {
             return this.VehicleId.GetHashCode();
         }
+
+
+
+    
     }
 
     public sealed class Player
