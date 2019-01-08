@@ -37,6 +37,16 @@ namespace LibProShip.Domain.StreamProcessor.Packet
         {
             return this.VehicleId.GetHashCode();
         }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Vehicle item && this.VehicleId.Equals(item.VehicleId);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.VehicleId.GetHashCode();
+        }
     }
 
     public sealed class Player
