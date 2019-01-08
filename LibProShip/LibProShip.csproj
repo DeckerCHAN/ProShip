@@ -102,6 +102,7 @@
     <Compile Include="Domain\Replay\ReplayVo.cs" />
     <Compile Include="Domain\Replay\ReplayRepository.cs" />
     <Compile Include="Domain\StreamProcessor\IStreamProcessor.cs" />
+    <Compile Include="Domain\StreamProcessor\Packet\Extensions\Matrix3Extension.cs" />
     <Compile Include="Domain\StreamProcessor\Packet\Map.cs" />
     <Compile Include="Domain\StreamProcessor\Packet\Matrix3.cs" />
     <Compile Include="Domain\StreamProcessor\Packet\PositionRecord.cs" />
