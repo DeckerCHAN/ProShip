@@ -91,6 +91,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
                                 break;
                             case 10:
                                 this.DecodeOtherPlayerPosition(time, reader);
+                                break;
                             case 43:
                                 this.DecodeControlPlayerPosition(time, reader);
                                 break;
@@ -107,7 +108,9 @@ namespace LibProShip.Domain.StreamProcessor.Version
 
             if (Res == null)
             {
-                this.Res = new BattleRecord(this.ArenaId,this.Map,this.EntityIdPlayer.Values,this.Vehicles,this.PositionRecords,this.TorpedoShootRecords,this.GunShootRecords,this.HitRecords, this.DamageRecords);
+                this.Res = new BattleRecord(this.ArenaId, this.Map, this.EntityIdPlayer.Values, this.Vehicles,
+                    this.PositionRecords, this.TorpedoShootRecords, this.GunShootRecords, this.HitRecords,
+                    this.DamageRecords);
             }
 
             return Res;
@@ -115,7 +118,22 @@ namespace LibProShip.Domain.StreamProcessor.Version
 
         private void DecodeOtherPlayerPosition(float time, BinaryReader reader)
         {
-            var entityId = 
+            var entityId = Convert.ToInt32(reader.ReadUInt32());
+
+            if (reader.BaseStream.Length > 45)
+            {
+                var spaceId = Convert.ToInt32(reader.ReadUInt32());
+            }
+
+            var vehicleId = Convert.ToInt32(reader.ReadUInt32());
+            var position = this.Read3D(reader);
+            var positionError = this.Read3D(reader);
+            var rotation = this.Read3D(reader);
+            var isErrored = reader.ReadBoolean();
+
+            var vehicle = this.EntityIdVehicle[entityId] ?? throw new Exception();
+            this.PositionRecords.Add(new PositionRecord(time, vehicle, position, rotation));
+
             throw new NotImplementedException();
         }
 
