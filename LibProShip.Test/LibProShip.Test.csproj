@@ -86,6 +86,7 @@
     <Compile Include="Integration\ProcessorTest.cs" />
     <Compile Include="Integration\PersistentTest.cs" />
     <Compile Include="Integration\PythonPickelTest.cs" />
+    <Compile Include="Unit\AnalysisTest.cs" />
     <Compile Include="Unit\BlowFishTest.cs" />
     <Compile Include="Unit\EventTest\EventBusTest.cs" />
     <Compile Include="Unit\FileMonitorTest.cs" />

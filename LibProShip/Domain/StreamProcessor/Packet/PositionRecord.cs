@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Xml;
 
@@ -25,7 +26,7 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 
         public static bool operator ==(Vehicle vehicle1, Vehicle vehicle2)
         {
-            return vehicle1 != null && vehicle1.Equals(vehicle2);
+            return vehicle1?.Equals(vehicle2) ?? ReferenceEquals(vehicle2, null);
         }
 
         public static bool operator !=(Vehicle vehicle1, Vehicle vehicle2)
@@ -37,10 +38,6 @@ namespace LibProShip.Domain.StreamProcessor.Packet
         {
             return this.VehicleId.GetHashCode();
         }
-
-
-
-    
     }
 
     public sealed class Player
@@ -58,7 +55,7 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 
         public static bool operator ==(Player p1, Player p2)
         {
-            return p1 != null && p1.Equals(p2);
+            return p1?.Equals(p2) ?? ReferenceEquals(p2, null);
         }
 
         public static bool operator !=(Player p1, Player p2)

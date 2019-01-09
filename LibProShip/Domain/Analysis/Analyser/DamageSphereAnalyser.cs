@@ -53,16 +53,17 @@ namespace LibProShip.Domain.Analysis.Analyser
 
         private Matrix3 GetVehiclePosition(IEnumerable<PositionRecord> positionRecords, float time, Vehicle vehicle)
         {
-            var enumerable = positionRecords as PositionRecord[] ?? positionRecords.ToArray();
-            var lowerNearest = enumerable
+            var vehiclePositions = positionRecords
                 .Where(x => x.Vehicle == vehicle)
+                .ToList();
+            
+            var lowerNearest = vehiclePositions
                 .Where(x => x.Time <= time)
                 .OrderByDescending(x => x.Time)
                 .DefaultIfEmpty(null)
                 .FirstOrDefault();
 
-            var higherNearest = enumerable
-                .Where(x => x.Vehicle == vehicle)
+            var higherNearest = vehiclePositions
                 .Where(x => x.Time >= time)
                 .OrderBy(x => x.Time)
                 .DefaultIfEmpty(null)

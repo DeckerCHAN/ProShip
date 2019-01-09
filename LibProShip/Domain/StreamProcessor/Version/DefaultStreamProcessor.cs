@@ -55,6 +55,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
             this.EntityIdPlayer = new Dictionary<int, Player>();
             this.EntityIdVehicle = new Dictionary<int, Vehicle>();
             this.PositionRecords = new List<PositionRecord>();
+            this.DamageRecords = new List<DamageRecord>();
             this.GunShootRecords = new List<GunShootRecord>();
             this.TorpedoShootRecords = new List<TorpedoShootRecord>();
             this.HitRecords = new List<HitRecord>();
@@ -88,8 +89,10 @@ namespace LibProShip.Domain.StreamProcessor.Version
                             case 1:
                                 this.CellPlayerCreate(reader);
                                 break;
+                            case 10:
+                                this.DecodeOtherPlayerPosition(time, reader);
                             case 43:
-                                this.DecodeOtherPosition(time, reader);
+                                this.DecodeControlPlayerPosition(time, reader);
                                 break;
                             case 0x27:
                                 this.DecodeMap(reader);
@@ -108,6 +111,12 @@ namespace LibProShip.Domain.StreamProcessor.Version
             }
 
             return Res;
+        }
+
+        private void DecodeOtherPlayerPosition(float time, BinaryReader reader)
+        {
+            var entityId = 
+            throw new NotImplementedException();
         }
 
         private void EntityMethod(float time, BinaryReader reader)
@@ -465,7 +474,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
             var hex = data.ReadBytes((int) valueSize);
         }
 
-        private void DecodeOtherPosition(float time, BinaryReader reader)
+        private void DecodeControlPlayerPosition(float time, BinaryReader reader)
         {
             var id1 = reader.ReadInt32();
             var id2 = reader.ReadInt32();
