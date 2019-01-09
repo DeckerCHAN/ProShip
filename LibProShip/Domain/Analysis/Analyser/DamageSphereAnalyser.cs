@@ -18,10 +18,18 @@ namespace LibProShip.Domain.Analysis.Analyser
 
         public AnalysisCollection Analysis(BattleRecord battleRecord)
         {
+            foreach (var damageRecord in battleRecord.DamageRecords)
+            {
+                var hits =  this.GetRelativeHits(battleRecord.PositionRecords, battleRecord.HitRecords, battleRecord.DamageRecords,
+                    damageRecord);
+                
+                
+            }
+            
             throw new System.NotImplementedException();
         }
 
-        private Vehicle GetDamageSource(IEnumerable<PositionRecord> positionRecords,IEnumerable<HitRecord> hitRecords, IEnumerable<DamageRecord> damageRecords,
+        private IEnumerable<HitRecord> GetRelativeHits(IEnumerable<PositionRecord> positionRecords,IEnumerable<HitRecord> hitRecords, IEnumerable<DamageRecord> damageRecords,
             DamageRecord record)
         {
             var hitTime = record.Time;
@@ -35,10 +43,11 @@ namespace LibProShip.Domain.Analysis.Analyser
 
             var relativeHits = hitRecords
                 .Where(x => x.OwnerVehicle == record.SourceVehicle)
-                //TODO: Add pos restriction
                 .Where(x => x.HitTime < hitTime && x.HitTime > lastDamageRecordTime && x.HitTime > hitTime - 5F)
                 .Where(hit => GetVehiclePosition(positionRecords, hit.HitTime, victim).DistanceFrom(hit.Position) < 10F)
                 .ToArray();
+
+            return relativeHits;
 
         }
 
