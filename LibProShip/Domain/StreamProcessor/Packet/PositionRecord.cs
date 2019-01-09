@@ -38,6 +38,11 @@ namespace LibProShip.Domain.StreamProcessor.Packet
         {
             return this.VehicleId.GetHashCode();
         }
+
+        public override string ToString()
+        {
+            return $"[{this.VehicleId}]{this.ControlPlayer.Name}";
+        }
     }
 
     public sealed class Player
@@ -77,6 +82,7 @@ namespace LibProShip.Domain.StreamProcessor.Packet
     public sealed class BattleRecord
     {
         public BattleRecord(long arenaId, Map map,
+            Vehicle controlVehicle,
             IEnumerable<Player> players,
             IEnumerable<Vehicle> vehicles, IEnumerable<PositionRecord> positionRecords,
             IEnumerable<TorpedoShootRecord> torpedoShootRecords,
@@ -85,16 +91,18 @@ namespace LibProShip.Domain.StreamProcessor.Packet
         {
             this.PositionRecords = positionRecords;
             this.Map = map;
+            this.ControlVehicle = controlVehicle;
             this.Players = players;
-            Vehicles = vehicles;
-            ArenaId = arenaId;
-            TorpedoShootRecords = torpedoShootRecords;
-            GunShootRecords = gunShootRecords;
-            HitRecords = hitRecords;
-            DamageRecords = damageRecords;
+            this.Vehicles = vehicles;
+            this.ArenaId = arenaId;
+            this.TorpedoShootRecords = torpedoShootRecords;
+            this.GunShootRecords = gunShootRecords;
+            this.HitRecords = hitRecords;
+            this.DamageRecords = damageRecords;
         }
 
         public Map Map { get; }
+        public Vehicle ControlVehicle { get; }
         public IEnumerable<Player> Players { get; }
         public IEnumerable<Vehicle> Vehicles { get; }
         public IEnumerable<PositionRecord> PositionRecords { get; }

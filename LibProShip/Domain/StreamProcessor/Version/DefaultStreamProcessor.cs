@@ -108,7 +108,8 @@ namespace LibProShip.Domain.StreamProcessor.Version
 
             if (Res == null)
             {
-                this.Res = new BattleRecord(this.ArenaId, this.Map, this.EntityIdPlayer.Values, this.Vehicles,
+                this.Res = new BattleRecord(this.ArenaId, this.Map, this.ControlVehicle, this.EntityIdPlayer.Values,
+                    this.Vehicles,
                     this.PositionRecords, this.TorpedoShootRecords, this.GunShootRecords, this.HitRecords,
                     this.DamageRecords);
             }
@@ -131,10 +132,13 @@ namespace LibProShip.Domain.StreamProcessor.Version
             var rotation = this.Read3D(reader);
             var isErrored = reader.ReadBoolean();
 
+            if (!this.EntityIdVehicle.ContainsKey(entityId))
+            {
+                return;
+            }
+
             var vehicle = this.EntityIdVehicle[entityId] ?? throw new Exception();
             this.PositionRecords.Add(new PositionRecord(time, vehicle, position, rotation));
-
-            throw new NotImplementedException();
         }
 
         private void EntityMethod(float time, BinaryReader reader)
@@ -279,6 +283,11 @@ namespace LibProShip.Domain.StreamProcessor.Version
                 this.EntityIdVehicle[vehicleId] = vehicle;
                 this.EntityIdVehicle[avatarId] = vehicle;
 
+                if (avatarId == this.AvatarId)
+                {
+                    this.ControlVehicle = vehicle;
+                }
+
                 switch (team)
                 {
                     case 0:
@@ -292,6 +301,8 @@ namespace LibProShip.Domain.StreamProcessor.Version
                 }
             }
         }
+
+        private Vehicle ControlVehicle { get; set; }
 
         public long ArenaId { get; set; }
 
