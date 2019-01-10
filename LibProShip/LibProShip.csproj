@@ -75,12 +75,13 @@
     <Compile Include="Domain\Analysis\Analyser\DamageSphereAnalyser.cs" />
     <Compile Include="Domain\Analysis\Analyser\Installer.cs" />
     <Compile Include="Domain\Analysis\AnalysisManager.cs" />
-    <Compile Include="Domain\Analysis\Dto\AnalysisCollection.cs" />
-    <Compile Include="Domain\Analysis\Dto\SphereChartResult.cs" />
-    <Compile Include="Domain\Analysis\Dto\SphereSample.cs" />
     <Compile Include="Domain\Analysis\IAnalysisManager.cs" />
     <Compile Include="Domain\Analysis\Installer.cs" />
     <Compile Include="Domain\Analysis\ISphereAnalyser.cs" />
+    <Compile Include="Domain\Analysis\Result\AnalysisCollection.cs" />
+    <Compile Include="Domain\Analysis\Result\Color.cs" />
+    <Compile Include="Domain\Analysis\Result\SphereChartResult.cs" />
+    <Compile Include="Domain\Analysis\Result\SpotSample.cs" />
     <Compile Include="Domain\Decoding\Decoder\BlowFishDecoder.cs" />
     <Compile Include="Domain\Decoding\Decoder\Installer.cs" />
     <Compile Include="Domain\Decoding\IDecoder.cs" />

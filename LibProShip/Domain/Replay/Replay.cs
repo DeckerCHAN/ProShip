@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using LibProShip.Domain.Analysis.Dto;
+using LibProShip.Domain.Analysis.Result;
 using LibProShip.Domain.Replay.Entities;
 
 namespace LibProShip.Domain.Replay
