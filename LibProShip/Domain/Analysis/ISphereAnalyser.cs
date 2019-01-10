@@ -1,4 +1,4 @@
-using LibProShip.Domain.Analysis.Dto;
+using LibProShip.Domain.Analysis.Result;
 using LibProShip.Domain.StreamProcessor.Packet;
 
 namespace LibProShip.Domain.Analysis

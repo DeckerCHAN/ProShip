@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace LibProShip.Domain.Analysis.Dto
+namespace LibProShip.Domain.Analysis.Result
 {
     public interface IAnalysisResult
     {

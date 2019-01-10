@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using LibProShip.Domain.Analysis.Dto;
+using LibProShip.Domain.Analysis.Result;
 using LibProShip.Domain.Events;
 using LibProShip.Infrastructure.Eventing;
 using LibProShip.Infrastructure.Logging;

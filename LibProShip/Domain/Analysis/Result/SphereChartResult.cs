@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using LibProShip.Domain.Analysis.Result;
 
-namespace LibProShip.Domain.Analysis.Dto
+namespace LibProShip.Domain.Analysis.Result
 {
     public sealed class SphereChartResult : ValueObject,IAnalysisResult
     {
@@ -9,11 +10,11 @@ namespace LibProShip.Domain.Analysis.Dto
             //For ORM
         }
 
-        public SphereChartResult(IDictionary<int, SphereSample> samples)
+        public SphereChartResult(IDictionary<int, SpotSample> samples)
         {
             this.Samples = samples;
         }
 
-        public IDictionary<int, SphereSample> Samples { get; private set; }
+        public IDictionary<int, SpotSample> Samples { get; private set; }
     }
 }

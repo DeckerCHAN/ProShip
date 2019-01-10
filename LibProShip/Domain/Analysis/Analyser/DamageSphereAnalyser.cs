@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI.WebControls;
-using LibProShip.Domain.Analysis.Dto;
+using LibProShip.Domain.Analysis.Result;
 using LibProShip.Domain.StreamProcessor.Packet;
 using LibProShip.Domain.StreamProcessor.Packet.Extensions;
 
