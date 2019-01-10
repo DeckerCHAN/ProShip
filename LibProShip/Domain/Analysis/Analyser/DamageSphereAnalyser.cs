@@ -23,6 +23,12 @@ namespace LibProShip.Domain.Analysis.Analyser
                 var hits =  this.GetRelativeHits(battleRecord.PositionRecords, battleRecord.HitRecords, battleRecord.DamageRecords,
                     damageRecord);
                 
+                //TODO: Here detect if same damage comes from two different type of projectile
+                var hit = hits.FirstOrDefault();
+                var sourceGun = battleRecord.GunShootRecords
+                    .Where(x => x.OwnerVehicle == hit.OwnerVehicle)
+                    .Where(x => x.)
+                    
                 
             }
             

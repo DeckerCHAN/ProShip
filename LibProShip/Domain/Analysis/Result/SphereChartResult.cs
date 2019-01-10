@@ -3,18 +3,20 @@ using LibProShip.Domain.Analysis.Result;
 
 namespace LibProShip.Domain.Analysis.Result
 {
-    public sealed class SphereChartResult : ValueObject,IAnalysisResult
+    public sealed class SphereChartResult : ValueObject, IAnalysisResult
     {
+        public SphereChartResult(IEnumerable<SpotSample> spotSamples, IEnumerable<PointSample> pointSamples)
+        {
+            SpotSamples = spotSamples;
+            PointSamples = pointSamples;
+        }
+
         public SphereChartResult()
         {
             //For ORM
         }
 
-        public SphereChartResult(IDictionary<int, SpotSample> samples)
-        {
-            this.Samples = samples;
-        }
-
-        public IDictionary<int, SpotSample> Samples { get; private set; }
+        public IEnumerable<SpotSample> SpotSamples { get; private set; }
+        public IEnumerable<PointSample> PointSamples { get; private set; }
     }
 }

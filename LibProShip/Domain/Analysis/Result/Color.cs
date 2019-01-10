@@ -14,9 +14,9 @@ namespace LibProShip.Domain.Analysis.Result
             //For ORM
         }
 
-        public double R { get; }
-        public double G { get; }
-        public double B { get; }
+        public double R { private set; get; }
+        public double G { private set; get; }
+        public double B { private set; get; }
         public static Color RED = new Color(255, 0, 0);
         public static Color GREEN = new Color(0, 255, 0);
         public static Color BLUE = new Color(0, 0, 255);
