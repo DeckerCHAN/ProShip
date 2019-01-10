@@ -27,12 +27,7 @@ namespace LibProShip.Domain.Analysis.Result
             Orbit = orbit;
         }
 
-        public SpotSample(Color color, double centralDistance, double orbit)
-        {
-            Color = color;
-            CentralDistance = centralDistance;
-            Orbit = orbit;
-        }
+    
 
         public SpotSample()
         {

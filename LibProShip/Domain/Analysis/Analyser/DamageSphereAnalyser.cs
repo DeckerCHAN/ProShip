@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI.WebControls;
@@ -18,24 +19,55 @@ namespace LibProShip.Domain.Analysis.Analyser
 
         public AnalysisCollection Analysis(BattleRecord battleRecord)
         {
+            var sp = new List<SpotSample>();
             foreach (var damageRecord in battleRecord.DamageRecords)
             {
-                var hits =  this.GetRelativeHits(battleRecord.PositionRecords, battleRecord.HitRecords, battleRecord.DamageRecords,
-                    damageRecord);
+                if (damageRecord.TargetVehicle != battleRecord.ControlVehicle)
+                {
+                    continue;
+                }
                 
+                var hits = this.GetRelativeHits(battleRecord.PositionRecords, battleRecord.HitRecords,
+                    battleRecord.DamageRecords,
+                    damageRecord);
+
                 //TODO: Here detect if same damage comes from two different type of projectile
                 var hit = hits.FirstOrDefault();
+                if (hit == null)
+                {
+                    continue;
+                }
+
                 var sourceGun = battleRecord.GunShootRecords
-                    .Where(x => x.OwnerVehicle == hit.OwnerVehicle)
-                    .Where(x => x.)
-                    
+                    .Where(x => x.OwnerVehicle == hit.OwnerVehicle).FirstOrDefault(x => x.ShotId == hit.ShotId);
+
+
+                if (sourceGun == null)
+                {
+                    continue;
+                }
+
+                var victimVehicle = damageRecord.TargetVehicle;
+                var sourceVehicle = sourceGun.OwnerVehicle;
+
+                var victimPosition = this.GetVehiclePosition(battleRecord.PositionRecords, hit.HitTime, victimVehicle).Value;
+                var sourcePosition = this.GetVehiclePosition(battleRecord.PositionRecords, sourceGun.ShootTime, sourceVehicle).Value;
+
+                var distance = victimPosition.position.DistanceFrom(sourcePosition.position);
+                var angleToVictim = 
                 
+                
+                var distanceFromVictim =
+                    this.GetVehiclePosition(battleRecord.PositionRecords, sourceGun.ShootTime, sourceVehicle)?.position.DistanceFrom();
+                
+                var spot =new SpotSample(String.Empty,damageRecord.Amount,Color.RED,  );
             }
-            
+
             throw new System.NotImplementedException();
         }
 
-        private IEnumerable<HitRecord> GetRelativeHits(IEnumerable<PositionRecord> positionRecords,IEnumerable<HitRecord> hitRecords, IEnumerable<DamageRecord> damageRecords,
+        private IEnumerable<HitRecord> GetRelativeHits(IEnumerable<PositionRecord> positionRecords,
+            IEnumerable<HitRecord> hitRecords, IEnumerable<DamageRecord> damageRecords,
             DamageRecord record)
         {
             var hitTime = record.Time;
@@ -50,19 +82,21 @@ namespace LibProShip.Domain.Analysis.Analyser
             var relativeHits = hitRecords
                 .Where(x => x.OwnerVehicle == record.SourceVehicle)
                 .Where(x => x.HitTime < hitTime && x.HitTime > lastDamageRecordTime && x.HitTime > hitTime - 5F)
-                .Where(hit => GetVehiclePosition(positionRecords, hit.HitTime, victim).DistanceFrom(hit.Position) < 10F)
+                .Where(hit =>
+                    this.GetVehiclePosition(positionRecords, hit.HitTime, victim)?.position.DistanceFrom(hit.Position) <
+                    10F)
                 .ToArray();
 
             return relativeHits;
-
         }
 
-        private Matrix3 GetVehiclePosition(IEnumerable<PositionRecord> positionRecords, float time, Vehicle vehicle)
+        private (Matrix3 position, Matrix3 rotation)? GetVehiclePosition(IEnumerable<PositionRecord> positionRecords,
+            float time, Vehicle vehicle)
         {
             var vehiclePositions = positionRecords
                 .Where(x => x.Vehicle == vehicle)
                 .ToList();
-            
+
             var lowerNearest = vehiclePositions
                 .Where(x => x.Time <= time)
                 .OrderByDescending(x => x.Time)
@@ -81,19 +115,24 @@ namespace LibProShip.Domain.Analysis.Analyser
             }
             else if (lowerNearest == null)
             {
-                return higherNearest.Position;
+                return (higherNearest.Position, higherNearest.Rotation);
             }
             else if (higherNearest == null)
             {
-                return lowerNearest.Position;
+                return (lowerNearest.Position, lowerNearest.Rotation);
             }
             else
             {
-                var x = (lowerNearest.Position.X + higherNearest.Position.X) / 2;
-                var y = (lowerNearest.Position.Y + higherNearest.Position.Y) / 2;
-                var z = (lowerNearest.Position.Z + higherNearest.Position.Z) / 2;
+                var px = (lowerNearest.Position.X + higherNearest.Position.X) / 2;
+                var py = (lowerNearest.Position.Y + higherNearest.Position.Y) / 2;
+                var pz = (lowerNearest.Position.Z + higherNearest.Position.Z) / 2;
 
-                return new Matrix3(x, y, z);
+                var rx = (lowerNearest.Rotation.X + higherNearest.Rotation.X) / 2;
+                var ry = (lowerNearest.Rotation.Y + higherNearest.Rotation.Y) / 2;
+                var rz = (lowerNearest.Rotation.Z + higherNearest.Rotation.Z) / 2;
+
+
+                return (new Matrix3(px, py, pz), new Matrix3(rx, ry, rz));
             }
         }
     }
