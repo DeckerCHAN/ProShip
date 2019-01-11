@@ -54,13 +54,13 @@ namespace LibProShip.Domain.Analysis.Analyser
                 var sourcePosition = this.GetVehiclePosition(battleRecord.PositionRecords, sourceGun.ShootTime, sourceVehicle).Value;
 
                 var distance = victimPosition.position.DistanceFrom(sourcePosition.position);
-                var angleToVictim = 
+                var angleToVictim = Math.Atan2(sourcePosition.position.X - victimPosition.position.X,
+                    sourcePosition.position.Y - victimPosition.position.Y);
+
+
+                var distanceFromVictim = sourcePosition.position.DistanceFrom(victimPosition.position);
                 
-                
-                var distanceFromVictim =
-                    this.GetVehiclePosition(battleRecord.PositionRecords, sourceGun.ShootTime, sourceVehicle)?.position.DistanceFrom();
-                
-                var spot =new SpotSample(String.Empty,damageRecord.Amount,Color.RED,  );
+//                var spot =new SpotSample(String.Empty,damageRecord.Amount,Color.RED,  );
             }
 
             throw new System.NotImplementedException();

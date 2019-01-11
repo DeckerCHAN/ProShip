@@ -508,7 +508,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
             var id1 = reader.ReadInt32();
             var id2 = reader.ReadInt32();
 
-            if (id2 == 0)
+            if (id2 == 0 && id1 != this.AvatarId)
             {
                 var position = this.Read3D(reader);
                 var rotation = this.Read3D(reader);
