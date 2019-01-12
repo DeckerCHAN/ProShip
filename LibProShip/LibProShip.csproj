@@ -107,10 +107,18 @@
     <Compile Include="Domain\Replay\ReplayVo.cs" />
     <Compile Include="Domain\Replay\ReplayRepository.cs" />
     <Compile Include="Domain\StreamProcessor\IStreamProcessor.cs" />
+    <Compile Include="Domain\StreamProcessor\Packet\BattleRecord.cs" />
+    <Compile Include="Domain\StreamProcessor\Packet\DamageRecord.cs" />
     <Compile Include="Domain\StreamProcessor\Packet\Extensions\Matrix3Extension.cs" />
+    <Compile Include="Domain\StreamProcessor\Packet\GunShootRecord.cs" />
+    <Compile Include="Domain\StreamProcessor\Packet\HitRecord.cs" />
     <Compile Include="Domain\StreamProcessor\Packet\Map.cs" />
     <Compile Include="Domain\StreamProcessor\Packet\Matrix3.cs" />
+    <Compile Include="Domain\StreamProcessor\Packet\Player.cs" />
     <Compile Include="Domain\StreamProcessor\Packet\PositionRecord.cs" />
+    <Compile Include="Domain\StreamProcessor\Packet\ProjectileShootRecord.cs" />
+    <Compile Include="Domain\StreamProcessor\Packet\TorpedoShootRecord.cs" />
+    <Compile Include="Domain\StreamProcessor\Packet\Vehicle.cs" />
     <Compile Include="Domain\StreamProcessor\Version\DefaultStreamProcessor.cs" />
     <Compile Include="Domain\ValueObject.cs" />
     <Compile Include="Infrastructure\BlowFish.cs" />
@@ -146,6 +154,7 @@
     <Compile Include="Infrastructure\Unpickling\Unpickler.cs" />
     <Compile Include="Infrastructure\Unpickling\UnpickleStack.cs" />
     <Compile Include="Infrastructure\Utils\HashUtils.cs" />
+    <Compile Include="Infrastructure\Utils\MathUtils.cs" />
     <Compile Include="Infrastructure\Utils\VersionUtils.cs" />
     <Compile Include="IService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -110,8 +110,11 @@ namespace LibProShip.Domain.StreamProcessor.Version
             {
                 this.Res = new BattleRecord(this.ArenaId, this.Map, this.ControlVehicle, this.EntityIdPlayer.Values,
                     this.Vehicles,
-                    this.PositionRecords, this.TorpedoShootRecords, this.GunShootRecords, this.HitRecords,
-                    this.DamageRecords);
+                    this.PositionRecords.Distinct(), 
+                    this.TorpedoShootRecords.Distinct(),
+                    this.GunShootRecords.Distinct(), 
+                    this.HitRecords.Distinct(),
+                    this.DamageRecords.Distinct());
             }
 
             return Res;

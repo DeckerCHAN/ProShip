@@ -12,10 +12,10 @@ namespace LibProShip.Domain.Analysis.Result
     {
         
         
-        public AnalysisCollection(IDictionary<string, string> properties, ICollection<SphereChartResult> sphereCharts)
+        public AnalysisCollection(IDictionary<string, string> properties, SphereChartResult sphereChart)
         {
             this.Properties = properties;
-            this.SphereCharts = sphereCharts;
+            this.SphereCharts = sphereChart;
         }
 
         public AnalysisCollection()
@@ -24,6 +24,6 @@ namespace LibProShip.Domain.Analysis.Result
         }
 
         public IDictionary<string, string> Properties { get; private set; }
-        public ICollection<SphereChartResult> SphereCharts { get; private set; }
+        public SphereChartResult SphereCharts { get; private set; }
     }
 }

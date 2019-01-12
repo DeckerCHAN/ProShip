@@ -26,7 +26,12 @@ namespace LibProShip.Domain.Analysis.Analyser
                 {
                     continue;
                 }
-                
+
+                if (Math.Abs(damageRecord.Amount) < 1)
+                {
+                    continue;
+                }
+
                 var hits = this.GetRelativeHits(battleRecord.PositionRecords, battleRecord.HitRecords,
                     battleRecord.DamageRecords,
                     damageRecord);
@@ -50,20 +55,30 @@ namespace LibProShip.Domain.Analysis.Analyser
                 var victimVehicle = damageRecord.TargetVehicle;
                 var sourceVehicle = sourceGun.OwnerVehicle;
 
-                var victimPosition = this.GetVehiclePosition(battleRecord.PositionRecords, hit.HitTime, victimVehicle).Value;
-                var sourcePosition = this.GetVehiclePosition(battleRecord.PositionRecords, sourceGun.ShootTime, sourceVehicle).Value;
+                var victimPosition = this.GetVehiclePosition(battleRecord.PositionRecords, hit.HitTime, victimVehicle)
+                    .Value;
+                var sourcePosition =
+                    this.GetVehiclePosition(battleRecord.PositionRecords, sourceGun.ShootTime, sourceVehicle).Value;
 
                 var distance = victimPosition.position.DistanceFrom(sourcePosition.position);
-                var angleToVictim = Math.Atan2(sourcePosition.position.X - victimPosition.position.X,
-                    sourcePosition.position.Y - victimPosition.position.Y);
+                var absluteAngleToVictim = Math.Atan2(sourcePosition.position.X - victimPosition.position.X,
+                    sourcePosition.position.Z - victimPosition.position.Z);
+
+                var relativeAngleToVictim = absluteAngleToVictim - victimPosition.rotation.X ;
 
 
                 var distanceFromVictim = sourcePosition.position.DistanceFrom(victimPosition.position);
-                
-//                var spot =new SpotSample(String.Empty,damageRecord.Amount,Color.RED,  );
+
+                var spot = new SpotSample(String.Empty, damageRecord.Amount, Color.RED, distanceFromVictim,
+                    relativeAngleToVictim);
+                sp.Add(spot);
             }
 
-            throw new System.NotImplementedException();
+            var proprites = new Dictionary<string, string>();
+            proprites["Title"] = "Damage Spots";
+
+            var col = new SphereChartResult(sp,new PointSample[0]);
+            return new AnalysisCollection(proprites, col);
         }
 
         private IEnumerable<HitRecord> GetRelativeHits(IEnumerable<PositionRecord> positionRecords,
@@ -121,19 +136,30 @@ namespace LibProShip.Domain.Analysis.Analyser
             {
                 return (lowerNearest.Position, lowerNearest.Rotation);
             }
+            else if (lowerNearest == higherNearest)
+            {
+                return (lowerNearest.Position, lowerNearest.Rotation);
+            }
             else
             {
                 var px = (lowerNearest.Position.X + higherNearest.Position.X) / 2;
                 var py = (lowerNearest.Position.Y + higherNearest.Position.Y) / 2;
                 var pz = (lowerNearest.Position.Z + higherNearest.Position.Z) / 2;
 
-                var rx = (lowerNearest.Rotation.X + higherNearest.Rotation.X) / 2;
-                var ry = (lowerNearest.Rotation.Y + higherNearest.Rotation.Y) / 2;
-                var rz = (lowerNearest.Rotation.Z + higherNearest.Rotation.Z) / 2;
+                var rx = MeanAngle(lowerNearest.Rotation.X, higherNearest.Rotation.X);
+                var ry = MeanAngle(lowerNearest.Rotation.Y, higherNearest.Rotation.Y);
+                var rz = MeanAngle(lowerNearest.Rotation.Z, higherNearest.Rotation.Z);
 
 
                 return (new Matrix3(px, py, pz), new Matrix3(rx, ry, rz));
             }
+        }
+
+        private static double MeanAngle(double r1, double r2)
+        {
+            var x = (Math.Cos(r1) + Math.Cos(r2)) / 2;
+            var y = (Math.Sin(r1) + Math.Sin(r2)) / 2;
+            return Math.Atan2(y, x);
         }
     }
 }
