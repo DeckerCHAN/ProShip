@@ -110,9 +110,9 @@ namespace LibProShip.Domain.StreamProcessor.Version
             {
                 this.Res = new BattleRecord(this.ArenaId, this.Map, this.ControlVehicle, this.EntityIdPlayer.Values,
                     this.Vehicles,
-                    this.PositionRecords.Distinct(), 
+                    this.PositionRecords.Distinct(),
                     this.TorpedoShootRecords.Distinct(),
-                    this.GunShootRecords.Distinct(), 
+                    this.GunShootRecords.Distinct(),
                     this.HitRecords.Distinct(),
                     this.DamageRecords.Distinct());
             }
@@ -221,7 +221,14 @@ namespace LibProShip.Domain.StreamProcessor.Version
 
             var vehicle = this.Vehicles.FirstOrDefault(x => x.VehicleId == ownerId) ?? throw new Exception();
 
-            this.HitRecords.Add(new HitRecord(vehicle, time, pos, shotId, hitType));
+            if (Enum.IsDefined(typeof(HitType), hitType))
+            {
+                this.HitRecords.Add(new HitRecord(vehicle, time, pos, shotId, (HitType) hitType));
+            }
+            else
+            {
+                throw new Exception($"Unknown hit type id {hitType}");
+            }
         }
 
 

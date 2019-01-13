@@ -5,6 +5,7 @@ using System.Web.UI.WebControls;
 using LibProShip.Domain.Analysis.Result;
 using LibProShip.Domain.StreamProcessor.Packet;
 using LibProShip.Domain.StreamProcessor.Packet.Extensions;
+using LibProShip.Infrastructure.Utils;
 
 namespace LibProShip.Domain.Analysis.Analyser
 {
@@ -61,10 +62,15 @@ namespace LibProShip.Domain.Analysis.Analyser
                     this.GetVehiclePosition(battleRecord.PositionRecords, sourceGun.ShootTime, sourceVehicle).Value;
 
                 var distance = victimPosition.position.DistanceFrom(sourcePosition.position);
-                var absluteAngleToVictim = Math.Atan2(sourcePosition.position.X - victimPosition.position.X,
-                    sourcePosition.position.Z - victimPosition.position.Z);
+                var absluteAngleToVictim = MathUtils.AngleFrom(
+                    victimPosition.position.X,
+                    victimPosition.position.Z,
+                    sourcePosition.position.X,
+                    sourcePosition.position.Z
+                );
 
-                var relativeAngleToVictim = absluteAngleToVictim - victimPosition.rotation.X ;
+                var relativeAngleToVictim = absluteAngleToVictim - victimPosition.rotation.X;
+
 
 
                 var distanceFromVictim = sourcePosition.position.DistanceFrom(victimPosition.position);
@@ -77,7 +83,7 @@ namespace LibProShip.Domain.Analysis.Analyser
             var proprites = new Dictionary<string, string>();
             proprites["Title"] = "Damage Spots";
 
-            var col = new SphereChartResult(sp,new PointSample[0]);
+            var col = new SphereChartResult(sp, new PointSample[0]);
             return new AnalysisCollection(proprites, col);
         }
 

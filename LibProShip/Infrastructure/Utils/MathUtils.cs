@@ -9,13 +9,13 @@ namespace LibProShip.Infrastructure.Utils
             var xDiff = x2 - x1;
             var yDiff = y2 - y1;
 
-            if ((xDiff*yDiff) < 0)
+            if (xDiff * yDiff < 0)
             {
                 var tempDiff = xDiff;
                 xDiff = yDiff;
                 yDiff = tempDiff;
             }
-            
+
             return Math.Atan2(xDiff,
                 yDiff);
         }

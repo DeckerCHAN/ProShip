@@ -1,8 +1,15 @@
 namespace LibProShip.Domain.StreamProcessor.Packet
 {
+    public enum HitType
+    {
+        OutOfRange = 0,
+        Hit = 4,
+        Miss = 12,
+    }
+
     public sealed class HitRecord
     {
-        public HitRecord(Vehicle ownerVehicle, float hitTime, Matrix3 position, int shotId, int hitType)
+        public HitRecord(Vehicle ownerVehicle, float hitTime, Matrix3 position, int shotId, HitType hitType)
         {
             this.Position = position;
             this.OwnerVehicle = ownerVehicle;
@@ -11,10 +18,10 @@ namespace LibProShip.Domain.StreamProcessor.Packet
             this.HitTime = hitTime;
         }
 
-        
+
         public static bool operator ==(HitRecord o1, HitRecord o2)
         {
-            return o1?.Equals((object)o2) ?? object.ReferenceEquals(o2, null);
+            return o1?.Equals((object) o2) ?? object.ReferenceEquals(o2, null);
         }
 
         public static bool operator !=(HitRecord o1, HitRecord o2)
@@ -46,6 +53,6 @@ namespace LibProShip.Domain.StreamProcessor.Packet
         public Matrix3 Position { get; }
         public Vehicle OwnerVehicle { get; }
         public int ShotId { get; }
-        public int HitType { get; }
+        public HitType HitType { get; }
     }
 }
