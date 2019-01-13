@@ -9,6 +9,13 @@ namespace LibProShip.Domain.Analysis.Analyser
 {
     public class DamageSpotAnalyser : SphereAnalyserBase
     {
+        public DamageSpotAnalyser()
+        {
+            Name = "Damage Spot Analyser";
+        }
+
+        public override string Name { get; }
+
         public override AnalysisCollection Analysis(BattleRecord battleRecord)
         {
             var sp = new List<SpotSample>();

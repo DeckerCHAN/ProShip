@@ -14,7 +14,7 @@ namespace LibProShip.Domain.Analysis.Analyser
         {
         }
 
-        public string Name { get; }
+        public abstract string Name { get; }
         public abstract AnalysisCollection Analysis(BattleRecord battleRecord);
 
 
