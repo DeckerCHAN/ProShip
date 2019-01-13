@@ -35,7 +35,7 @@ namespace LibProShip.Domain.Analysis.Analyser
 
                 var hits = this.GetRelativeHits(battleRecord.PositionRecords, battleRecord.HitRecords,
                     battleRecord.DamageRecords,
-                    damageRecord);
+                    damageRecord).Where(x => x.HitType == HitType.Hit);
 
                 //TODO: Here detect if same damage comes from two different type of projectile
                 var hit = hits.FirstOrDefault();
@@ -61,7 +61,7 @@ namespace LibProShip.Domain.Analysis.Analyser
                 var sourcePosition =
                     this.GetVehiclePosition(battleRecord.PositionRecords, sourceGun.ShootTime, sourceVehicle).Value;
 
-                var distance = victimPosition.position.DistanceFrom(sourcePosition.position);
+
                 var absluteAngleToVictim = MathUtils.AngleFrom(
                     victimPosition.position.X,
                     victimPosition.position.Z,
@@ -71,7 +71,17 @@ namespace LibProShip.Domain.Analysis.Analyser
 
                 var relativeAngleToVictim = absluteAngleToVictim - victimPosition.rotation.X;
 
+                if (relativeAngleToVictim > Math.PI)
+                {
+                    relativeAngleToVictim = -2 * Math.PI + relativeAngleToVictim;
+                }
 
+                if (relativeAngleToVictim < (-Math.PI))
+                {
+                    relativeAngleToVictim = 2 * Math.PI - relativeAngleToVictim;
+                }
+                
+        
 
                 var distanceFromVictim = sourcePosition.position.DistanceFrom(victimPosition.position);
 

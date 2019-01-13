@@ -3,8 +3,9 @@ namespace LibProShip.Domain.StreamProcessor.Packet
     public enum HitType
     {
         OutOfRange = 0,
-        Hit = 4,
-        Miss = 12,
+        Miss = 4,
+        HitOnTheMountain = 8,
+        Hit = 12,
     }
 
     public sealed class HitRecord

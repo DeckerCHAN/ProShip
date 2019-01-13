@@ -11,7 +11,7 @@ namespace LibProShip.Test.Integration
         {
             var decoder = new BlowFishDecoder();
 
-            var comb = decoder.DecodeReplay(new FileInfo("G:\\Python\\replays_unpack\\replays\\20181117_011834_PRSD210-Grozovoy-pr-40N_01_solomon_islands.wowsreplay"));
+            var comb = decoder.DecodeReplay(new FileInfo(@"D:\World_of_Warships\replays\20190113_154142_PBSD105-Acasta_01_solomon_islands.wowsreplay"));
 
             using (var file = new FileStream("binaryFileForTest.bin", FileMode.Create))
             {

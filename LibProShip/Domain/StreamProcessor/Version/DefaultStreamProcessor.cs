@@ -38,7 +38,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
         private IList<GunShootRecord> GunShootRecords { get; set; }
         private IList<HitRecord> HitRecords { get; set; }
         private IList<TorpedoShootRecord> TorpedoShootRecords { get; set; }
-        private BattleRecord Res { get; set; }
+        private BattleRecord ProcessResult { get; set; }
         private IDictionary<int, Player> EntityIdPlayer { get; set; }
         private IDictionary<int, Vehicle> EntityIdVehicle { get; set; }
         private int AvatarId { get; set; }
@@ -106,9 +106,9 @@ namespace LibProShip.Domain.StreamProcessor.Version
             }
 
 
-            if (Res == null)
+            if (this.ProcessResult == null)
             {
-                this.Res = new BattleRecord(this.ArenaId, this.Map, this.ControlVehicle, this.EntityIdPlayer.Values,
+                this.ProcessResult = new BattleRecord(this.ArenaId, this.Map, this.ControlVehicle, this.EntityIdPlayer.Values,
                     this.Vehicles,
                     this.PositionRecords.Distinct(),
                     this.TorpedoShootRecords.Distinct(),
@@ -117,7 +117,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
                     this.DamageRecords.Distinct());
             }
 
-            return Res;
+            return this.ProcessResult;
         }
 
         private void DecodeOtherPlayerPosition(float time, BinaryReader reader)
