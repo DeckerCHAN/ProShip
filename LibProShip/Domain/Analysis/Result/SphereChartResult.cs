@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using LibProShip.Domain.Analysis.Result;
 
 namespace LibProShip.Domain.Analysis.Result
 {

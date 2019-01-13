@@ -1,6 +1,3 @@
-using System;
-using System.Xml;
-
 namespace LibProShip.Domain.StreamProcessor.Packet
 {
     public sealed class PositionRecord

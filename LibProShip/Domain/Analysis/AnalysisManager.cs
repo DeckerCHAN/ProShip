@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using LibProShip.Domain.Analysis.Result;
 using LibProShip.Domain.Events;
 using LibProShip.Domain.Replay;
 using LibProShip.Domain.StreamProcessor;
