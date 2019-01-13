@@ -26,7 +26,7 @@ namespace LibProShip.Test.Unit
             //TODO: REMOVE THIS
 
 
-            var analyer = new DamageSphereAnalyser();
+            var analyer = new DamageSpotAnalyser();
             var result = analyer.Analysis(pac);
         }
     }

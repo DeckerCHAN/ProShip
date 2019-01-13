@@ -8,95 +8,43 @@ using LibProShip.Infrastructure.Utils;
 
 namespace LibProShip.Domain.Analysis.Analyser
 {
-    public class DamageSphereAnalyser : IAnalyser
+    public abstract class SphereAnalyserBase : IAnalyser
     {
-        public DamageSphereAnalyser()
+        public SphereAnalyserBase()
         {
-            this.Name = "Damage Sphere Analyser";
         }
 
         public string Name { get; }
+        public abstract AnalysisCollection Analysis(BattleRecord battleRecord);
 
-        public AnalysisCollection Analysis(BattleRecord battleRecord)
+
+        protected double GetRelativeRotationFromGunHit((Matrix3 position, Matrix3 rotation) victimPosition,
+            GunShootRecord shootRecord)
         {
-            var sp = new List<SpotSample>();
-            foreach (var damageRecord in battleRecord.DamageRecords)
+            var absluteAngleToVictim = MathUtils.AngleFrom2D(
+                victimPosition.position.X,
+                victimPosition.position.Z,
+                shootRecord.Position.X,
+                shootRecord.Position.Z
+            );
+
+            var relativeAngleToVictim = absluteAngleToVictim - victimPosition.rotation.X;
+
+            if (relativeAngleToVictim > Math.PI)
             {
-                if (damageRecord.TargetVehicle != battleRecord.ControlVehicle)
-                {
-                    continue;
-                }
-
-                if (Math.Abs(damageRecord.Amount) < 1)
-                {
-                    continue;
-                }
-
-                var hits = this.GetRelativeHits(battleRecord.PositionRecords, battleRecord.HitRecords,
-                    battleRecord.DamageRecords,
-                    damageRecord).Where(x => x.HitType == HitType.Hit);
-
-                //TODO: Here detect if same damage comes from two different type of projectile
-                var hit = hits.FirstOrDefault();
-                if (hit == null)
-                {
-                    continue;
-                }
-
-                var sourceGun = battleRecord.GunShootRecords
-                    .Where(x => x.OwnerVehicle == hit.OwnerVehicle).FirstOrDefault(x => x.ShotId == hit.ShotId);
-
-
-                if (sourceGun == null)
-                {
-                    continue;
-                }
-
-                var victimVehicle = damageRecord.TargetVehicle;
-                var sourceVehicle = sourceGun.OwnerVehicle;
-
-                var victimPosition = this.GetVehiclePosition(battleRecord.PositionRecords, hit.HitTime, victimVehicle)
-                    .Value;
-                var sourcePosition =
-                    this.GetVehiclePosition(battleRecord.PositionRecords, sourceGun.ShootTime, sourceVehicle).Value;
-
-
-                var absluteAngleToVictim = MathUtils.AngleFrom(
-                    victimPosition.position.X,
-                    victimPosition.position.Z,
-                    sourcePosition.position.X,
-                    sourcePosition.position.Z
-                );
-
-                var relativeAngleToVictim = absluteAngleToVictim - victimPosition.rotation.X;
-
-                if (relativeAngleToVictim > Math.PI)
-                {
-                    relativeAngleToVictim = -2 * Math.PI + relativeAngleToVictim;
-                }
-
-                if (relativeAngleToVictim < (-Math.PI))
-                {
-                    relativeAngleToVictim = 2 * Math.PI - relativeAngleToVictim;
-                }
-                
-        
-
-                var distanceFromVictim = sourcePosition.position.DistanceFrom(victimPosition.position);
-
-                var spot = new SpotSample(String.Empty, damageRecord.Amount, Color.RED, distanceFromVictim,
-                    relativeAngleToVictim);
-                sp.Add(spot);
+                relativeAngleToVictim = -2 * Math.PI + relativeAngleToVictim;
             }
 
-            var proprites = new Dictionary<string, string>();
-            proprites["Title"] = "Damage Spots";
+            if (relativeAngleToVictim < (-Math.PI))
+            {
+                relativeAngleToVictim = 2 * Math.PI - relativeAngleToVictim;
+            }
 
-            var col = new SphereChartResult(sp, new PointSample[0]);
-            return new AnalysisCollection(proprites, col);
+            return relativeAngleToVictim;
         }
 
-        private IEnumerable<HitRecord> GetRelativeHits(IEnumerable<PositionRecord> positionRecords,
+
+        protected IEnumerable<HitRecord> GetRelatedHits(IEnumerable<PositionRecord> positionRecords,
             IEnumerable<HitRecord> hitRecords, IEnumerable<DamageRecord> damageRecords,
             DamageRecord record)
         {
@@ -120,7 +68,7 @@ namespace LibProShip.Domain.Analysis.Analyser
             return relativeHits;
         }
 
-        private (Matrix3 position, Matrix3 rotation)? GetVehiclePosition(IEnumerable<PositionRecord> positionRecords,
+        protected (Matrix3 position, Matrix3 rotation)? GetVehiclePosition(IEnumerable<PositionRecord> positionRecords,
             float time, Vehicle vehicle)
         {
             var vehiclePositions = positionRecords

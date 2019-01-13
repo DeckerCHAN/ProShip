@@ -76,8 +76,8 @@
     <Compile Include="Application\DomainEventPublisher.cs" />
     <Compile Include="Application\Installer.cs" />
     <Compile Include="Application\VisualObject\ReplayAbstract.cs" />
-    <Compile Include="Domain\Analysis\Analyser\DamageSphereAnalyser.cs" />
-    <Compile Include="Domain\Analysis\Analyser\Installer.cs" />
+    <Compile Include="Domain\Analysis\Analyser\SphereAnalyserBase.cs" />
+    <Compile Include="Domain\Analysis\Analyser\DamageSpotAnalyser.cs" />
     <Compile Include="Domain\Analysis\AnalysisManager.cs" />
     <Compile Include="Domain\Analysis\IAnalysisManager.cs" />
     <Compile Include="Domain\Analysis\Installer.cs" />
