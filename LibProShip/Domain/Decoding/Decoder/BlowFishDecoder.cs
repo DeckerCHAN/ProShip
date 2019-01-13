@@ -114,14 +114,6 @@ namespace LibProShip.Domain.Decoding.Decoder
                 var data = new byte[resST.Length];
                 resST.Read(data, 0, data.Length);
 
-
-                using (var fileStream = new FileStream("replay.raw", FileMode.CreateNew))
-                {
-                    fileStream.Write(data, 0, data.Length);
-                    fileStream.Flush();
-                }
-
-
                 return new Tuple<Battle, byte[]>(battle, data);
             }
         }
