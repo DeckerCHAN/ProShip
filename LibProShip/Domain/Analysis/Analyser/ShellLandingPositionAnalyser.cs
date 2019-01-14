@@ -1,3 +1,4 @@
+using System.Linq;
 using LibProShip.Domain.Analysis.Result;
 using LibProShip.Domain.StreamProcessor.Packet;
 
@@ -14,6 +15,14 @@ namespace LibProShip.Domain.Analysis.Analyser
 
         public override AnalysisCollection Analysis(BattleRecord battleRecord)
         {
+            foreach (var vehicle in battleRecord.Vehicles)
+            {
+                var hits = battleRecord.GunShootRecords.Where(x => x.OwnerVehicle == vehicle);
+                //TODO: Continue plot points
+
+            }
+            
+
             throw new System.NotImplementedException();
         }
     }
