@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using LibProShip.Domain.StreamProcessor.Packet;
 using LibProShip.Infrastructure.Unpickling;
 
@@ -105,7 +106,8 @@ namespace LibProShip.Domain.StreamProcessor.Version
 
             if (this.ProcessResult == null)
             {
-                this.ProcessResult = new BattleRecord(this.ArenaId, this.Map, this.ControlVehicle, this.EntityIdPlayer.Values,
+                this.ProcessResult = new BattleRecord(this.ArenaId, this.Map, this.ControlVehicle,
+                    this.EntityIdPlayer.Values,
                     this.Vehicles,
                     this.PositionRecords.Distinct(),
                     this.TorpedoShootRecords.Distinct(),
@@ -490,9 +492,36 @@ namespace LibProShip.Domain.StreamProcessor.Version
         private void DecodeMap(BinaryReader binaryReader)
         {
             var spaceId = binaryReader.ReadInt32();
-            var arenaId = binaryReader.ReadInt32();
+            var arenaId = binaryReader.ReadInt64();
 
-            this.Map = new Map(arenaId, spaceId);
+            var hex = binaryReader.ReadBytes(17 * 8);
+
+            var nameLength = binaryReader.ReadInt32();
+            var name = binaryReader.ReadBytes(nameLength);
+
+            var nameString = Encoding.ASCII.GetString(name);
+
+            if (!nameString.Contains("spaces/"))
+            {
+                throw new Exception($"Unknown map name {nameString}");
+            }
+
+            nameString = nameString.Substring("spaces/".Length);
+
+            var nameSplit = nameString.Split(new char[] {'_'}, 2);
+            if (nameSplit.Length != 2)
+            {
+                throw new Exception($"Unknown to split map {nameString} to id and name.");
+            }
+
+            if (!int.TryParse(nameSplit[0], out var id))
+            {
+                throw new Exception($"Unable to convert {nameSplit[0]} to id.");
+            }
+            
+            
+
+            this.Map = new Map(id, nameSplit[1], arenaId, _mapIdConvertRatio[id], spaceId);
         }
 
 
@@ -558,5 +587,39 @@ namespace LibProShip.Domain.StreamProcessor.Version
                 return null;
             }
         }
+
+        private static IDictionary<int, double> _mapIdConvertRatio = new Dictionary<int, double>()
+        {
+            {34, 24D / 1600D},
+            {33, 24D / 1600D},
+            {01, 30D / 1600D},
+            {10, 30D / 1600D},
+            {04, 30D / 1600D},
+            {05, 36D / 1600D},
+            {08, 36D / 1600D},
+            {13, 36D / 1600D},
+            {17, 42D / 1600D},
+            {41, 42D / 1600D},
+            {15, 48D / 1600D},
+            {35, 48D / 1600D},
+            {46, 42D / 1600D},
+            {23, 42D / 1600D},
+            {42, 42D / 1600D},
+            {50, 42D / 1600D},
+            {20, 42D / 1600D},
+            {16, 48D / 1600D},
+            {22, 48D / 1600D},
+            {19, 42D / 1600D},
+            {28, 42D / 1600D},
+            {40, 42D / 1600D},
+            {18, 48D / 1600D},
+            {14, 42D / 1600D},
+            {38, 48D / 1600D},
+            {37, 48D / 1600D},
+            {44, 48D / 1600D},
+            {25, 48D / 1600D},
+            {45, 48D / 1600D},
+            {00, 36D / 1600D},
+        };
     }
 }

@@ -4,14 +4,18 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 {
     public sealed class Map
     {
-        public Map(int arenaId, int spaceId, double distanceConvertRatio)
+        public Map(int id, string name, long arenaId, double distanceConvertRatio, int spaceId)
         {
             this.ArenaId = arenaId;
             this.SpaceId = spaceId;
-            DistanceConvertRatio = distanceConvertRatio;
+            this.Id = id;
+            this.DistanceConvertRatio = distanceConvertRatio;
+            this.Name = name;
         }
 
-        public int ArenaId { get; }
+        public string Name { get; }
+        public int Id { get; }
+        public long ArenaId { get; }
         public int SpaceId { get; }
         public double DistanceConvertRatio { get; }
     }
