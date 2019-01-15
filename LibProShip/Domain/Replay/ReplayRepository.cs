@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Linq.Expressions;
 using LiteDB;
 
@@ -32,6 +33,12 @@ namespace LibProShip.Domain.Replay
         public IEnumerable<Replay> Find(Expression<Func<Replay, bool>> predict)
         {
             return this.Collection.Find(predict);
+        }
+
+        public IEnumerable<Replay> Page(int pageCount, int pageIndex)
+        {
+            throw new NotImplementedException();
+//            this.Collection.FindAll().OrderByDescending(x => x.)
         }
 
         public byte[] FindFile(Replay replays)

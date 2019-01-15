@@ -51,23 +51,13 @@ namespace LibProShip.Domain.Replay
                 }
             }).DefaultIfEmpty(null).FirstOrDefault(x => x != null);
 
-            if (decoded != null)
-            {
-                this.Logger.Info($"{repFile.Name} Processed");
-                var replay = new Replay(HashUtils.Hash(decoded.Item2), repFile.Name, decoded.Item1,
-                    new Dictionary<string, AnalysisCollection>());
+            if (decoded == null) return;
+            this.Logger.Info($"{repFile.Name} Processed");
+            var replay = new Replay(HashUtils.Hash(decoded.Item2), repFile.Name, decoded.Item1,
+                new Dictionary<string, AnalysisCollection>());
 
-                this.Repository.Insert(replay, decoded.Item2);
-                this.EventBus.Raise(new NewRawReplayEvent(this));
-            }
-            else
-            {
-                lock (this.UnProcessedFilePool)
-                {
-                    this.UnProcessedFilePool.Enqueue(repFile);
-                    this.Logger.Info($"Unable to process {repFile.Name} add back to the queue");
-                }
-            }
+            this.Repository.Insert(replay, decoded.Item2);
+            this.EventBus.Raise(new NewRawReplayEvent(this));
         }
 
 

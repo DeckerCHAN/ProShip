@@ -6,6 +6,7 @@ using Castle.Windsor;
 using Castle.Windsor.Installer;
 using LibProShip.Application.VisualObject;
 using LibProShip.Domain;
+using LibProShip.Domain.Replay;
 using LibProShip.Infrastructure.Eventing;
 
 namespace LibProShip.Application
@@ -42,8 +43,9 @@ namespace LibProShip.Application
             throw new NotImplementedException();
 //            return await Task.Run((() =>
 //            {
+//                this.Container.Resolve<ReplayRepository>().
 //
-//                var replayAbstractReplayAbstracts = this.Container.Resolve<IRepository<Replay>>().GetAll().Select(x =>
+//                var replayAbstractReplayAbstracts = this.Container.Resolve<ReplayRepository>().GetAll().Select(x =>
 //                    new ReplayAbstract(x.DateTime.ToString("f"),
 //                        x.Battle.PlayerVehicles[x.Battle.ControlPlayer].ToString()));
 //                

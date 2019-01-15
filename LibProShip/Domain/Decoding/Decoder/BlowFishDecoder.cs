@@ -51,8 +51,12 @@ namespace LibProShip.Domain.Decoding.Decoder
                 var mapName = jobj.SelectToken("mapDisplayName").ToObject<string>();
                 var duration = jobj.SelectToken("duration").ToObject<int>();
                 var vehiclesJToken = jobj.SelectToken("vehicles");
+                var time = DateTime.Parse(jobj.SelectToken("dateTime").ToObject<string>());
+
 
                 var vehicleSet = new List<Vehicle>();
+                
+                //TODO: filter version here
 
                 foreach (var child in vehiclesJToken.Children())
                 {
