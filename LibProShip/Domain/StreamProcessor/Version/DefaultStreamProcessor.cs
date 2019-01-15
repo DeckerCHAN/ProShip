@@ -108,7 +108,8 @@ namespace LibProShip.Domain.StreamProcessor.Version
             {
                 this.ProcessResult = new BattleRecord(this.ArenaId, this.Map, this.ControlVehicle,
                     this.EntityIdPlayer.Values,
-                    this.Vehicles,
+                    this.Enemy,
+                    this.Alies,
                     this.PositionRecords.Distinct(),
                     this.TorpedoShootRecords.Distinct(),
                     this.GunShootRecords.Distinct(),
@@ -300,10 +301,10 @@ namespace LibProShip.Domain.StreamProcessor.Version
                 switch (team)
                 {
                     case 0:
-                        this.Alies.Add(vehicle);
+                        this.Enemy.Add(vehicle);
                         break;
                     case 1:
-                        this.Enemy.Add(vehicle);
+                        this.Alies.Add(vehicle);
                         break;
                     default:
                         throw new Exception();

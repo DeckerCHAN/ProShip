@@ -29,5 +29,27 @@ namespace LibProShip.Test.Unit
             var analyer = new DamageSpotAnalyser();
             var result = analyer.Analysis(pac);
         }
+        
+        [Fact]
+        public void ShellPointAnalyserTest()
+        {
+            //TODO: REMOVE THIS
+
+            IStreamProcessor processor = new DefaultStreamProcessor();
+            byte[] data = null;
+            using (var st = new FileStream("binaryFileForTest.bin", FileMode.Open))
+            {
+                data = new byte[st.Length];
+                st.Read(data, 0, data.Length);
+            }
+
+            var pac = processor.ProcessStream(data);
+
+            //TODO: REMOVE THIS
+
+
+            var analyer = new ShellLandingPositionAnalyser();
+            var result = analyer.Analysis(pac);
+        }
     }
 }

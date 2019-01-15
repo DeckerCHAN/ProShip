@@ -10,9 +10,9 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 
     public sealed class HitRecord
     {
-        public HitRecord(Vehicle ownerVehicle, float hitTime, Matrix3 position, int shotId, HitType hitType)
+        public HitRecord(Vehicle ownerVehicle, float hitTime, Matrix3 hitPosition, int shotId, HitType hitType)
         {
-            this.Position = position;
+            this.HitPosition = hitPosition;
             this.OwnerVehicle = ownerVehicle;
             this.ShotId = shotId;
             this.HitType = hitType;
@@ -51,7 +51,7 @@ namespace LibProShip.Domain.StreamProcessor.Packet
         }
 
         public float HitTime { get; }
-        public Matrix3 Position { get; }
+        public Matrix3 HitPosition { get; }
         public Vehicle OwnerVehicle { get; }
         public int ShotId { get; }
         public HitType HitType { get; }

@@ -7,7 +7,8 @@ namespace LibProShip.Domain.StreamProcessor.Packet
         public BattleRecord(long arenaId, Map map,
             Vehicle controlVehicle,
             IEnumerable<Player> players,
-            IEnumerable<Vehicle> vehicles, IEnumerable<PositionRecord> positionRecords,
+            IEnumerable<Vehicle> enemyVehicles, IEnumerable<Vehicle> aliesVehicles,
+            IEnumerable<PositionRecord> positionRecords,
             IEnumerable<TorpedoShootRecord> torpedoShootRecords,
             IEnumerable<GunShootRecord> gunShootRecords, IEnumerable<HitRecord> hitRecords,
             IEnumerable<DamageRecord> damageRecords)
@@ -16,18 +17,20 @@ namespace LibProShip.Domain.StreamProcessor.Packet
             this.Map = map;
             this.ControlVehicle = controlVehicle;
             this.Players = players;
-            this.Vehicles = vehicles;
+            this.EnemyVehicles = enemyVehicles;
             this.ArenaId = arenaId;
             this.TorpedoShootRecords = torpedoShootRecords;
             this.GunShootRecords = gunShootRecords;
             this.HitRecords = hitRecords;
             this.DamageRecords = damageRecords;
+            AliesVehicles = aliesVehicles;
         }
 
         public Map Map { get; }
         public Vehicle ControlVehicle { get; }
         public IEnumerable<Player> Players { get; }
-        public IEnumerable<Vehicle> Vehicles { get; }
+        public IEnumerable<Vehicle> EnemyVehicles { get; }
+        public IEnumerable<Vehicle> AliesVehicles { get; }
         public IEnumerable<PositionRecord> PositionRecords { get; }
         public long ArenaId { get; }
         public IEnumerable<TorpedoShootRecord> TorpedoShootRecords { get; }

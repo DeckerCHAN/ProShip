@@ -18,7 +18,7 @@ namespace LibProShip.Domain.Analysis.Analyser
         public abstract AnalysisCollection Analysis(BattleRecord battleRecord);
 
 
-        protected double GetRelativeRotationFromGunHit((Matrix3 position, Matrix3 rotation) victimPosition,
+        protected virtual double GetRelativeRotationFromGunHit((Matrix3 position, Matrix3 rotation) victimPosition,
             GunShootRecord shootRecord)
         {
             var absluteAngleToVictim = MathUtils.AngleFrom2D(
@@ -61,14 +61,14 @@ namespace LibProShip.Domain.Analysis.Analyser
                 .Where(x => x.OwnerVehicle == record.SourceVehicle)
                 .Where(x => x.HitTime < hitTime && x.HitTime > lastDamageRecordTime && x.HitTime > hitTime - 5F)
                 .Where(hit =>
-                    this.GetVehiclePosition(positionRecords, hit.HitTime, victim)?.position.DistanceFrom(hit.Position) <
+                    this.GetVehiclePosition(positionRecords, hit.HitTime, victim)?.position.DistanceFrom(hit.HitPosition) <
                     10F)
                 .ToArray();
 
             return relativeHits;
         }
 
-        protected (Matrix3 position, Matrix3 rotation)? GetVehiclePosition(IEnumerable<PositionRecord> positionRecords,
+        protected virtual (Matrix3 position, Matrix3 rotation)? GetVehiclePosition(IEnumerable<PositionRecord> positionRecords,
             float time, Vehicle vehicle)
         {
             var vehiclePositions = positionRecords
@@ -109,20 +109,15 @@ namespace LibProShip.Domain.Analysis.Analyser
                 var py = (lowerNearest.Position.Y + higherNearest.Position.Y) / 2;
                 var pz = (lowerNearest.Position.Z + higherNearest.Position.Z) / 2;
 
-                var rx = MeanAngle(lowerNearest.Rotation.X, higherNearest.Rotation.X);
-                var ry = MeanAngle(lowerNearest.Rotation.Y, higherNearest.Rotation.Y);
-                var rz = MeanAngle(lowerNearest.Rotation.Z, higherNearest.Rotation.Z);
+                var rx = MathUtils.MeanAngle(lowerNearest.Rotation.X, higherNearest.Rotation.X);
+                var ry = MathUtils.MeanAngle(lowerNearest.Rotation.Y, higherNearest.Rotation.Y);
+                var rz = MathUtils.MeanAngle(lowerNearest.Rotation.Z, higherNearest.Rotation.Z);
 
 
                 return (new Matrix3(px, py, pz), new Matrix3(rx, ry, rz));
             }
         }
 
-        private static double MeanAngle(double r1, double r2)
-        {
-            var x = (Math.Cos(r1) + Math.Cos(r2)) / 2;
-            var y = (Math.Sin(r1) + Math.Sin(r2)) / 2;
-            return Math.Atan2(y, x);
-        }
+
     }
 }
