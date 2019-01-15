@@ -52,7 +52,6 @@ namespace LibProShip.Domain.Analysis.Analyser
                 }
 
                 var victimVehicle = damageRecord.TargetVehicle;
-                var sourceVehicle = sourceGun.OwnerVehicle;
 
                 var victimPosition = this.GetVehiclePosition(battleRecord.PositionRecords, hit.HitTime, victimVehicle)
                     .Value;
