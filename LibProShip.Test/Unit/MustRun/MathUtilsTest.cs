@@ -1,7 +1,7 @@
 using LibProShip.Infrastructure.Utils;
 using Xunit;
 
-namespace LibProShip.Test.Unit
+namespace LibProShip.Test.Unit.MustRun
 {
     public class MathUtilsTest
     {

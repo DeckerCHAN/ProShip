@@ -26,7 +26,6 @@ namespace LibProShip.Domain.Analysis.Analyser
             var results = new List<SphereChartResult>();
             foreach (var vehicle in allVehicles)
             {
-
                 var gunShotIds = battleRecord.GunShootRecords
                     .Where(x => x.OwnerVehicle == vehicle)
                     .Select(x => x.ShotId);
@@ -34,15 +33,20 @@ namespace LibProShip.Domain.Analysis.Analyser
                     .Where(x => x.OwnerVehicle == vehicle)
                     .Where(x => gunShotIds.Contains(x.ShotId));
 
+                var pointSamples = new List<PointSample>();
                 //TODO: Continue plot points
-                var points = gunHits.Select(gunHit =>
+                foreach (var gunHit in gunHits)
                 {
                     var gunShot = battleRecord.GunShootRecords.First(x => x.ShotId == gunHit.ShotId);
+                    var pointsInterested = battleRecord.PositionRecords.Where(x =>
+                        x.Time < gunHit.HitTime + VehicleFindTimeLimitation &&
+                        x.Time > gunHit.HitTime - VehicleFindTimeLimitation).ToArray();
+                    
                     var inRangeVehicles = allVehicles
                         .Where(x => x != vehicle) //There is no po
                         .Where(x =>
                         {
-                            var pos = this.GetVehiclePosition(battleRecord.PositionRecords, gunHit.HitTime, x);
+                            var pos = this.GetVehiclePosition(pointsInterested, gunHit.HitTime, x);
                             if (!pos.HasValue)
                             {
                                 return false;
@@ -56,18 +60,18 @@ namespace LibProShip.Domain.Analysis.Analyser
                     //No vehicle found
                     if (!inRangeVehicles.Any())
                     {
-                        return null;
+                        continue;
                     }
 
                     //Get cloest vehicle
                     var closetVehicle = inRangeVehicles.Count() == 1
                         ? inRangeVehicles.First()
                         : inRangeVehicles.OrderByDescending(x =>
-                            this.GetVehiclePosition(battleRecord.PositionRecords, gunHit.HitTime, x).Value.position
+                            this.GetVehiclePosition(pointsInterested, gunHit.HitTime, x).Value.position
                                 .DistanceFrom(gunHit.HitPosition)).First();
 
                     var victimPosition =
-                        this.GetVehiclePosition(battleRecord.PositionRecords, gunHit.HitTime, closetVehicle);
+                        this.GetVehiclePosition(pointsInterested, gunHit.HitTime, closetVehicle);
 
 
                     var relativeRotation = this.GetRelativeRotationFromGunHit(victimPosition.Value, gunShot);
@@ -78,28 +82,30 @@ namespace LibProShip.Domain.Analysis.Analyser
                     switch (gunHit.HitType)
                     {
                         case HitType.OutOfRange:
-                            throw new Exception("Gun shot never out of range.");
+                            throw new Exception("Gun shot should never out of range.");
                         case HitType.Miss:
-                            return new PointSample($"{closetVehicle.ControlPlayer.Name} Miss", relativeRotation,
-                                actualDistanceFromGunHitAndVictimVehicle, Color.BLUE);
+                            pointSamples.Add(new PointSample($"{closetVehicle.ControlPlayer.Name} Miss", relativeRotation,
+                                actualDistanceFromGunHitAndVictimVehicle, Color.BLUE));
+                            break;
                         case HitType.HitOnTheMountain:
                             //Man this is too effing rare
-                            return new PointSample($"{closetVehicle.ControlPlayer.Name} Mount", relativeRotation,
-                                actualDistanceFromGunHitAndVictimVehicle, Color.GREEN);
+                            pointSamples.Add(new PointSample($"{closetVehicle.ControlPlayer.Name} Mount", relativeRotation,
+                                actualDistanceFromGunHitAndVictimVehicle, Color.GREEN));
+                            break;
                         case HitType.Hit:
-                            return new PointSample($"{closetVehicle.ControlPlayer.Name} Hit", relativeRotation,
-                                actualDistanceFromGunHitAndVictimVehicle, Color.RED);
+                            pointSamples.Add(new PointSample($"{closetVehicle.ControlPlayer.Name} Hit", relativeRotation,
+                                actualDistanceFromGunHitAndVictimVehicle, Color.RED));
+                            break;
                         default:
                             throw new ArgumentOutOfRangeException($"Unknown {gunHit.HitType}.");
                     }
-                }).Where(x => x!= null).AsParallel().ToArray();
-                
-                
+                }
 
-                results.Add(new SphereChartResult(new List<SpotSample>(), points, vehicle.ControlPlayer.Name));
+
+                results.Add(new SphereChartResult(new SpotSample[]{}, pointSamples, vehicle.ControlPlayer.Name));
             }
-
-            var col = new AnalysisCollection(new Dictionary<string, string>() {{"Name", this.Name}}, results);
+            
+            var col = new AnalysisCollection(new Dictionary<string, string> {{"Name", this.Name}}, results);
             return col;
         }
 

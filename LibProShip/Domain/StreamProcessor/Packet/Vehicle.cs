@@ -2,18 +2,20 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 {
     public sealed class Vehicle
     {
-        public Vehicle(int vehicleId, Player controlPlayer)
+        public Vehicle(int vehicleId, Player controlPlayer, long shipId)
         {
             this.ControlPlayer = controlPlayer;
+            this.ShipId = shipId;
             this.VehicleId = vehicleId;
         }
-
+        
         public int VehicleId { get; }
+        public long ShipId { get; }
         public Player ControlPlayer { get; }
 
         private bool Equals(Vehicle other)
         {
-            return this.VehicleId == other.VehicleId && Equals(this.ControlPlayer, other.ControlPlayer);
+            return this.VehicleId == other.VehicleId;
         }
 
         public override bool Equals(object obj)
@@ -25,13 +27,10 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                return (this.VehicleId * 397) ^ (this.ControlPlayer != null ? this.ControlPlayer.GetHashCode() : 0);
-            }
+            return VehicleId;
         }
 
- 
+
         public static bool operator ==(Vehicle o1, Vehicle o2)
         {
             return o1?.Equals((object)o2) ?? object.ReferenceEquals(o2, null);

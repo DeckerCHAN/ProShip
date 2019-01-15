@@ -284,12 +284,12 @@ namespace LibProShip.Domain.StreamProcessor.Version
                 var id = playersState[0][1];
                 var vehicleId = playersState[27][1];
                 var shipId = playersState[29][1];
-                var player = new Player(name, id, shipId);
+                var player = new Player(name, id);
                 var team = playersState[30][1];
                 var avatarId = playersState[1][1];
                 this.EntityIdPlayer[avatarId] = player;
 
-                var vehicle = new Vehicle(vehicleId, player);
+                var vehicle = new Vehicle(vehicleId, player, shipId);
                 this.EntityIdVehicle[vehicleId] = vehicle;
                 this.EntityIdVehicle[avatarId] = vehicle;
 
