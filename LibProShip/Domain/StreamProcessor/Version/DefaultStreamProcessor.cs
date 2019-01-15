@@ -518,8 +518,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
             {
                 throw new Exception($"Unable to convert {nameSplit[0]} to id.");
             }
-            
-            
+
 
             this.Map = new Map(id, nameSplit[1], arenaId, _mapIdConvertRatio[id], spaceId);
         }
@@ -588,38 +587,38 @@ namespace LibProShip.Domain.StreamProcessor.Version
             }
         }
 
-        private static IDictionary<int, double> _mapIdConvertRatio = new Dictionary<int, double>()
+        private static readonly IReadOnlyDictionary<int, double> _mapIdConvertRatio = new Dictionary<int, double>
         {
-            {34, 24D / 1600D},
-            {33, 24D / 1600D},
-            {01, 30D / 1600D},
-            {10, 30D / 1600D},
-            {04, 30D / 1600D},
-            {05, 36D / 1600D},
-            {08, 36D / 1600D},
-            {13, 36D / 1600D},
-            {17, 42D / 1600D},
-            {41, 42D / 1600D},
-            {15, 48D / 1600D},
-            {35, 48D / 1600D},
-            {46, 42D / 1600D},
-            {23, 42D / 1600D},
-            {42, 42D / 1600D},
-            {50, 42D / 1600D},
-            {20, 42D / 1600D},
-            {16, 48D / 1600D},
-            {22, 48D / 1600D},
-            {19, 42D / 1600D},
-            {28, 42D / 1600D},
-            {40, 42D / 1600D},
-            {18, 48D / 1600D},
-            {14, 42D / 1600D},
-            {38, 48D / 1600D},
-            {37, 48D / 1600D},
-            {44, 48D / 1600D},
-            {25, 48D / 1600D},
-            {45, 48D / 1600D},
-            {00, 36D / 1600D},
+            {34, 24000D / 1600D},
+            {33, 24000D / 1600D},
+            {01, 30000D / 1600D},
+            {10, 30000D / 1600D},
+            {04, 30000D / 1600D},
+            {05, 36000D / 1600D},
+            {08, 36000D / 1600D},
+            {13, 36000D / 1600D},
+            {17, 42000D / 1600D},
+            {41, 42000D / 1600D},
+            {15, 48000D / 1600D},
+            {35, 48000D / 1600D},
+            {46, 42000D / 1600D},
+            {23, 42000D / 1600D},
+            {42, 42000D / 1600D},
+            {50, 42000D / 1600D},
+            {20, 42000D / 1600D},
+            {16, 48000D / 1600D},
+            {22, 48000D / 1600D},
+            {19, 42000D / 1600D},
+            {28, 42000D / 1600D},
+            {40, 42000D / 1600D},
+            {18, 48000D / 1600D},
+            {14, 42000D / 1600D},
+            {38, 48000D / 1600D},
+            {37, 48000D / 1600D},
+            {44, 48000D / 1600D},
+            {25, 48000D / 1600D},
+            {45, 48000D / 1600D},
+            {00, 36000D / 1600D},
         };
     }
 }

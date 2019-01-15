@@ -60,8 +60,8 @@ namespace LibProShip.Domain.Analysis.Analyser
                 var relativeAngleToVictim = this.GetRelativeRotationFromGunHit(victimPosition, sourceGun);
 
                 var distanceFromVictim = sourceGun.Position.DistanceFrom(victimPosition.position);
-
-                var spot = new SpotSample(string.Empty, damageRecord.Amount, Color.RED, distanceFromVictim,
+                
+                var spot = new SpotSample(string.Empty, damageRecord.Amount, Color.RED, distanceFromVictim * battleRecord.Map.DistanceConvertRatio,
                     relativeAngleToVictim);
                 sp.Add(spot);
             }
