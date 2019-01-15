@@ -45,19 +45,16 @@ namespace LibProShip.Domain.Decoding.Decoder
                 var areaInfoBytes = new byte [areaBlockSize];
                 f.Read(areaInfoBytes, 0, areaInfoBytes.Length);
                 var areaInfoString = Encoding.UTF8.GetString(areaInfoBytes);
-                var battle = JsonConvert.DeserializeObject<Battle>(areaInfoString);
                 var jobj = JObject.Parse(areaInfoString);
-                var version = jobj.SelectToken("clientVersionFromExe").ToObject<string>();
+                var version = jobj.SelectToken("clientVersionFromExe").ToObject<string>().Replace(',','.').Replace(" ",string.Empty);
                 var mapName = jobj.SelectToken("mapDisplayName").ToObject<string>();
                 var duration = jobj.SelectToken("duration").ToObject<int>();
                 var vehiclesJToken = jobj.SelectToken("vehicles");
-                var time = DateTime.Parse(jobj.SelectToken("dateTime").ToObject<string>());
+                var battleTime = DateTime.Parse(jobj.SelectToken("dateTime").ToObject<string>());
 
 
                 var vehicleSet = new List<Vehicle>();
                 
-                //TODO: filter version here
-
                 foreach (var child in vehiclesJToken.Children())
                 {
                     var playerId = child.SelectToken("id").ToObject<long>();
@@ -71,7 +68,7 @@ namespace LibProShip.Domain.Decoding.Decoder
                 }
 
 
-                battle = new Battle(version, duration, null, vehicleSet);
+                var battle = new Battle(version, duration, vehicleSet.Where(x => x.TeamId == 0).Select(x => x.Player).First(), vehicleSet,battleTime);
 
                 var zLibBytes = new byte[f.Length - f.Position];
                 f.Read(zLibBytes, 0, zLibBytes.Length);
