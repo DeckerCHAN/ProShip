@@ -35,10 +35,12 @@ namespace LibProShip.Domain.Replay
             return this.Collection.Find(predict);
         }
 
-        public IEnumerable<Replay> Page(int pageCount, int pageIndex)
+        public IEnumerable<Replay> Paging(int numberPrePage, int pageIndex)
         {
-            throw new NotImplementedException();
-//            this.Collection.FindAll().OrderByDescending(x => x.)
+            return this.Collection.FindAll()
+                .OrderByDescending(x => x.Battle.DateTime)
+                .Skip(numberPrePage * pageIndex)
+                .Take(numberPrePage);
         }
 
         public byte[] FindFile(Replay replays)
@@ -49,7 +51,7 @@ namespace LibProShip.Domain.Replay
                 return null;
             }
 
-            using (var stream  = found.OpenRead())
+            using (var stream = found.OpenRead())
             {
                 var res = new byte[stream.Length];
                 stream.Read(res, 0, res.Length);

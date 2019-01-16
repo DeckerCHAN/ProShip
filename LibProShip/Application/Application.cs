@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Castle.MicroKernel.Resolvers.SpecializedResolvers;
 using Castle.Windsor;
@@ -22,7 +24,7 @@ namespace LibProShip.Application
         public Application()
         {
             this.Container = new WindsorContainer();
-            this.Container.Kernel.Resolver.AddSubResolver(new CollectionResolver( this.Container.Kernel));
+            this.Container.Kernel.Resolver.AddSubResolver(new CollectionResolver(this.Container.Kernel));
 
             this.Container.Install(FromAssembly.InThisApplication());
             this.EventBus = this.Container.Resolve<IEventBus>();
@@ -38,20 +40,18 @@ namespace LibProShip.Application
             }
         }
 
-        public async Task<IReadOnlyCollection<ReplayAbstract>> GetReplays()
+        public async Task<IEnumerable<ReplayAbstract>> GetReplays(int itemsPrePage, int pageNumber)
         {
-            throw new NotImplementedException();
-//            return await Task.Run((() =>
-//            {
-//                this.Container.Resolve<ReplayRepository>().
-//
-//                var replayAbstractReplayAbstracts = this.Container.Resolve<ReplayRepository>().GetAll().Select(x =>
-//                    new ReplayAbstract(x.DateTime.ToString("f"),
-//                        x.Battle.PlayerVehicles[x.Battle.ControlPlayer].ToString()));
-//                
-//                return new ReadOnlyCollection<ReplayAbstract>(replayAbstractReplayAbstracts.ToList());
-//                
-//            }));
+            return await Task.Run(() =>
+                {
+                    var page = this.Container.Resolve<ReplayRepository>().Paging(itemsPrePage, pageNumber);
+                    var absPage = page.Select(x =>
+                        new ReplayAbstract(x.Battle.DateTime.ToString("f"),
+                            x.Battle.Vehicles.First(y => y.ShipId == x.Battle.ControlVehicle.ShipId).ToString(), x.Id));
+
+                    return absPage;
+                }
+            );
         }
     }
 }

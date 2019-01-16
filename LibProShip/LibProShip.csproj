@@ -160,6 +160,7 @@
     <Compile Include="IService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceBase.cs" />
+    <Compile Include="StaticResources\ShipDefination.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

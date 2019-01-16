@@ -67,8 +67,8 @@ namespace LibProShip.Domain.Decoding.Decoder
                     vehicleSet.Add(vehicle);
                 }
 
-
-                var battle = new Battle(version, duration, vehicleSet.Where(x => x.TeamId == 0).Select(x => x.Player).First(), vehicleSet,battleTime);
+                    
+                var battle = new Battle(version, duration, vehicleSet.First(x => x.TeamId == 0), vehicleSet,battleTime);
 
                 var zLibBytes = new byte[f.Length - f.Position];
                 f.Read(zLibBytes, 0, zLibBytes.Length);

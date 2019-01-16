@@ -22,21 +22,15 @@ namespace LibProShip.Domain.Replay.Entities
         public long ShipId { get; private set; }
 
         public Player Player { get; private set; }
-
-
-        public bool SameAs(Vehicle other)
-        {
-            throw new NotImplementedException();
-        }
     }
 
     public class Battle : ValueObject
     {
-        public Battle(string version, int duration, Player controlPlayer, ICollection<Vehicle> vehicles, DateTime dateTime)
+        public Battle(string version, int duration, Vehicle controlVehicle, ICollection<Vehicle> vehicles, DateTime dateTime)
         {
             this.Version = version;
             this.Duration = duration;
-            this.ControlPlayer = controlPlayer;
+            this.ControlVehicle = controlVehicle;
             this.Vehicles = vehicles;
             DateTime = dateTime;
         }
@@ -47,7 +41,7 @@ namespace LibProShip.Domain.Replay.Entities
         }
 
         public ICollection<Vehicle> Vehicles { get; private set; }
-        public Player ControlPlayer { get; private set; }
+        public Vehicle ControlVehicle { get; private set; }
         public string Version { get; private set; }
         public int Duration { get; private set; }
         public DateTime DateTime { get; private set; }
