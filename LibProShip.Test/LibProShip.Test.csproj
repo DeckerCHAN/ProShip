@@ -91,9 +91,9 @@
     <Compile Include="Unit\EventTest\EventBusTest.cs" />
     <Compile Include="Unit\FileMonitorTest.cs" />
     <Compile Include="Unit\MustRun\MathUtilsTest.cs" />
+    <Compile Include="Unit\MustRun\ResourceTest.cs" />
     <Compile Include="Unit\MustRun\VehicleTest.cs" />
     <Compile Include="Unit\PlayGround\Class1.cs" />
-    <Compile Include="Unit\ResourceTest.cs" />
     <Compile Include="Unit\TaskScheduallerTest.cs" />
     <Compile Include="Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

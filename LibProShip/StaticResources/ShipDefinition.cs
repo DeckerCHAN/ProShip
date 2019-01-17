@@ -7,8 +7,8 @@ namespace LibProShip.StaticResources
     {
         Unknown = 0,
         Destroyer = 1,
-        Cusier = 2,
-        BattleShip = 3,
+        Cruiser = 2,
+        Battleship = 3,
         AirCarrier = 4,
         Submarine = 5
     }
@@ -362,7 +362,7 @@ namespace LibProShip.StaticResources
             new ShipDefinition(4291704528L, "Isokaze", (ShipType) Enum.Parse(typeof(ShipType), "Destroyer"), 4),
             new ShipDefinition(4293801680L, "Tachibana", (ShipType) Enum.Parse(typeof(ShipType), "Destroyer"), 2),
             new ShipDefinition(4292753104L, "Umikaze", (ShipType) Enum.Parse(typeof(ShipType), "Destroyer"), 2),
-            new ShipDefinition(4292818736L, "Tirpitz", (ShipType) Enum.Parse(typeof(ShipType), "Battleship"), 8),
+            new ShipDefinition(4292818736L, "Tirpitz", ShipType.Battleship, 8),
         };
     }
 }
