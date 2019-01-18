@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -10,12 +9,12 @@ namespace LibProShip.Test.Integration
 {
     public class PythonPickelTest
     {
-        private readonly ITestOutputHelper TestOutputHelper;
-
         public PythonPickelTest(ITestOutputHelper testOutputHelper)
         {
             TestOutputHelper = testOutputHelper;
         }
+
+        private readonly ITestOutputHelper TestOutputHelper;
 
         [Fact]
         public void Test()
@@ -37,7 +36,7 @@ namespace LibProShip.Test.Integration
             TestOutputHelper.WriteLine("Writing pickle to '{0}'", pickleFilename);
 
             var pickler = new Pickler(true);
-            using (FileStream fos = new FileStream(pickleFilename, FileMode.Create))
+            using (var fos = new FileStream(pickleFilename, FileMode.Create))
             {
                 pickler.dump(map, fos);
             }
@@ -67,9 +66,9 @@ namespace LibProShip.Test.Integration
 
             TestOutputHelper.WriteLine("type: {0}", result.GetType());
             var list = (ArrayList) result;
-            int integer1 = (int) list[0];
-            int integer2 = (int) list[1];
-            int integer3 = (int) list[2];
+            var integer1 = (int) list[0];
+            var integer2 = (int) list[1];
+            var integer3 = (int) list[2];
             var tuple = (object[]) list[3];
             var set = (HashSet<object>) list[4];
             TestOutputHelper.WriteLine("1-3: integers: {0}, {1}, {2}", integer1, integer2, integer3);

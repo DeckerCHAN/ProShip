@@ -5,11 +5,11 @@ namespace LibProShip.Domain.Replay.Entities
 {
     public class Vehicle : ValueObject
     {
-        public Vehicle( int teamId, long shipId, Player player)
+        public Vehicle(int teamId, long shipId, Player player)
         {
-            this.TeamId = teamId;
-            this.ShipId = shipId;
-            this.Player = player;
+            TeamId = teamId;
+            ShipId = shipId;
+            Player = player;
         }
 
         public Vehicle()
@@ -17,21 +17,22 @@ namespace LibProShip.Domain.Replay.Entities
         }
 
 
-        public int TeamId { get; private set; }
+        public int TeamId { get; }
 
-        public long ShipId { get; private set; }
+        public long ShipId { get; }
 
-        public Player Player { get; private set; }
+        public Player Player { get; }
     }
 
     public class Battle : ValueObject
     {
-        public Battle(string version, int duration, Vehicle controlVehicle, ICollection<Vehicle> vehicles, DateTime dateTime)
+        public Battle(string version, int duration, Vehicle controlVehicle, ICollection<Vehicle> vehicles,
+            DateTime dateTime)
         {
-            this.Version = version;
-            this.Duration = duration;
-            this.ControlVehicle = controlVehicle;
-            this.Vehicles = vehicles;
+            Version = version;
+            Duration = duration;
+            ControlVehicle = controlVehicle;
+            Vehicles = vehicles;
             DateTime = dateTime;
         }
 
@@ -40,11 +41,10 @@ namespace LibProShip.Domain.Replay.Entities
             //For ORM
         }
 
-        public ICollection<Vehicle> Vehicles { get; private set; }
-        public Vehicle ControlVehicle { get; private set; }
-        public string Version { get; private set; }
-        public int Duration { get; private set; }
-        public DateTime DateTime { get; private set; }
-
+        public ICollection<Vehicle> Vehicles { get; }
+        public Vehicle ControlVehicle { get; }
+        public string Version { get; }
+        public int Duration { get; }
+        public DateTime DateTime { get; }
     }
 }

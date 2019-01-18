@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using LibProShip.Domain.Replay.Entities;
 using LibProShip.Infrastructure;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace LibProShip.Domain.Decoding.Decoder
@@ -20,7 +19,7 @@ namespace LibProShip.Domain.Decoding.Decoder
             var key = new byte[]
                 {0x29, 0xB7, 0xC9, 0x09, 0x38, 0x3F, 0x84, 0x88, 0xFA, 0x98, 0xEC, 0x4E, 0x13, 0x19, 0x79, 0xFB};
 
-            this.BlowFish = new Blowfish(key);
+            BlowFish = new Blowfish(key);
         }
 
 
@@ -46,7 +45,8 @@ namespace LibProShip.Domain.Decoding.Decoder
                 f.Read(areaInfoBytes, 0, areaInfoBytes.Length);
                 var areaInfoString = Encoding.UTF8.GetString(areaInfoBytes);
                 var jobj = JObject.Parse(areaInfoString);
-                var version = jobj.SelectToken("clientVersionFromExe").ToObject<string>().Replace(',','.').Replace(" ",string.Empty);
+                var version = jobj.SelectToken("clientVersionFromExe").ToObject<string>().Replace(',', '.')
+                    .Replace(" ", string.Empty);
                 var mapName = jobj.SelectToken("mapDisplayName").ToObject<string>();
                 var duration = jobj.SelectToken("duration").ToObject<int>();
                 var vehiclesJToken = jobj.SelectToken("vehicles");
@@ -54,7 +54,7 @@ namespace LibProShip.Domain.Decoding.Decoder
 
 
                 var vehicleSet = new List<Vehicle>();
-                
+
                 foreach (var child in vehiclesJToken.Children())
                 {
                     var playerId = child.SelectToken("id").ToObject<long>();
@@ -67,32 +67,29 @@ namespace LibProShip.Domain.Decoding.Decoder
                     vehicleSet.Add(vehicle);
                 }
 
-                    
-                var battle = new Battle(version, duration, vehicleSet.First(x => x.TeamId == 0), vehicleSet,battleTime);
+
+                var battle = new Battle(version, duration, vehicleSet.First(x => x.TeamId == 0), vehicleSet,
+                    battleTime);
 
                 var zLibBytes = new byte[f.Length - f.Position];
                 f.Read(zLibBytes, 0, zLibBytes.Length);
 
-                if (zLibBytes.Length % 8 != 0)
-                {
-                    //Something went wrong
-                    return null;
-                }
+                if (zLibBytes.Length % 8 != 0) return null;
 
 
                 var resStream = new MemoryStream();
                 var secondChunk = new ArraySegment<byte>(zLibBytes, 8, 8).ToArray();
-                secondChunk =  this.BlowFish.Decipher(secondChunk);
+                secondChunk = BlowFish.Decipher(secondChunk);
                 resStream.Write(secondChunk, 0, secondChunk.Length);
 
                 var previousChunk = new byte[8];
                 Array.Copy(secondChunk, previousChunk, 8);
 
 
-                for (int i = 16; i < zLibBytes.Length; i += 8)
+                for (var i = 16; i < zLibBytes.Length; i += 8)
                 {
                     var chunk = new ArraySegment<byte>(zLibBytes, i, 8).ToArray();
-                    chunk = this.BlowFish.Decipher(chunk);
+                    chunk = BlowFish.Decipher(chunk);
 
                     var thisChunkLong = BitConverter.ToInt64(chunk, 0);
                     var previousChunkLong = BitConverter.ToInt64(previousChunk, 0);
@@ -110,8 +107,8 @@ namespace LibProShip.Domain.Decoding.Decoder
                 resStream.Position = 0;
                 resStream.Read(resBytes, 0, resBytes.Length);
 
-                                    
-                var resST = this.Decompress(resBytes);
+
+                var resST = Decompress(resBytes);
                 var data = new byte[resST.Length];
                 resST.Read(data, 0, data.Length);
 

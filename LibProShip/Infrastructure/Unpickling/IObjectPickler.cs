@@ -11,15 +11,14 @@ using System.IO;
 
 namespace LibProShip.Infrastructure.Unpickling
 {
-	
-/// <summary>
-/// Interface for object Picklers used by the pickler, to pickle custom classes. 
-/// </summary>
-public interface IObjectPickler {
-	/**
-	 * Pickle an object.
-	 */
-	void pickle(dynamic o, Stream outs, Pickler currentPickler);
-}
-
+	/// <summary>
+	///     Interface for object Picklers used by the pickler, to pickle custom classes.
+	/// </summary>
+	public interface IObjectPickler
+    {
+        /**
+         * Pickle an object.
+         */
+        void pickle(dynamic o, Stream outs, Pickler currentPickler);
+    }
 }

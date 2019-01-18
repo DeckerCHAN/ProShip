@@ -10,7 +10,8 @@ namespace LibProShip.Application
     {
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
-            container.Register(Component.For<IInit, IDomainEventHandler<IDomainEvent>,DomainEventPublisher>().ImplementedBy<DomainEventPublisher>().LifestyleSingleton());
+            container.Register(Component.For<IInit, IDomainEventHandler<IDomainEvent>, DomainEventPublisher>()
+                .ImplementedBy<DomainEventPublisher>().LifestyleSingleton());
         }
     }
 }

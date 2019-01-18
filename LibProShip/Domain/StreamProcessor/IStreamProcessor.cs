@@ -6,5 +6,4 @@ namespace LibProShip.Domain.StreamProcessor
     {
         BattleRecord ProcessStream(byte[] data);
     }
-
 }

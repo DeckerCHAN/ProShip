@@ -6,7 +6,7 @@ namespace LibProShip.Domain.Events
     {
         public NewRawReplayEvent(object source)
         {
-            this.Source = source;
+            Source = source;
         }
 
 

@@ -6,7 +6,7 @@ namespace LibProShip.Domain.Events
     {
         public NewReplaySavedEvent(object source)
         {
-            this.Source = source;
+            Source = source;
         }
 
         public object Source { get; }

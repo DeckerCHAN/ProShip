@@ -4,8 +4,8 @@ namespace LibProShip.Domain.StreamProcessor.Packet
     {
         public Player(string name, int accountId)
         {
-            this.Name = name;
-            this.AccountId = accountId;
+            Name = name;
+            AccountId = accountId;
         }
 
         public string Name { get; }
@@ -13,7 +13,7 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 
         public static bool operator ==(Player p1, Player p2)
         {
-            return p1?.Equals((object)p2) ?? ReferenceEquals(p2, null);
+            return p1?.Equals((object) p2) ?? ReferenceEquals(p2, null);
         }
 
         public static bool operator !=(Player p1, Player p2)
@@ -23,7 +23,7 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 
         private bool Equals(Player other)
         {
-            return this.AccountId == other.AccountId;
+            return AccountId == other.AccountId;
         }
 
         public override bool Equals(object obj)

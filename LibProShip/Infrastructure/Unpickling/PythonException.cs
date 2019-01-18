@@ -17,47 +17,48 @@ using System.Text;
 namespace LibProShip.Infrastructure.Unpickling
 {
 	/// <summary>
-	/// Exception thrown that represents a certain Python exception.
+	///     Exception thrown that represents a certain Python exception.
 	/// </summary>
 	[SuppressMessage("ReSharper", "InconsistentNaming")]
-	public class PythonException : Exception
-	{
-		public string _pyroTraceback {get; set;}
-		public string PythonExceptionType {get; set;}
+    public class PythonException : Exception
+    {
+        public PythonException(string message) : base(message)
+        {
+        }
 
-		public PythonException(string message) : base(message)
-		{
-		}
+        // special constructor for UnicodeDecodeError
+        // ReSharper disable once UnusedMember.Global
+        public PythonException(string encoding, byte[] data, int i1, int i2, string message)
+            : base("UnicodeDecodeError: " + encoding + ": " + message)
+        {
+        }
 
-		// special constructor for UnicodeDecodeError
-		// ReSharper disable once UnusedMember.Global
-		public PythonException(string encoding, byte[] data, int i1, int i2, string message)
-			:base("UnicodeDecodeError: "+encoding+": "+message)
-		{
-		}
+        public string _pyroTraceback { get; set; }
+        public string PythonExceptionType { get; set; }
 
-		/// <summary>
-		/// for the unpickler to restore state
-		/// </summary>
-		// ReSharper disable once UnusedMember.Global
-		public void __setstate__(Hashtable values) {
-			if(!values.ContainsKey("_pyroTraceback"))
-				return;
-			object tb=values["_pyroTraceback"];
-			// if the traceback is a list of strings, create one string from it
-			var tbcoll = tb as ICollection;
-			if(tbcoll != null) {
-				StringBuilder sb=new StringBuilder();
-				foreach(object line in tbcoll) {
-					sb.Append(line);
-				}	
-				_pyroTraceback=sb.ToString();
-			} else {
-				_pyroTraceback=(string)tb;
-			}
-			//Console.WriteLine("pythonexception state set to:{0}",_pyroTraceback);
-		}
+        /// <summary>
+        ///     for the unpickler to restore state
+        /// </summary>
+        // ReSharper disable once UnusedMember.Global
+        public void __setstate__(Hashtable values)
+        {
+            if (!values.ContainsKey("_pyroTraceback"))
+                return;
+            var tb = values["_pyroTraceback"];
+            // if the traceback is a list of strings, create one string from it
+            var tbcoll = tb as ICollection;
+            if (tbcoll != null)
+            {
+                var sb = new StringBuilder();
+                foreach (var line in tbcoll) sb.Append(line);
+                _pyroTraceback = sb.ToString();
+            }
+            else
+            {
+                _pyroTraceback = (string) tb;
+            }
 
-	}
+            //Console.WriteLine("pythonexception state set to:{0}",_pyroTraceback);
+        }
+    }
 }
-

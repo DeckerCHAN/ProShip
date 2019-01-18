@@ -10,10 +10,6 @@ namespace LibProShip.Domain.Analysis.Analyser
 {
     public abstract class SphereAnalyserBase : IAnalyser
     {
-        public SphereAnalyserBase()
-        {
-        }
-
         public abstract string Name { get; }
         public abstract AnalysisCollection Analysis(BattleRecord battleRecord);
 
@@ -30,15 +26,9 @@ namespace LibProShip.Domain.Analysis.Analyser
 
             var relativeAngleToVictim = absluteAngleToVictim - victimPosition.rotation.X;
 
-            if (relativeAngleToVictim > Math.PI)
-            {
-                relativeAngleToVictim = -2 * Math.PI + relativeAngleToVictim;
-            }
+            if (relativeAngleToVictim > Math.PI) relativeAngleToVictim = -2 * Math.PI + relativeAngleToVictim;
 
-            if (relativeAngleToVictim < (-Math.PI))
-            {
-                relativeAngleToVictim = 2 * Math.PI - relativeAngleToVictim;
-            }
+            if (relativeAngleToVictim < -Math.PI) relativeAngleToVictim = 2 * Math.PI - relativeAngleToVictim;
 
             return relativeAngleToVictim;
         }
@@ -61,14 +51,15 @@ namespace LibProShip.Domain.Analysis.Analyser
                 .Where(x => x.OwnerVehicle == record.SourceVehicle)
                 .Where(x => x.HitTime < hitTime && x.HitTime > lastDamageRecordTime && x.HitTime > hitTime - 5F)
                 .Where(hit =>
-                    this.GetVehiclePosition(positionRecords, hit.HitTime, victim)?.position.DistanceFrom(hit.HitPosition) <
+                    GetVehiclePosition(positionRecords, hit.HitTime, victim)?.position.DistanceFrom(hit.HitPosition) <
                     10F)
                 .ToArray();
 
             return relativeHits;
         }
 
-        protected virtual (Matrix3 position, Matrix3 rotation)? GetVehiclePosition(IEnumerable<PositionRecord> positionRecords,
+        protected virtual (Matrix3 position, Matrix3 rotation)? GetVehiclePosition(
+            IEnumerable<PositionRecord> positionRecords,
             float time, Vehicle vehicle)
         {
             var vehiclePositions = positionRecords
@@ -87,37 +78,27 @@ namespace LibProShip.Domain.Analysis.Analyser
                 .DefaultIfEmpty(null)
                 .FirstOrDefault();
 
-            if (lowerNearest == null && higherNearest == null)
-            {
-                return null;
-            }
-            else if (lowerNearest == null)
-            {
-                return (higherNearest.Position, higherNearest.Rotation);
-            }
-            else if (higherNearest == null)
+            if (lowerNearest == null && higherNearest == null) return null;
+
+            if (lowerNearest == null) return (higherNearest.Position, higherNearest.Rotation);
+
+            if (higherNearest == null) return (lowerNearest.Position, lowerNearest.Rotation);
+
+            if (lowerNearest == higherNearest)
             {
                 return (lowerNearest.Position, lowerNearest.Rotation);
             }
-            else if (lowerNearest == higherNearest)
-            {
-                return (lowerNearest.Position, lowerNearest.Rotation);
-            }
-            else
-            {
-                var px = (lowerNearest.Position.X + higherNearest.Position.X) / 2;
-                var py = (lowerNearest.Position.Y + higherNearest.Position.Y) / 2;
-                var pz = (lowerNearest.Position.Z + higherNearest.Position.Z) / 2;
 
-                var rx = MathUtils.MeanAngle(lowerNearest.Rotation.X, higherNearest.Rotation.X);
-                var ry = MathUtils.MeanAngle(lowerNearest.Rotation.Y, higherNearest.Rotation.Y);
-                var rz = MathUtils.MeanAngle(lowerNearest.Rotation.Z, higherNearest.Rotation.Z);
+            var px = (lowerNearest.Position.X + higherNearest.Position.X) / 2;
+            var py = (lowerNearest.Position.Y + higherNearest.Position.Y) / 2;
+            var pz = (lowerNearest.Position.Z + higherNearest.Position.Z) / 2;
+
+            var rx = MathUtils.MeanAngle(lowerNearest.Rotation.X, higherNearest.Rotation.X);
+            var ry = MathUtils.MeanAngle(lowerNearest.Rotation.Y, higherNearest.Rotation.Y);
+            var rz = MathUtils.MeanAngle(lowerNearest.Rotation.Z, higherNearest.Rotation.Z);
 
 
-                return (new Matrix3(px, py, pz), new Matrix3(rx, ry, rz));
-            }
+            return (new Matrix3(px, py, pz), new Matrix3(rx, ry, rz));
         }
-
-
     }
 }

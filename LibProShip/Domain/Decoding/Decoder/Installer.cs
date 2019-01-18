@@ -16,9 +16,7 @@ namespace LibProShip.Domain.Decoding.Decoder
                 .Where(x => typeof(IDecoder).IsAssignableFrom(x));
 
             foreach (var decoderType in decoderTypes)
-            {
                 container.Register(Component.For<IDecoder>().ImplementedBy(decoderType).LifestyleTransient());
-            }
         }
     }
 }

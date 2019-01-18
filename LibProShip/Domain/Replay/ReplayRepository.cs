@@ -11,33 +11,38 @@ namespace LibProShip.Domain.Replay
     {
         public ReplayRepository()
         {
-            var fileName = $"RawReplay4.ldb";
-            this.Context = new LiteDatabase(fileName);
-            this.Collection = this.Context.GetCollection<Replay>();
-            this.FileStorage = this.Context.FileStorage;
+            var fileName = "RawReplay4.ldb";
+            Context = new LiteDatabase(fileName);
+            Collection = Context.GetCollection<Replay>();
+            FileStorage = Context.FileStorage;
         }
 
-        private LiteCollection<Replay> Collection { get; set; }
+        private LiteCollection<Replay> Collection { get; }
 
-        private LiteStorage FileStorage { get; set; }
+        private LiteStorage FileStorage { get; }
 
-        private LiteDatabase Context { get; set; }
+        private LiteDatabase Context { get; }
+
+        public void Dispose()
+        {
+            Context?.Dispose();
+        }
 
 
         public void Insert(Replay replay, byte[] replayFile)
         {
-            this.Collection.Insert(replay);
-            this.FileStorage.Upload(replay.Id, replay.FileName, new MemoryStream(replayFile));
+            Collection.Insert(replay);
+            FileStorage.Upload(replay.Id, replay.FileName, new MemoryStream(replayFile));
         }
 
         public IEnumerable<Replay> Find(Expression<Func<Replay, bool>> predict)
         {
-            return this.Collection.Find(predict);
+            return Collection.Find(predict);
         }
 
         public IEnumerable<Replay> Paging(int numberPrePage, int pageIndex)
         {
-            return this.Collection.FindAll()
+            return Collection.FindAll()
                 .OrderByDescending(x => x.Battle.DateTime)
                 .Skip(numberPrePage * pageIndex)
                 .Take(numberPrePage);
@@ -45,11 +50,8 @@ namespace LibProShip.Domain.Replay
 
         public byte[] FindFile(Replay replays)
         {
-            var found = this.FileStorage.FindById(replays.Id);
-            if (found == null)
-            {
-                return null;
-            }
+            var found = FileStorage.FindById(replays.Id);
+            if (found == null) return null;
 
             using (var stream = found.OpenRead())
             {
@@ -62,11 +64,6 @@ namespace LibProShip.Domain.Replay
         public void Update(Replay replay)
         {
             throw new NotImplementedException();
-        }
-
-        public void Dispose()
-        {
-            this.Context?.Dispose();
         }
     }
 }

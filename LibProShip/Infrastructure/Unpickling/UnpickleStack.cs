@@ -11,7 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace LibProShip.Infrastructure.Unpickling
 {
     /// <summary>
-    /// Helper type that represents the unpickler working stack. 
+    ///     Helper type that represents the unpickler working stack.
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class UnpickleStack
@@ -37,7 +37,7 @@ namespace LibProShip.Infrastructure.Unpickling
 
         public dynamic pop()
         {
-            int size = _stack.Count;
+            var size = _stack.Count;
             var result = _stack[size - 1];
             _stack.RemoveAt(size - 1);
             return result;
@@ -45,8 +45,8 @@ namespace LibProShip.Infrastructure.Unpickling
 
         public ArrayList pop_all_since_marker()
         {
-            ArrayList result = new ArrayList();
-            dynamic o = pop();
+            var result = new ArrayList();
+            var o = pop();
             while (!o.Equals(MARKER))
             {
                 result.Add(o);

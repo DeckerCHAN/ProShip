@@ -6,8 +6,8 @@ namespace LibProShip.Domain.Events
     {
         public AnalysisUpdatedEvent(object source, string replayId)
         {
-            this.Source = source;
-            this.ReplayId = replayId;
+            Source = source;
+            ReplayId = replayId;
         }
 
         public string ReplayId { get; }

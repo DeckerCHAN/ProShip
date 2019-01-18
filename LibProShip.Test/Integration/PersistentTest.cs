@@ -4,7 +4,6 @@ using LibProShip.Domain.Analysis.Result;
 using LibProShip.Domain.Replay;
 using LibProShip.Infrastructure.Utils;
 using Xunit;
-using Replay = LibProShip.Domain.Replay.Replay;
 
 namespace LibProShip.Test.Integration
 {
@@ -15,12 +14,13 @@ namespace LibProShip.Test.Integration
         {
             var rpData = new byte[] {12, 3, 45, 67, 1, 23, 42, 134, 55, 12};
 
-            var rp = new Replay(HashUtils.Hash(rpData), "abc.wowosreplay", null, new Dictionary<string, AnalysisCollection>());
+            var rp = new Replay(HashUtils.Hash(rpData), "abc.wowosreplay", null,
+                new Dictionary<string, AnalysisCollection>());
 
             var repo = new ReplayRepository();
             repo.Insert(rp, rpData);
 
-            var restoredRp = repo.Find((r => r.Id == rp.Id)).FirstOrDefault();
+            var restoredRp = repo.Find(r => r.Id == rp.Id).FirstOrDefault();
 
             Assert.Equal(restoredRp.AnalysisResults.Count, rp.AnalysisResults.Count);
 

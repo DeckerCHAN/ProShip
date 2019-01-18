@@ -10,18 +10,17 @@ using System.Collections.Generic;
 
 namespace LibProShip.Infrastructure.Unpickling.Objects
 {
-
-/// <summary>
-/// This object constructor creates sets. (HashSet&lt;object&gt;)
-/// </summary>
-public class SetConstructor : IObjectConstructor {
-
-	public dynamic construct(dynamic[] args) {
-		// create a HashSet, args=arraylist of stuff to put in it
-		ArrayList elements=(ArrayList)args[0];
-		IEnumerable<dynamic> array=elements.ToArray();
-		return new HashSet<dynamic>(array);
-	}
-}
-
+	/// <summary>
+	///     This object constructor creates sets. (HashSet&lt;object&gt;)
+	/// </summary>
+	public class SetConstructor : IObjectConstructor
+    {
+        public dynamic construct(dynamic[] args)
+        {
+            // create a HashSet, args=arraylist of stuff to put in it
+            var elements = (ArrayList) args[0];
+            IEnumerable<dynamic> array = elements.ToArray();
+            return new HashSet<dynamic>(array);
+        }
+    }
 }

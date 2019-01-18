@@ -4,10 +4,10 @@ namespace LibProShip.Domain.StreamProcessor.Packet
     {
         public PositionRecord(float time, Vehicle vehicle, Matrix3 position, Matrix3 rotation)
         {
-            this.Position = position;
-            this.Vehicle = vehicle;
-            this.Time = time;
-            this.Rotation = rotation;
+            Position = position;
+            Vehicle = vehicle;
+            Time = time;
+            Rotation = rotation;
         }
 
         public float Time { get; }
@@ -18,7 +18,7 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 
         private bool Equals(PositionRecord other)
         {
-            return this.Time.Equals(other.Time) && Equals(this.Vehicle, other.Vehicle);
+            return Time.Equals(other.Time) && Equals(Vehicle, other.Vehicle);
         }
 
         public override bool Equals(object obj)
@@ -32,21 +32,19 @@ namespace LibProShip.Domain.StreamProcessor.Packet
         {
             unchecked
             {
-                return (this.Time.GetHashCode() * 397) ^ (this.Vehicle != null ? this.Vehicle.GetHashCode() : 0);
+                return (Time.GetHashCode() * 397) ^ (Vehicle != null ? Vehicle.GetHashCode() : 0);
             }
         }
 
 
         public static bool operator ==(PositionRecord o1, PositionRecord o2)
         {
-            return o1?.Equals((object)o2) ?? object.ReferenceEquals(o2, null);
+            return o1?.Equals((object) o2) ?? ReferenceEquals(o2, null);
         }
 
         public static bool operator !=(PositionRecord o1, PositionRecord o2)
         {
             return !(o1 == o2);
         }
-
- 
     }
 }

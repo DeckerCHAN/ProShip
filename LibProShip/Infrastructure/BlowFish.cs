@@ -3,20 +3,20 @@ using System;
 namespace LibProShip.Infrastructure
 {
     /// <summary>
-    /// Class that provides blowfish encryption.
+    ///     Class that provides blowfish encryption.
     /// </summary>
     public class Blowfish
     {
         private const int N = 16;
 
-        static readonly uint[] _P =
+        private static readonly uint[] _P =
         {
             0x243f6a88, 0x85a308d3, 0x13198a2e, 0x03707344, 0xa4093822, 0x299f31d0,
             0x082efa98, 0xec4e6c89, 0x452821e6, 0x38d01377, 0xbe5466cf, 0x34e90c6c,
             0xc0ac29b7, 0xc97c50dd, 0x3f84d5b5, 0xb5470917, 0x9216d5d9, 0x8979fb1b
         };
 
-        static readonly uint[,] _S =
+        private static readonly uint[,] _S =
         {
             {
                 0xd1310ba6, 0x98dfb5ac, 0x2ffd72db, 0xd01adfb7, 0xb8e1afed, 0x6a267e96,
@@ -204,15 +204,15 @@ namespace LibProShip.Infrastructure
         private readonly uint[,] S;
 
         /// <summary>
-        /// Constructs and initializes a blowfish instance with the supplied key.
+        ///     Constructs and initializes a blowfish instance with the supplied key.
         /// </summary>
         /// <param name="key">The key to cipher with.</param>
         public Blowfish(byte[] key)
         {
             short i;
 
-            this.P = _P.Clone() as uint[];
-            this.S = _S.Clone() as uint[,];
+            P = _P.Clone() as uint[];
+            S = _S.Clone() as uint[,];
 
             short j = 0;
             for (i = 0; i < N + 2; ++i)
@@ -223,13 +223,10 @@ namespace LibProShip.Infrastructure
                 {
                     data = (data << 8) | key[j];
                     j++;
-                    if (j >= key.Length)
-                    {
-                        j = 0;
-                    }
+                    if (j >= key.Length) j = 0;
                 }
 
-                this.P[i] = this.P[i] ^ data;
+                P[i] = P[i] ^ data;
             }
 
             uint dataL = 0x00000000;
@@ -237,25 +234,22 @@ namespace LibProShip.Infrastructure
 
             for (i = 0; i < N + 2; i += 2)
             {
-                this.Encipher(ref dataL, ref dataR);
-                this.P[i] = dataL;
-                this.P[i + 1] = dataR;
+                Encipher(ref dataL, ref dataR);
+                P[i] = dataL;
+                P[i + 1] = dataR;
             }
 
             for (i = 0; i < 4; ++i)
+            for (j = 0; j < 256; j += 2)
             {
-                for (j = 0; j < 256; j += 2)
-                {
-                    this.Encipher(ref dataL, ref dataR);
+                Encipher(ref dataL, ref dataR);
 
-                    this.S[i, j] = dataL;
-                    this.S[i, j + 1] = dataR;
-                }
+                S[i, j] = dataL;
+                S[i, j + 1] = dataR;
             }
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="x"></param>
         /// <returns></returns>
@@ -269,16 +263,16 @@ namespace LibProShip.Infrastructure
             x >>= 8;
             var a = (ushort) (x & 0x00FF);
             //y = ((S[0][a] + S[1][b]) ^ S[2][c]) + S[3][d];
-            var y = this.S[0, a] + this.S[1, b];
-            y = y ^ this.S[2, c];
-            y = y + this.S[3, d];
+            var y = S[0, a] + S[1, b];
+            y = y ^ S[2, c];
+            y = y + S[3, d];
 
             return y;
         }
 
 
         /// <summary>
-        /// Encrypts a byte array.
+        ///     Encrypts a byte array.
         /// </summary>
         /// <param name="data">Origin data.</param>
         /// <returns></returns>
@@ -289,30 +283,30 @@ namespace LibProShip.Infrastructure
             var res = new byte[data.Length];
             Array.Copy(data, res, data.Length);
             uint xl, xr;
-            if ((length % 8) != 0)
+            if (length % 8 != 0)
                 throw new Exception("Invalid Length");
             for (var i = 0; i < length; i += 8)
             {
                 // Encode the data in 8 byte blocks.
                 xl = (uint) ((res[i] << 24) | (res[i + 1] << 16) | (res[i + 2] << 8) | res[i + 3]);
                 xr = (uint) ((res[i + 4] << 24) | (res[i + 5] << 16) | (res[i + 6] << 8) | res[i + 7]);
-                this.Encipher(ref xl, ref xr);
+                Encipher(ref xl, ref xr);
                 // Now Replace the data.
                 res[i] = (byte) (xl >> 24);
                 res[i + 1] = (byte) (xl >> 16);
                 res[i + 2] = (byte) (xl >> 8);
-                res[i + 3] = (byte) (xl);
+                res[i + 3] = (byte) xl;
                 res[i + 4] = (byte) (xr >> 24);
                 res[i + 5] = (byte) (xr >> 16);
                 res[i + 6] = (byte) (xr >> 8);
-                res[i + 7] = (byte) (xr);
+                res[i + 7] = (byte) xr;
             }
 
             return res;
         }
 
         /// <summary>
-        /// Encrypts 8 bytes of data (1 block)
+        ///     Encrypts 8 bytes of data (1 block)
         /// </summary>
         /// <param name="xl">The left part of the 8 bytes.</param>
         /// <param name="xr">The right part of the 8 bytes.</param>
@@ -328,8 +322,8 @@ namespace LibProShip.Infrastructure
 
             for (i = 0; i < N; ++i)
             {
-                Xl = Xl ^ this.P[i];
-                Xr = this.F(Xl) ^ Xr;
+                Xl = Xl ^ P[i];
+                Xr = F(Xl) ^ Xr;
 
                 temp = Xl;
                 Xl = Xr;
@@ -340,8 +334,8 @@ namespace LibProShip.Infrastructure
             Xl = Xr;
             Xr = temp;
 
-            Xr = Xr ^ this.P[N];
-            Xl = Xl ^ this.P[N + 1];
+            Xr = Xr ^ P[N];
+            Xl = Xl ^ P[N + 1];
 
             xl = Xl;
             xr = Xr;
@@ -349,7 +343,7 @@ namespace LibProShip.Infrastructure
 
 
         /// <summary>
-        /// Decrypts a byte array.
+        ///     Decrypts a byte array.
         /// </summary>
         /// <param name="data">data to decrypt</param>
         /// <exception cref="Exception"></exception>
@@ -360,30 +354,30 @@ namespace LibProShip.Infrastructure
             Array.Copy(data, res, data.Length);
 
             uint xl, xr;
-            if ((length % 8) != 0)
+            if (length % 8 != 0)
                 throw new Exception("Invalid Length");
             for (var i = 0; i < length; i += 8)
             {
                 // Encode the data in 8 byte blocks.
                 xl = (uint) ((res[i] << 24) | (res[i + 1] << 16) | (res[i + 2] << 8) | res[i + 3]);
                 xr = (uint) ((res[i + 4] << 24) | (res[i + 5] << 16) | (res[i + 6] << 8) | res[i + 7]);
-                this.Decipher(ref xl, ref xr);
+                Decipher(ref xl, ref xr);
                 // Now Replace the data.
                 res[i] = (byte) (xl >> 24);
                 res[i + 1] = (byte) (xl >> 16);
                 res[i + 2] = (byte) (xl >> 8);
-                res[i + 3] = (byte) (xl);
+                res[i + 3] = (byte) xl;
                 res[i + 4] = (byte) (xr >> 24);
                 res[i + 5] = (byte) (xr >> 16);
                 res[i + 6] = (byte) (xr >> 8);
-                res[i + 7] = (byte) (xr);
+                res[i + 7] = (byte) xr;
             }
-            
+
             return res;
         }
 
         /// <summary>
-        /// Decrypts 8 bytes of data (1 block)
+        ///     Decrypts 8 bytes of data (1 block)
         /// </summary>
         /// <param name="xl">The left part of the 8 bytes.</param>
         /// <param name="xr">The right part of the 8 bytes.</param>
@@ -399,8 +393,8 @@ namespace LibProShip.Infrastructure
 
             for (i = N + 1; i > 1; --i)
             {
-                Xl = Xl ^ this.P[i];
-                Xr = this.F(Xl) ^ Xr;
+                Xl = Xl ^ P[i];
+                Xr = F(Xl) ^ Xr;
 
                 /* Exchange Xl and Xr */
                 temp = Xl;
@@ -413,8 +407,8 @@ namespace LibProShip.Infrastructure
             Xl = Xr;
             Xr = temp;
 
-            Xr = Xr ^ this.P[1];
-            Xl = Xl ^ this.P[0];
+            Xr = Xr ^ P[1];
+            Xl = Xl ^ P[0];
 
             xl = Xl;
             xr = Xr;

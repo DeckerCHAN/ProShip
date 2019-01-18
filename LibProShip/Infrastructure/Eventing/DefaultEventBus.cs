@@ -7,21 +7,18 @@ namespace LibProShip.Infrastructure.Eventing
 {
     public sealed class DefaultEventBus : IEventBus
     {
-        public ICollection<Tuple<Type, object>> Handlers { get; }
-
         public DefaultEventBus()
         {
-            this.Handlers = new List<Tuple<Type, object>>();
+            Handlers = new List<Tuple<Type, object>>();
         }
+
+        public ICollection<Tuple<Type, object>> Handlers { get; }
 
 
         public void Unregister(IDomainEventHandler<IDomainEvent> handler)
         {
-            var foundHandlers = this.Handlers.Where(x => x.Item2 == handler);
-            foreach (var foundHandler in foundHandlers)
-            {
-                this.Handlers.Remove(foundHandler);
-            }
+            var foundHandlers = Handlers.Where(x => x.Item2 == handler);
+            foreach (var foundHandler in foundHandlers) Handlers.Remove(foundHandler);
         }
 
         public void Unregister(IDomainEvent domainEventToUnregister)
@@ -32,20 +29,18 @@ namespace LibProShip.Infrastructure.Eventing
 
         public void Register<T>(IDomainEventHandler<T> handler) where T : IDomainEvent
         {
-            this.Handlers.Add(new Tuple<Type, dynamic>(typeof(T), handler));
+            Handlers.Add(new Tuple<Type, dynamic>(typeof(T), handler));
         }
 
         public async void Raise<T>(T ie) where T : IDomainEvent
         {
-            var handlers = this.Handlers.Where(x => ie.GetType() == x.Item1).Select(x => x.Item2).ToList();
+            var handlers = Handlers.Where(x => ie.GetType() == x.Item1).Select(x => x.Item2).ToList();
             foreach (var eHandler in handlers)
-            {
-                if (eHandler is IDomainEventHandler<T> )
+                if (eHandler is IDomainEventHandler<T>)
                 {
                     var handler = (IDomainEventHandler<T>) eHandler;
-                    await Task.Run((() => { handler.Handle(ie); }));
+                    await Task.Run(() => { handler.Handle(ie); });
                 }
-            }
         }
     }
 }

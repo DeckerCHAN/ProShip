@@ -29,7 +29,7 @@ namespace LibProShip.Test.Unit
             var analyer = new DamageSpotAnalyser();
             var result = analyer.Analysis(pac);
         }
-        
+
         [Fact]
         public void ShellPointAnalyserTest()
         {

@@ -15,19 +15,6 @@ namespace LibProShip.StaticResources
 
     public sealed class ShipDefinition
     {
-        private ShipDefinition(long shipId, string shipName, ShipType shipType, int tier)
-        {
-            ShipId = shipId;
-            ShipName = shipName;
-            ShipType = shipType;
-            Tier = tier;
-        }
-
-        public long ShipId { get; }
-        public string ShipName { get; }
-        public ShipType ShipType { get; }
-        public int Tier { get; }
-
         public static readonly IEnumerable<ShipDefinition> ShipShipDefinitions = new[]
         {
             new ShipDefinition(3760109552L, "Alaska", (ShipType) Enum.Parse(typeof(ShipType), "Cruiser"), 9),
@@ -362,7 +349,20 @@ namespace LibProShip.StaticResources
             new ShipDefinition(4291704528L, "Isokaze", (ShipType) Enum.Parse(typeof(ShipType), "Destroyer"), 4),
             new ShipDefinition(4293801680L, "Tachibana", (ShipType) Enum.Parse(typeof(ShipType), "Destroyer"), 2),
             new ShipDefinition(4292753104L, "Umikaze", (ShipType) Enum.Parse(typeof(ShipType), "Destroyer"), 2),
-            new ShipDefinition(4292818736L, "Tirpitz", ShipType.Battleship, 8),
+            new ShipDefinition(4292818736L, "Tirpitz", ShipType.Battleship, 8)
         };
+
+        private ShipDefinition(long shipId, string shipName, ShipType shipType, int tier)
+        {
+            ShipId = shipId;
+            ShipName = shipName;
+            ShipType = shipType;
+            Tier = tier;
+        }
+
+        public long ShipId { get; }
+        public string ShipName { get; }
+        public ShipType ShipType { get; }
+        public int Tier { get; }
     }
 }

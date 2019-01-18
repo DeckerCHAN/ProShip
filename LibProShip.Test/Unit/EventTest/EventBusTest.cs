@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using LibProShip.Infrastructure.Eventing;
 using Xunit;
@@ -6,11 +7,6 @@ namespace LibProShip.Test.Unit.EventTest
 {
     public class EventBusTest
     {
-        public EventBusTest()
-        {
-        }
-
-
         [Fact]
         public void ItShouldHandleEventOnce()
         {
@@ -18,7 +14,7 @@ namespace LibProShip.Test.Unit.EventTest
             var handlerMock = new TestDomainEventHandler();
             eventBus.Register(handlerMock);
             eventBus.Raise(new TestEvent());
-            
+
             Thread.Sleep(5000);
 
             Assert.Equal(handlerMock.HandleTimes, 1);
@@ -27,22 +23,22 @@ namespace LibProShip.Test.Unit.EventTest
 
     internal class TestDomainEventHandler : IDomainEventHandler<TestEvent>
     {
-        public int HandleTimes { get; set; }
-
         public TestDomainEventHandler()
         {
-            this.HandleTimes = 0;
+            HandleTimes = 0;
         }
+
+        public int HandleTimes { get; set; }
 
         public void Handle(TestEvent e)
         {
-            this.HandleTimes++;
+            HandleTimes++;
         }
 
         public void Init()
         {
             //This should not be called
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 

@@ -8,6 +8,4 @@ namespace LibProShip.Domain.Analysis
         string Name { get; }
         AnalysisCollection Analysis(BattleRecord battleRecord);
     }
-
- 
 }

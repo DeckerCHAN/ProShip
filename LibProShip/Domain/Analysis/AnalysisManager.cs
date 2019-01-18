@@ -10,28 +10,28 @@ namespace LibProShip.Domain.Analysis
 {
     public class AnalysisManager : IAnalysisManager
     {
-        private readonly IEventBus EventBus;
-        private readonly IEnumerable<IStreamProcessor> StreamProcessors;
         private readonly IEnumerable<IAnalyser> Analysers;
+        private readonly IEventBus EventBus;
         private readonly ReplayRepository ReplayRepository;
+        private readonly IEnumerable<IStreamProcessor> StreamProcessors;
 
         public AnalysisManager(IEventBus eventBus,
             IEnumerable<IStreamProcessor> streamProcessors,
             IEnumerable<IAnalyser> analysers, ReplayRepository replayRepository)
         {
-            this.StreamProcessors = streamProcessors;
-            this.EventBus = eventBus;
-            this.Analysers = analysers;
-            this.ReplayRepository = replayRepository;
+            StreamProcessors = streamProcessors;
+            EventBus = eventBus;
+            Analysers = analysers;
+            ReplayRepository = replayRepository;
         }
 
         public void Analysis(string replayId, string analyserName)
         {
-            var replay = this.ReplayRepository.Find((r => r.Id == replayId)).FirstOrDefault() ??
+            var replay = ReplayRepository.Find(r => r.Id == replayId).FirstOrDefault() ??
                          throw new ArgumentException();
-            var data = this.ReplayRepository.FindFile(replay);
+            var data = ReplayRepository.FindFile(replay);
 
-            var st = this.StreamProcessors.Select(x =>
+            var st = StreamProcessors.Select(x =>
             {
                 try
                 {
@@ -45,13 +45,13 @@ namespace LibProShip.Domain.Analysis
             }).FirstOrDefault(x => x != null) ?? throw new Exception("Unable to process stream.");
 
 
-            var analyser = this.Analysers.FirstOrDefault(x => x.Name.Equals(analyserName)) ??
+            var analyser = Analysers.FirstOrDefault(x => x.Name.Equals(analyserName)) ??
                            throw new Exception($"Unable to find analyser {analyserName}");
 
             var result = analyser.Analysis(st);
             replay.AnalysisResults[analyser.Name] = result;
 
-            this.EventBus.Raise(new AnalysisUpdatedEvent(this, replayId));
+            EventBus.Raise(new AnalysisUpdatedEvent(this, replayId));
         }
     }
 }

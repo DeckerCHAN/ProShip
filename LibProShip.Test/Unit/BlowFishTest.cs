@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using LibProShip.Infrastructure;
 using Xunit;
-using CompressionMode = System.IO.Compression.CompressionMode;
 
 namespace LibProShip.Test.Unit
 {
@@ -14,19 +13,24 @@ namespace LibProShip.Test.Unit
     {
         public BlowFishTest()
         {
-            this.BlowFish = new Blowfish(new byte[]
+            BlowFish = new Blowfish(new byte[]
                 {0x29, 0xB7, 0xC9, 0x09, 0x38, 0x3F, 0x84, 0x88, 0xFA, 0x98, 0xEC, 0x4E, 0x13, 0x19, 0x79, 0xFB});
         }
 
         public Blowfish BlowFish { get; set; }
 
-        [Fact]
-        public async Task TestEncipherAndDecipher()
+
+        public Stream Decompress(byte[] data)
         {
-            var data = Encoding.ASCII.GetBytes("1234567812345678");
-            var encipherData =   this.BlowFish.Encipher(data);
-            var decipherData = this.BlowFish.Decipher(encipherData );
-            Assert.Equal("1234567812345678", Encoding.ASCII.GetString(decipherData));
+            var output = new MemoryStream();
+            using (var compressedStream = new MemoryStream(new ArraySegment<byte>(data, 2, data.Length - 2).ToArray()))
+            using (var zipStream = new DeflateStream(compressedStream, CompressionMode.Decompress))
+            {
+                zipStream.CopyTo(output);
+                zipStream.Close();
+                output.Position = 0;
+                return output;
+            }
         }
 
 
@@ -34,9 +38,9 @@ namespace LibProShip.Test.Unit
         public async Task DecipherFile()
         {
             using (var f =
-                (new FileStream(
+                new FileStream(
                     @"D:\World_of_Warships\replays\20181105_205142_PRSD210-Grozovoy-pr-40N_15_NE_north.wowsreplay",
-                    FileMode.Open)))
+                    FileMode.Open))
             {
                 var signtureBytes = new byte[4];
                 f.Read(signtureBytes, 0, 4);
@@ -71,17 +75,17 @@ namespace LibProShip.Test.Unit
                 var resStream = new MemoryStream();
 
                 var secondChunk = new ArraySegment<byte>(zLibBytes, 8, 8).ToArray();
-                this.BlowFish.Decipher(secondChunk);
+                BlowFish.Decipher(secondChunk);
                 resStream.Write(secondChunk, 0, secondChunk.Length);
 
                 var previousChunk = new byte[8];
                 Array.Copy(secondChunk, previousChunk, 8);
 
 
-                for (int i = 16; i < zLibBytes.Length; i += 8)
+                for (var i = 16; i < zLibBytes.Length; i += 8)
                 {
                     var chunk = new ArraySegment<byte>(zLibBytes, i, 8).ToArray();
-                    this.BlowFish.Decipher(chunk);
+                    BlowFish.Decipher(chunk);
 
                     var thisChunkLong = BitConverter.ToInt64(chunk, 0);
                     var previousChunkLong = BitConverter.ToInt64(previousChunk, 0);
@@ -100,7 +104,7 @@ namespace LibProShip.Test.Unit
                 resStream.Read(resBytes, 0, resBytes.Length);
 
 
-                var resST = this.Decompress(resBytes);
+                var resST = Decompress(resBytes);
 
 
                 var a = resST.Length;
@@ -116,18 +120,13 @@ namespace LibProShip.Test.Unit
             }
         }
 
-
-        public Stream Decompress(byte[] data)
+        [Fact]
+        public async Task TestEncipherAndDecipher()
         {
-            var output = new MemoryStream();
-            using (var compressedStream = new MemoryStream(new ArraySegment<byte>(data, 2, data.Length - 2).ToArray()))
-            using (var zipStream = new DeflateStream(compressedStream, CompressionMode.Decompress))
-            {
-                zipStream.CopyTo(output);
-                zipStream.Close();
-                output.Position = 0;
-                return output;
-            }
+            var data = Encoding.ASCII.GetBytes("1234567812345678");
+            var encipherData = BlowFish.Encipher(data);
+            var decipherData = BlowFish.Decipher(encipherData);
+            Assert.Equal("1234567812345678", Encoding.ASCII.GetString(decipherData));
         }
     }
 }

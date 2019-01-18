@@ -8,11 +8,12 @@ namespace LibProShip.Domain.Events
     {
         public FileChangeEvent(object source, ICollection<FileInfo> replayFiles)
         {
-            this.Source = source;
-            this.ReplayFiles = replayFiles;
+            Source = source;
+            ReplayFiles = replayFiles;
         }
 
-        public object Source { get; }
         public ICollection<FileInfo> ReplayFiles { get; }
+
+        public object Source { get; }
     }
 }

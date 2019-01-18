@@ -4,8 +4,8 @@ namespace LibProShip.Application.VisualObject
     {
         public ReplayAbstract(string dateString, string ship, string id)
         {
-            this.DateString = dateString;
-            this.Ship = ship;
+            DateString = dateString;
+            Ship = ship;
             this.id = id;
         }
 

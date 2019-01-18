@@ -8,28 +8,25 @@ namespace LibProShip.Application
     {
         private readonly IEventBus EventBus;
 
-        public event EventHandler NewReplaySaved;
-
         public DomainEventPublisher(IEventBus eventBus)
         {
-            this.EventBus = eventBus;
+            EventBus = eventBus;
         }
 
         public void Handle(IDomainEvent e)
         {
             if (e.GetType() == typeof(NewReplaySavedEvent))
             {
-                var handler = this.NewReplaySaved;
+                var handler = NewReplaySaved;
                 handler?.Invoke(this, new EventArgs());
-            }
-            else
-            {
             }
         }
 
         public void Init()
         {
-            this.EventBus.Register(this);
+            EventBus.Register(this);
         }
+
+        public event EventHandler NewReplaySaved;
     }
 }

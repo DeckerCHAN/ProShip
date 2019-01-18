@@ -10,16 +10,16 @@ using System;
 namespace LibProShip.Infrastructure.Unpickling
 {
 	/// <summary>
-	/// Exception thrown when something went wrong with pickling or unpickling.
+	///     Exception thrown when something went wrong with pickling or unpickling.
 	/// </summary>
 	public class PickleException : Exception
-	{
-		public PickleException(string message) : base(message)
-		{
-		}
+    {
+        public PickleException(string message) : base(message)
+        {
+        }
 
-		public PickleException(string message, Exception innerException) : base(message, innerException)
-		{
-		}
-	}
+        public PickleException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+    }
 }

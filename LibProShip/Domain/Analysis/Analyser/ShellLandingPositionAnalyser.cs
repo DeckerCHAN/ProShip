@@ -10,8 +10,8 @@ namespace LibProShip.Domain.Analysis.Analyser
 {
     public sealed class ShellLandingPositionAnalyser : SphereAnalyserBase
     {
-        private static double VehicleFindTimeLimitation = 5D;
-        private static double VehicleFindDistanceLimitation = 200D;
+        private static readonly double VehicleFindTimeLimitation = 5D;
+        private static readonly double VehicleFindDistanceLimitation = 200D;
 
         public ShellLandingPositionAnalyser()
         {
@@ -41,16 +41,13 @@ namespace LibProShip.Domain.Analysis.Analyser
                     var pointsInterested = battleRecord.PositionRecords.Where(x =>
                         x.Time < gunHit.HitTime + VehicleFindTimeLimitation &&
                         x.Time > gunHit.HitTime - VehicleFindTimeLimitation).ToArray();
-                    
+
                     var inRangeVehicles = allVehicles
                         .Where(x => x != vehicle) //There is no po
                         .Where(x =>
                         {
-                            var pos = this.GetVehiclePosition(pointsInterested, gunHit.HitTime, x);
-                            if (!pos.HasValue)
-                            {
-                                return false;
-                            }
+                            var pos = GetVehiclePosition(pointsInterested, gunHit.HitTime, x);
+                            if (!pos.HasValue) return false;
 
                             return pos.Value.position.DistanceFrom(gunHit.HitPosition) *
                                    battleRecord.Map.DistanceConvertRatio <
@@ -58,23 +55,20 @@ namespace LibProShip.Domain.Analysis.Analyser
                         }).ToArray();
 
                     //No vehicle found
-                    if (!inRangeVehicles.Any())
-                    {
-                        continue;
-                    }
+                    if (!inRangeVehicles.Any()) continue;
 
                     //Get cloest vehicle
                     var closetVehicle = inRangeVehicles.Count() == 1
                         ? inRangeVehicles.First()
                         : inRangeVehicles.OrderByDescending(x =>
-                            this.GetVehiclePosition(pointsInterested, gunHit.HitTime, x).Value.position
+                            GetVehiclePosition(pointsInterested, gunHit.HitTime, x).Value.position
                                 .DistanceFrom(gunHit.HitPosition)).First();
 
                     var victimPosition =
-                        this.GetVehiclePosition(pointsInterested, gunHit.HitTime, closetVehicle);
+                        GetVehiclePosition(pointsInterested, gunHit.HitTime, closetVehicle);
 
 
-                    var relativeRotation = this.GetRelativeRotationFromGunHit(victimPosition.Value, gunShot);
+                    var relativeRotation = GetRelativeRotationFromGunHit(victimPosition.Value, gunShot);
                     var actualDistanceFromGunHitAndVictimVehicle =
                         gunHit.HitPosition.DistanceFrom(victimPosition.Value.position) *
                         battleRecord.Map.DistanceConvertRatio;
@@ -84,16 +78,19 @@ namespace LibProShip.Domain.Analysis.Analyser
                         case HitType.OutOfRange:
                             throw new Exception("Gun shot should never out of range.");
                         case HitType.Miss:
-                            pointSamples.Add(new PointSample($"{closetVehicle.ControlPlayer.Name} Miss", relativeRotation,
+                            pointSamples.Add(new PointSample($"{closetVehicle.ControlPlayer.Name} Miss",
+                                relativeRotation,
                                 actualDistanceFromGunHitAndVictimVehicle, Color.BLUE));
                             break;
                         case HitType.HitOnTheMountain:
                             //Man this is too effing rare
-                            pointSamples.Add(new PointSample($"{closetVehicle.ControlPlayer.Name} Mount", relativeRotation,
+                            pointSamples.Add(new PointSample($"{closetVehicle.ControlPlayer.Name} Mount",
+                                relativeRotation,
                                 actualDistanceFromGunHitAndVictimVehicle, Color.GREEN));
                             break;
                         case HitType.Hit:
-                            pointSamples.Add(new PointSample($"{closetVehicle.ControlPlayer.Name} Hit", relativeRotation,
+                            pointSamples.Add(new PointSample($"{closetVehicle.ControlPlayer.Name} Hit",
+                                relativeRotation,
                                 actualDistanceFromGunHitAndVictimVehicle, Color.RED));
                             break;
                         default:
@@ -102,10 +99,10 @@ namespace LibProShip.Domain.Analysis.Analyser
                 }
 
 
-                results.Add(new SphereChartResult(new SpotSample[]{}, pointSamples, vehicle.ControlPlayer.Name));
+                results.Add(new SphereChartResult(new SpotSample[] { }, pointSamples, vehicle.ControlPlayer.Name));
             }
-            
-            var col = new AnalysisCollection(new Dictionary<string, string> {{"Name", this.Name}}, results);
+
+            var col = new AnalysisCollection(new Dictionary<string, string> {{"Name", Name}}, results);
             return col;
         }
 
@@ -130,35 +127,27 @@ namespace LibProShip.Domain.Analysis.Analyser
                 .DefaultIfEmpty(null)
                 .FirstOrDefault();
 
-            if (lowerNearest == null && higherNearest == null)
-            {
-                return null;
-            }
-            else if (lowerNearest == null)
-            {
-                return (higherNearest.Position, higherNearest.Rotation);
-            }
-            else if (higherNearest == null)
+            if (lowerNearest == null && higherNearest == null) return null;
+
+            if (lowerNearest == null) return (higherNearest.Position, higherNearest.Rotation);
+
+            if (higherNearest == null) return (lowerNearest.Position, lowerNearest.Rotation);
+
+            if (lowerNearest == higherNearest)
             {
                 return (lowerNearest.Position, lowerNearest.Rotation);
             }
-            else if (lowerNearest == higherNearest)
-            {
-                return (lowerNearest.Position, lowerNearest.Rotation);
-            }
-            else
-            {
-                var px = (lowerNearest.Position.X + higherNearest.Position.X) / 2;
-                var py = (lowerNearest.Position.Y + higherNearest.Position.Y) / 2;
-                var pz = (lowerNearest.Position.Z + higherNearest.Position.Z) / 2;
 
-                var rx = MathUtils.MeanAngle(lowerNearest.Rotation.X, higherNearest.Rotation.X);
-                var ry = MathUtils.MeanAngle(lowerNearest.Rotation.Y, higherNearest.Rotation.Y);
-                var rz = MathUtils.MeanAngle(lowerNearest.Rotation.Z, higherNearest.Rotation.Z);
+            var px = (lowerNearest.Position.X + higherNearest.Position.X) / 2;
+            var py = (lowerNearest.Position.Y + higherNearest.Position.Y) / 2;
+            var pz = (lowerNearest.Position.Z + higherNearest.Position.Z) / 2;
+
+            var rx = MathUtils.MeanAngle(lowerNearest.Rotation.X, higherNearest.Rotation.X);
+            var ry = MathUtils.MeanAngle(lowerNearest.Rotation.Y, higherNearest.Rotation.Y);
+            var rz = MathUtils.MeanAngle(lowerNearest.Rotation.Z, higherNearest.Rotation.Z);
 
 
-                return (new Matrix3(px, py, pz), new Matrix3(rx, ry, rz));
-            }
+            return (new Matrix3(px, py, pz), new Matrix3(rx, ry, rz));
         }
     }
 }

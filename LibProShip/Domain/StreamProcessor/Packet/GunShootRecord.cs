@@ -7,9 +7,9 @@ namespace LibProShip.Domain.StreamProcessor.Packet
             shootTime,
             shotId, salvoId, position, direction)
         {
-            this.TargetPosition = targetPosition;
-            this.HitDistance = hitDistance;
-            this.GunBarrelId = gunBarrelId;
+            TargetPosition = targetPosition;
+            HitDistance = hitDistance;
+            GunBarrelId = gunBarrelId;
         }
 
         public Matrix3 TargetPosition { get; }

@@ -8,12 +8,12 @@
 namespace LibProShip.Infrastructure.Unpickling
 {
 	/// <summary>
-	/// Exception thrown when the unpickler encountered an unknown or unimplemented opcode.
+	///     Exception thrown when the unpickler encountered an unknown or unimplemented opcode.
 	/// </summary>
 	public class InvalidOpcodeException : PickleException
-	{
-		public InvalidOpcodeException(string message) : base(message)
-		{
-		}
-	}
+    {
+        public InvalidOpcodeException(string message) : base(message)
+        {
+        }
+    }
 }

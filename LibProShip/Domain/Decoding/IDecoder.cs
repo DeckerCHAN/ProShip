@@ -7,6 +7,6 @@ namespace LibProShip.Domain.Decoding
     public interface IDecoder
     {
         //TODO: Use a proper wrapper
-        Tuple<Battle , byte []> DecodeReplay(FileInfo replayFile);
+        Tuple<Battle, byte[]> DecodeReplay(FileInfo replayFile);
     }
 }

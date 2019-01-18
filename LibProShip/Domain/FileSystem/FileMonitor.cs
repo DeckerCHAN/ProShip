@@ -10,52 +10,27 @@ namespace LibProShip.Domain.FileSystem
 {
     public class FileMonitor : IFileMonitor, IInit
     {
-        private readonly IEventBus EventBus;
         private readonly ISystemConfig Config;
-        private ISet<string> RaisedFiles { get; }
+        private readonly IEventBus EventBus;
 
         public FileMonitor(IEventBus eventBus, ISystemConfig config)
         {
-            this.EventBus = eventBus;
-            this.Config = config;
-            this.RaisedFiles = new HashSet<string>();
+            EventBus = eventBus;
+            Config = config;
+            RaisedFiles = new HashSet<string>();
         }
 
-        private void RaiseNewReplayEvent(ICollection<FileInfo> replayFiles)
-        {
-            var e = new FileChangeEvent(this, replayFiles);
-            this.EventBus.Raise(e);
-        }
-
-        private FileInfo[] GetAllReplayFile()
-        {
-            var files = this.Config.ReplayPath.GetFiles("*.wowsreplay");
-            return files;
-        }
-
-        private FileInfo[] FilterOutExistReplays(IEnumerable<FileInfo> files)
-        {
-            return files.Where(x => !this.RaisedFiles.Contains(x.Name)).ToArray();
-        }
-
-        private void SaveToProcessedReplay(IEnumerable<FileInfo> files)
-        {
-            var names = files.Select(x => x.Name);
-            this.RaisedFiles.UnionWith(names);
-        }
+        private ISet<string> RaisedFiles { get; }
 
 
         public void TriggerScan()
         {
-            var scannedFiles = this.GetAllReplayFile();
-            scannedFiles = this.FilterOutExistReplays(scannedFiles);
-            if (scannedFiles.Length == 0)
-            {
-                return;
-            }
+            var scannedFiles = GetAllReplayFile();
+            scannedFiles = FilterOutExistReplays(scannedFiles);
+            if (scannedFiles.Length == 0) return;
 
-            this.RaiseNewReplayEvent(scannedFiles);
-            this.SaveToProcessedReplay(scannedFiles);
+            RaiseNewReplayEvent(scannedFiles);
+            SaveToProcessedReplay(scannedFiles);
         }
 
         public void Init()
@@ -65,9 +40,32 @@ namespace LibProShip.Domain.FileSystem
                 while (true)
                 {
                     await Task.Delay(5000);
-                    this.TriggerScan();
+                    TriggerScan();
                 }
             });
+        }
+
+        private void RaiseNewReplayEvent(ICollection<FileInfo> replayFiles)
+        {
+            var e = new FileChangeEvent(this, replayFiles);
+            EventBus.Raise(e);
+        }
+
+        private FileInfo[] GetAllReplayFile()
+        {
+            var files = Config.ReplayPath.GetFiles("*.wowsreplay");
+            return files;
+        }
+
+        private FileInfo[] FilterOutExistReplays(IEnumerable<FileInfo> files)
+        {
+            return files.Where(x => !RaisedFiles.Contains(x.Name)).ToArray();
+        }
+
+        private void SaveToProcessedReplay(IEnumerable<FileInfo> files)
+        {
+            var names = files.Select(x => x.Name);
+            RaisedFiles.UnionWith(names);
         }
     }
 }

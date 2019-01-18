@@ -4,9 +4,9 @@ namespace LibProShip.Domain.StreamProcessor.Packet
     {
         public Matrix3(double x, double y, double z)
         {
-            this.X = x;
-            this.Y = y;
-            this.Z = z;
+            X = x;
+            Y = y;
+            Z = z;
         }
 
         public double X { get; }
@@ -16,18 +16,18 @@ namespace LibProShip.Domain.StreamProcessor.Packet
 
         public override string ToString()
         {
-            return $"x:{this.X} y:{this.Y} z:{this.Z}";
+            return $"x:{X} y:{Y} z:{Z}";
         }
 
         protected bool Equals(Matrix3 other)
         {
-            return this.X.Equals(other.X) && this.Y.Equals(other.Y) && this.Z.Equals(other.Z);
+            return X.Equals(other.X) && Y.Equals(other.Y) && Z.Equals(other.Z);
         }
 
 
         public static bool operator ==(Matrix3 o1, Matrix3 o2)
         {
-            return o1?.Equals((object)o2) ?? object.ReferenceEquals(o2, null);
+            return o1?.Equals((object) o2) ?? ReferenceEquals(o2, null);
         }
 
         public static bool operator !=(Matrix3 o1, Matrix3 o2)
@@ -39,7 +39,7 @@ namespace LibProShip.Domain.StreamProcessor.Packet
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((Matrix3) obj);
         }
 
@@ -47,9 +47,9 @@ namespace LibProShip.Domain.StreamProcessor.Packet
         {
             unchecked
             {
-                var hashCode = this.X.GetHashCode();
-                hashCode = (hashCode * 397) ^ this.Y.GetHashCode();
-                hashCode = (hashCode * 397) ^ this.Z.GetHashCode();
+                var hashCode = X.GetHashCode();
+                hashCode = (hashCode * 397) ^ Y.GetHashCode();
+                hashCode = (hashCode * 397) ^ Z.GetHashCode();
                 return hashCode;
             }
         }

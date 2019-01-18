@@ -4,11 +4,11 @@ namespace LibProShip.Domain.Replay
     {
         public ReplayDataContainer(Replay replay, byte[] replayData)
         {
-            this.ReplayData = replayData;
-            this.Replay = replay;
+            ReplayData = replayData;
+            Replay = replay;
         }
 
-        public Replay Replay { get; private set; }
-        public byte [] ReplayData { get; private set; }
+        public Replay Replay { get; }
+        public byte[] ReplayData { get; }
     }
 }

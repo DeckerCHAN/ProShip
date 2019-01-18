@@ -13,16 +13,16 @@ namespace LibProShip.Domain.StreamProcessor.Packet
             IEnumerable<GunShootRecord> gunShootRecords, IEnumerable<HitRecord> hitRecords,
             IEnumerable<DamageRecord> damageRecords)
         {
-            this.PositionRecords = positionRecords;
-            this.Map = map;
-            this.ControlVehicle = controlVehicle;
-            this.Players = players;
-            this.EnemyVehicles = enemyVehicles;
-            this.ArenaId = arenaId;
-            this.TorpedoShootRecords = torpedoShootRecords;
-            this.GunShootRecords = gunShootRecords;
-            this.HitRecords = hitRecords;
-            this.DamageRecords = damageRecords;
+            PositionRecords = positionRecords;
+            Map = map;
+            ControlVehicle = controlVehicle;
+            Players = players;
+            EnemyVehicles = enemyVehicles;
+            ArenaId = arenaId;
+            TorpedoShootRecords = torpedoShootRecords;
+            GunShootRecords = gunShootRecords;
+            HitRecords = hitRecords;
+            DamageRecords = damageRecords;
             AliesVehicles = aliesVehicles;
         }
 

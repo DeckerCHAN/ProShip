@@ -10,11 +10,6 @@ namespace LibProShip.Domain.StreamProcessor.Version
 {
     public sealed class DefaultStreamProcessor : IStreamProcessor
     {
-        public DefaultStreamProcessor()
-        {
-        }
-
-
         public BattleRecord ProcessStream(byte[] data)
         {
             var p = new InnerProcessor(data);
@@ -25,43 +20,82 @@ namespace LibProShip.Domain.StreamProcessor.Version
 
     internal class InnerProcessor
     {
+        private static readonly IReadOnlyDictionary<int, double> _mapIdConvertRatio = new Dictionary<int, double>
+        {
+            {34, 24000D / 1600D},
+            {33, 24000D / 1600D},
+            {01, 30000D / 1600D},
+            {10, 30000D / 1600D},
+            {04, 30000D / 1600D},
+            {05, 36000D / 1600D},
+            {08, 36000D / 1600D},
+            {13, 36000D / 1600D},
+            {17, 42000D / 1600D},
+            {41, 42000D / 1600D},
+            {15, 48000D / 1600D},
+            {35, 48000D / 1600D},
+            {46, 42000D / 1600D},
+            {23, 42000D / 1600D},
+            {42, 42000D / 1600D},
+            {50, 42000D / 1600D},
+            {20, 42000D / 1600D},
+            {16, 48000D / 1600D},
+            {22, 48000D / 1600D},
+            {19, 42000D / 1600D},
+            {28, 42000D / 1600D},
+            {40, 42000D / 1600D},
+            {18, 48000D / 1600D},
+            {14, 42000D / 1600D},
+            {38, 48000D / 1600D},
+            {37, 48000D / 1600D},
+            {44, 48000D / 1600D},
+            {25, 48000D / 1600D},
+            {45, 48000D / 1600D},
+            {00, 36000D / 1600D}
+        };
+
         private readonly byte[] Data;
-        private ICollection<Vehicle> Enemy { get; set; }
-        private ICollection<Vehicle> Alies { get; set; }
-
-        private ICollection<Vehicle> Vehicles => this.Enemy.Concat(this.Alies).ToList();
-
-        private IList<PositionRecord> PositionRecords { get; set; }
-        public IList<DamageRecord> DamageRecords { get; set; }
-        private IList<GunShootRecord> GunShootRecords { get; set; }
-        private IList<HitRecord> HitRecords { get; set; }
-        private IList<TorpedoShootRecord> TorpedoShootRecords { get; set; }
-        private BattleRecord ProcessResult { get; set; }
-        private IDictionary<int, Player> EntityIdPlayer { get; set; }
-        private IDictionary<int, Vehicle> EntityIdVehicle { get; set; }
-        private int AvatarId { get; set; }
-        private List<int> ShipEntityIds { get; set; }
-        public Map Map { get; private set; }
 
 
         public InnerProcessor(byte[] data)
         {
-            this.Data = data;
-            this.ShipEntityIds = new List<int>();
-            this.Alies = new List<Vehicle>();
-            this.Enemy = new List<Vehicle>();
-            this.EntityIdPlayer = new Dictionary<int, Player>();
-            this.EntityIdVehicle = new Dictionary<int, Vehicle>();
-            this.PositionRecords = new List<PositionRecord>();
-            this.DamageRecords = new List<DamageRecord>();
-            this.GunShootRecords = new List<GunShootRecord>();
-            this.TorpedoShootRecords = new List<TorpedoShootRecord>();
-            this.HitRecords = new List<HitRecord>();
+            Data = data;
+            ShipEntityIds = new List<int>();
+            Alies = new List<Vehicle>();
+            Enemy = new List<Vehicle>();
+            EntityIdPlayer = new Dictionary<int, Player>();
+            EntityIdVehicle = new Dictionary<int, Vehicle>();
+            PositionRecords = new List<PositionRecord>();
+            DamageRecords = new List<DamageRecord>();
+            GunShootRecords = new List<GunShootRecord>();
+            TorpedoShootRecords = new List<TorpedoShootRecord>();
+            HitRecords = new List<HitRecord>();
         }
+
+        private ICollection<Vehicle> Enemy { get; }
+        private ICollection<Vehicle> Alies { get; }
+
+        private ICollection<Vehicle> Vehicles => Enemy.Concat(Alies).ToList();
+
+        private IList<PositionRecord> PositionRecords { get; }
+        public IList<DamageRecord> DamageRecords { get; set; }
+        private IList<GunShootRecord> GunShootRecords { get; }
+        private IList<HitRecord> HitRecords { get; }
+        private IList<TorpedoShootRecord> TorpedoShootRecords { get; }
+        private BattleRecord ProcessResult { get; set; }
+        private IDictionary<int, Player> EntityIdPlayer { get; }
+        private IDictionary<int, Vehicle> EntityIdVehicle { get; }
+        private int AvatarId { get; set; }
+        private List<int> ShipEntityIds { get; }
+        public Map Map { get; private set; }
+
+        private Vehicle ControlVehicle { get; set; }
+
+        public long ArenaId { get; set; }
 
         public BattleRecord GetRecord()
         {
-            using (var st = new MemoryStream(this.Data))
+            using (var st = new MemoryStream(Data))
             using (var binaryReader = new BinaryReader(st))
             {
                 while (binaryReader.BaseStream.Position != binaryReader.BaseStream.Length)
@@ -76,27 +110,25 @@ namespace LibProShip.Domain.StreamProcessor.Version
                         switch (type)
                         {
                             case 0:
-                                this.BasePlayerCrate(reader);
+                                BasePlayerCrate(reader);
                                 break;
                             case 0x5:
-                                this.Entity(reader);
+                                Entity(reader);
                                 break;
                             case 0x8:
-                                this.EntityMethod(time, reader);
+                                EntityMethod(time, reader);
                                 break;
                             case 1:
-                                this.CellPlayerCreate(reader);
+                                CellPlayerCreate(reader);
                                 break;
                             case 10:
-                                this.DecodeOtherPlayerPosition(time, reader);
+                                DecodeOtherPlayerPosition(time, reader);
                                 break;
                             case 43:
-                                this.DecodeControlPlayerPosition(time, reader);
+                                DecodeControlPlayerPosition(time, reader);
                                 break;
                             case 0x27:
-                                this.DecodeMap(reader);
-                                break;
-                            default:
+                                DecodeMap(reader);
                                 break;
                         }
                     }
@@ -104,20 +136,18 @@ namespace LibProShip.Domain.StreamProcessor.Version
             }
 
 
-            if (this.ProcessResult == null)
-            {
-                this.ProcessResult = new BattleRecord(this.ArenaId, this.Map, this.ControlVehicle,
-                    this.EntityIdPlayer.Values,
-                    this.Enemy,
-                    this.Alies,
-                    this.PositionRecords.Distinct(),
-                    this.TorpedoShootRecords.Distinct(),
-                    this.GunShootRecords.Distinct(),
-                    this.HitRecords.Distinct(),
-                    this.DamageRecords.Distinct());
-            }
+            if (ProcessResult == null)
+                ProcessResult = new BattleRecord(ArenaId, Map, ControlVehicle,
+                    EntityIdPlayer.Values,
+                    Enemy,
+                    Alies,
+                    PositionRecords.Distinct(),
+                    TorpedoShootRecords.Distinct(),
+                    GunShootRecords.Distinct(),
+                    HitRecords.Distinct(),
+                    DamageRecords.Distinct());
 
-            return this.ProcessResult;
+            return ProcessResult;
         }
 
         private void DecodeOtherPlayerPosition(float time, BinaryReader reader)
@@ -130,18 +160,15 @@ namespace LibProShip.Domain.StreamProcessor.Version
             }
 
             var vehicleId = Convert.ToInt32(reader.ReadUInt32());
-            var position = this.Read3D(reader);
-            var positionError = this.Read3D(reader);
-            var rotation = this.Read3D(reader);
+            var position = Read3D(reader);
+            var positionError = Read3D(reader);
+            var rotation = Read3D(reader);
             var isErrored = reader.ReadBoolean();
 
-            if (!this.EntityIdVehicle.ContainsKey(entityId))
-            {
-                return;
-            }
+            if (!EntityIdVehicle.ContainsKey(entityId)) return;
 
-            var vehicle = this.EntityIdVehicle[entityId] ?? throw new Exception();
-            this.PositionRecords.Add(new PositionRecord(time, vehicle, position, rotation));
+            var vehicle = EntityIdVehicle[entityId] ?? throw new Exception();
+            PositionRecords.Add(new PositionRecord(time, vehicle, position, rotation));
         }
 
         private void EntityMethod(float time, BinaryReader reader)
@@ -149,30 +176,24 @@ namespace LibProShip.Domain.StreamProcessor.Version
             var entityId = Convert.ToInt32(reader.ReadUInt32());
             var messageId = Convert.ToInt32(reader.ReadUInt32());
 
-            if (entityId == this.AvatarId)
-            {
+            if (entityId == AvatarId)
                 switch (messageId)
                 {
                     //Avatar 
                     case 84:
-                        this.AddPlayer(reader);
+                        AddPlayer(reader);
                         break;
                     case 73:
-                        this.AddGunAndTorpedo(time, reader);
-                        break;
-                    default:
+                        AddGunAndTorpedo(time, reader);
                         break;
                 }
-            }
-            else if (this.Vehicles.Select(x => x.VehicleId).Contains(entityId))
-            {
+            else if (Vehicles.Select(x => x.VehicleId).Contains(entityId))
                 switch (messageId)
                 {
                     case 51:
-                        this.AddDamage(time, entityId, reader);
+                        AddDamage(time, entityId, reader);
                         break;
                 }
-            }
         }
 
         private void AddDamage(float time, int entityId, BinaryReader reader)
@@ -185,8 +206,8 @@ namespace LibProShip.Domain.StreamProcessor.Version
                 var vehicleId = reader.ReadInt32();
                 var damageAmount = reader.ReadSingle();
 
-                this.DamageRecords.Add(new DamageRecord(time, this.EntityIdVehicle[vehicleId],
-                    this.EntityIdVehicle[entityId], damageAmount));
+                DamageRecords.Add(new DamageRecord(time, EntityIdVehicle[vehicleId],
+                    EntityIdVehicle[entityId], damageAmount));
             }
         }
 
@@ -194,66 +215,53 @@ namespace LibProShip.Domain.StreamProcessor.Version
         {
             var dataLength = reader.ReadInt32();
             var shotLength = Convert.ToInt32(reader.ReadByte());
-            for (var i = 0; i < shotLength; i++)
-            {
-                this.AddGun(time, reader);
-            }
+            for (var i = 0; i < shotLength; i++) AddGun(time, reader);
 
             var torpedoLength = Convert.ToInt32(reader.ReadByte());
-            for (var i = 0; i < torpedoLength; i++)
-            {
-                this.AddTorpedo(time, reader);
-            }
+            for (var i = 0; i < torpedoLength; i++) AddTorpedo(time, reader);
 
             var hitLength = Convert.ToInt32(reader.ReadByte());
-            for (var i = 0; i < hitLength; i++)
-            {
-                this.AddHit(time, reader);
-            }
+            for (var i = 0; i < hitLength; i++) AddHit(time, reader);
         }
 
         private void AddHit(float time, BinaryReader reader)
         {
-            var pos = this.Read3D(reader);
+            var pos = Read3D(reader);
             var ownerId = reader.ReadInt32();
             var shotId = Convert.ToInt32(reader.ReadUInt16());
             var hitType = Convert.ToInt32(reader.ReadByte());
 
-            var vehicle = this.Vehicles.FirstOrDefault(x => x.VehicleId == ownerId) ?? throw new Exception();
+            var vehicle = Vehicles.FirstOrDefault(x => x.VehicleId == ownerId) ?? throw new Exception();
 
             if (Enum.IsDefined(typeof(HitType), hitType))
-            {
-                this.HitRecords.Add(new HitRecord(vehicle, time, pos, shotId, (HitType) hitType));
-            }
+                HitRecords.Add(new HitRecord(vehicle, time, pos, shotId, (HitType) hitType));
             else
-            {
                 throw new Exception($"Unknown hit type id {hitType}");
-            }
         }
 
 
         private void AddTorpedo(float time, BinaryReader reader)
         {
             var gameparamsId = reader.ReadUInt32();
-            var pos = this.Read3D(reader);
-            var dir = this.Read3D(reader);
+            var pos = Read3D(reader);
+            var dir = Read3D(reader);
             var ownerId = reader.ReadInt32();
             var salvoId = reader.ReadInt32();
             var shotId = Convert.ToInt32(reader.ReadUInt16());
             var skinId = reader.ReadUInt32();
 
-            var vehicle = this.Vehicles.FirstOrDefault(x => x.VehicleId == ownerId) ?? throw new Exception();
+            var vehicle = Vehicles.FirstOrDefault(x => x.VehicleId == ownerId) ?? throw new Exception();
 
 
-            this.TorpedoShootRecords.Add(new TorpedoShootRecord(vehicle, time, shotId, salvoId, pos, dir));
+            TorpedoShootRecords.Add(new TorpedoShootRecord(vehicle, time, shotId, salvoId, pos, dir));
         }
 
         private void AddGun(float time, BinaryReader reader)
         {
             var gameparamsId = reader.ReadUInt32();
-            var pos = this.Read3D(reader);
-            var dir = this.Read3D(reader);
-            var tarPos = this.Read3D(reader);
+            var pos = Read3D(reader);
+            var dir = Read3D(reader);
+            var tarPos = Read3D(reader);
             var ownerId = reader.ReadInt32();
             var salvoId = reader.ReadInt32();
             var shotId = Convert.ToInt32(reader.ReadUInt16());
@@ -262,10 +270,10 @@ namespace LibProShip.Domain.StreamProcessor.Version
             var shooterHeight = reader.ReadSingle();
             var hitDistance = reader.ReadSingle();
 
-            var vehicle = this.Vehicles.FirstOrDefault(x => x.VehicleId == ownerId) ?? throw new Exception();
+            var vehicle = Vehicles.FirstOrDefault(x => x.VehicleId == ownerId) ?? throw new Exception();
 
 
-            this.GunShootRecords.Add(new GunShootRecord(vehicle, time, shotId, salvoId, pos, dir, tarPos,
+            GunShootRecords.Add(new GunShootRecord(vehicle, time, shotId, salvoId, pos, dir, tarPos,
                 hitDistance, gunBarrelId));
         }
 
@@ -274,9 +282,9 @@ namespace LibProShip.Domain.StreamProcessor.Version
             var length = reader.ReadInt32();
 
             var areadId = reader.ReadInt64();
-            this.ArenaId = areadId;
+            ArenaId = areadId;
             var teamBuiltId = Convert.ToInt32(reader.ReadByte());
-            var playersStates = this.ReadBlob(reader);
+            var playersStates = ReadBlob(reader);
 
             foreach (var playersState in playersStates)
             {
@@ -287,24 +295,21 @@ namespace LibProShip.Domain.StreamProcessor.Version
                 var player = new Player(name, id);
                 var team = playersState[30][1];
                 var avatarId = playersState[1][1];
-                this.EntityIdPlayer[avatarId] = player;
+                EntityIdPlayer[avatarId] = player;
 
                 var vehicle = new Vehicle(vehicleId, player, shipId);
-                this.EntityIdVehicle[vehicleId] = vehicle;
-                this.EntityIdVehicle[avatarId] = vehicle;
+                EntityIdVehicle[vehicleId] = vehicle;
+                EntityIdVehicle[avatarId] = vehicle;
 
-                if (avatarId == this.AvatarId)
-                {
-                    this.ControlVehicle = vehicle;
-                }
+                if (avatarId == AvatarId) ControlVehicle = vehicle;
 
                 switch (team)
                 {
                     case 0:
-                        this.Enemy.Add(vehicle);
+                        Enemy.Add(vehicle);
                         break;
                     case 1:
-                        this.Alies.Add(vehicle);
+                        Alies.Add(vehicle);
                         break;
                     default:
                         throw new Exception();
@@ -312,28 +317,22 @@ namespace LibProShip.Domain.StreamProcessor.Version
             }
         }
 
-        private Vehicle ControlVehicle { get; set; }
-
-        public long ArenaId { get; set; }
-
         private void Entity(BinaryReader reader)
         {
             var entityId = reader.ReadInt32();
             var entityType = reader.ReadInt16();
             var spaceId = reader.ReadUInt32();
             var vehicleId = reader.ReadInt32();
-            var position = this.Read3D(reader);
-            var rotation = this.Read3D(reader);
+            var position = Read3D(reader);
+            var rotation = Read3D(reader);
 
             switch (entityType)
             {
                 case 2:
-                    this.ShipEntityIds.Add(entityId);
-                    this.VehicleEntityCreate(entityId, reader);
+                    ShipEntityIds.Add(entityId);
+                    VehicleEntityCreate(entityId, reader);
 
 
-                    break;
-                default:
                     break;
             }
         }
@@ -343,10 +342,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
             var length = reader.ReadInt32();
             var count = Convert.ToInt32(reader.ReadByte());
 
-            if (count != 37)
-            {
-                throw new Exception();
-            }
+            if (count != 37) throw new Exception();
 
             var curse = 0;
 
@@ -401,10 +397,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
             if (reader.ReadByte() == curse++)
             {
                 atbaTargets = new uint[reader.ReadByte()];
-                for (var i = 0; i < atbaTargets.Length; i++)
-                {
-                    atbaTargets[i] = reader.ReadUInt32();
-                }
+                for (var i = 0; i < atbaTargets.Length; i++) atbaTargets[i] = reader.ReadUInt32();
             }
             else
             {
@@ -415,10 +408,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
             if (reader.ReadByte() == curse++)
             {
                 airDefenceTargetIds = new long[reader.ReadByte()];
-                for (var i = 0; i < airDefenceTargetIds.Length; i++)
-                {
-                    airDefenceTargetIds[i] = reader.ReadInt64();
-                }
+                for (var i = 0; i < airDefenceTargetIds.Length; i++) airDefenceTargetIds[i] = reader.ReadInt64();
             }
             else
             {
@@ -446,7 +436,7 @@ namespace LibProShip.Domain.StreamProcessor.Version
             if (reader.ReadByte() == curse++)
             {
                 var effects = new Tuple<int, string, string>[reader.ReadByte()];
-                for (int i = 0; i < effects.Length; i++)
+                for (var i = 0; i < effects.Length; i++)
                 {
                     var id = reader.ReadInt16();
                     var name = reader.ReadString();
@@ -464,7 +454,6 @@ namespace LibProShip.Domain.StreamProcessor.Version
 
 
             if (reader.ReadByte() == curse++)
-            {
                 switch (reader.ReadByte())
                 {
                     case 0x00:
@@ -474,20 +463,19 @@ namespace LibProShip.Domain.StreamProcessor.Version
                     case 0x01:
                         // not empty dict
                         shipId = reader.ReadUInt32();
-                        this.ReadBlob(reader, false);
+                        ReadBlob(reader, false);
                         break;
                     default:
                         throw new Exception();
                         break;
                 }
-            }
         }
 
         private void BasePlayerCrate(BinaryReader reader)
         {
             var entityId = reader.ReadInt32();
             var entityType = reader.ReadInt16();
-            this.AvatarId = entityId;
+            AvatarId = entityId;
         }
 
         private void DecodeMap(BinaryReader binaryReader)
@@ -502,26 +490,18 @@ namespace LibProShip.Domain.StreamProcessor.Version
 
             var nameString = Encoding.ASCII.GetString(name);
 
-            if (!nameString.Contains("spaces/"))
-            {
-                throw new Exception($"Unknown map name {nameString}");
-            }
+            if (!nameString.Contains("spaces/")) throw new Exception($"Unknown map name {nameString}");
 
             nameString = nameString.Substring("spaces/".Length);
 
-            var nameSplit = nameString.Split(new char[] {'_'}, 2);
-            if (nameSplit.Length != 2)
-            {
-                throw new Exception($"Unknown to split map {nameString} to id and name.");
-            }
+            var nameSplit = nameString.Split(new[] {'_'}, 2);
+            if (nameSplit.Length != 2) throw new Exception($"Unknown to split map {nameString} to id and name.");
 
             if (!int.TryParse(nameSplit[0], out var id))
-            {
                 throw new Exception($"Unable to convert {nameSplit[0]} to id.");
-            }
 
 
-            this.Map = new Map(id, nameSplit[1], arenaId, _mapIdConvertRatio[id], spaceId);
+            Map = new Map(id, nameSplit[1], arenaId, _mapIdConvertRatio[id], spaceId);
         }
 
 
@@ -530,8 +510,8 @@ namespace LibProShip.Domain.StreamProcessor.Version
             var entityId = data.ReadInt32();
             var spaceId = data.ReadInt32();
             var vehicleId = data.ReadInt32();
-            var position = this.Read3D(data);
-            var direction = this.Read3D(data);
+            var position = Read3D(data);
+            var direction = Read3D(data);
 
 
 //            var ply = new Player();
@@ -544,15 +524,15 @@ namespace LibProShip.Domain.StreamProcessor.Version
             var id1 = reader.ReadInt32();
             var id2 = reader.ReadInt32();
 
-            if (id2 == 0 && id1 != this.AvatarId)
+            if (id2 == 0 && id1 != AvatarId)
             {
-                var position = this.Read3D(reader);
-                var rotation = this.Read3D(reader);
+                var position = Read3D(reader);
+                var rotation = Read3D(reader);
 
-                var vehicle = this.EntityIdVehicle[id1] ?? throw new Exception();
+                var vehicle = EntityIdVehicle[id1] ?? throw new Exception();
 
 
-                this.PositionRecords.Add(new PositionRecord(time, vehicle, position, rotation));
+                PositionRecords.Add(new PositionRecord(time, vehicle, position, rotation));
             }
         }
 
@@ -575,51 +555,13 @@ namespace LibProShip.Domain.StreamProcessor.Version
             }
 
             if (load)
-            {
                 using (var pkl = new Unpickler())
                 {
                     var pObject = pkl.loads(reader.ReadBytes(length));
                     return pObject;
                 }
-            }
-            else
-            {
-                return null;
-            }
-        }
 
-        private static readonly IReadOnlyDictionary<int, double> _mapIdConvertRatio = new Dictionary<int, double>
-        {
-            {34, 24000D / 1600D},
-            {33, 24000D / 1600D},
-            {01, 30000D / 1600D},
-            {10, 30000D / 1600D},
-            {04, 30000D / 1600D},
-            {05, 36000D / 1600D},
-            {08, 36000D / 1600D},
-            {13, 36000D / 1600D},
-            {17, 42000D / 1600D},
-            {41, 42000D / 1600D},
-            {15, 48000D / 1600D},
-            {35, 48000D / 1600D},
-            {46, 42000D / 1600D},
-            {23, 42000D / 1600D},
-            {42, 42000D / 1600D},
-            {50, 42000D / 1600D},
-            {20, 42000D / 1600D},
-            {16, 48000D / 1600D},
-            {22, 48000D / 1600D},
-            {19, 42000D / 1600D},
-            {28, 42000D / 1600D},
-            {40, 42000D / 1600D},
-            {18, 48000D / 1600D},
-            {14, 42000D / 1600D},
-            {38, 48000D / 1600D},
-            {37, 48000D / 1600D},
-            {44, 48000D / 1600D},
-            {25, 48000D / 1600D},
-            {45, 48000D / 1600D},
-            {00, 36000D / 1600D},
-        };
+            return null;
+        }
     }
 }

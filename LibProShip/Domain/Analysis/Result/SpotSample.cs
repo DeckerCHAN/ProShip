@@ -10,34 +10,33 @@ namespace LibProShip.Domain.Analysis.Result
             Color = color;
         }
 
-        public string Title { get; private set; }
-        public double Orbit { get; private set; }
-        public double CentralDistance { get; private set; }
-        public Color Color { get; private set; }
+        public string Title { get; }
+        public double Orbit { get; }
+        public double CentralDistance { get; }
+        public Color Color { get; }
     }
 
     public sealed class SpotSample : ValueObject
     {
         public SpotSample(string title, double value, Color color, double centralDistance, double orbit)
         {
-            this.Title = title;
-            this.Value = value;
+            Title = title;
+            Value = value;
             Color = color;
             CentralDistance = centralDistance;
             Orbit = orbit;
         }
 
-    
 
         public SpotSample()
         {
             //For ORM
         }
 
-        public string Title { get; private set; }
-        public double Orbit { get; private set; }
-        public double CentralDistance { get; private set; }
-        public double Value { get; private set; }
-        public Color Color { get; private set; }
+        public string Title { get; }
+        public double Orbit { get; }
+        public double CentralDistance { get; }
+        public double Value { get; }
+        public Color Color { get; }
     }
 }

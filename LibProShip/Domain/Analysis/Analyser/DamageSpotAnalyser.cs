@@ -21,46 +21,35 @@ namespace LibProShip.Domain.Analysis.Analyser
             var sp = new List<SpotSample>();
             foreach (var damageRecord in battleRecord.DamageRecords)
             {
-                if (damageRecord.TargetVehicle != battleRecord.ControlVehicle)
-                {
-                    continue;
-                }
+                if (damageRecord.TargetVehicle != battleRecord.ControlVehicle) continue;
 
-                if (Math.Abs(damageRecord.Amount) < 1)
-                {
-                    continue;
-                }
+                if (Math.Abs(damageRecord.Amount) < 1) continue;
 
-                var hits = this.GetRelatedHits(battleRecord.PositionRecords, battleRecord.HitRecords,
+                var hits = GetRelatedHits(battleRecord.PositionRecords, battleRecord.HitRecords,
                     battleRecord.DamageRecords,
                     damageRecord).Where(x => x.HitType == HitType.Hit);
 
                 //TODO: Here detect if same damage comes from two different type of projectile
                 var hit = hits.FirstOrDefault();
-                if (hit == null)
-                {
-                    continue;
-                }
+                if (hit == null) continue;
 
                 var sourceGun = battleRecord.GunShootRecords
                     .Where(x => x.OwnerVehicle == hit.OwnerVehicle).FirstOrDefault(x => x.ShotId == hit.ShotId);
 
 
-                if (sourceGun == null)
-                {
-                    continue;
-                }
+                if (sourceGun == null) continue;
 
                 var victimVehicle = damageRecord.TargetVehicle;
 
-                var victimPosition = this.GetVehiclePosition(battleRecord.PositionRecords, hit.HitTime, victimVehicle)
+                var victimPosition = GetVehiclePosition(battleRecord.PositionRecords, hit.HitTime, victimVehicle)
                     .Value;
 
-                var relativeAngleToVictim = this.GetRelativeRotationFromGunHit(victimPosition, sourceGun);
+                var relativeAngleToVictim = GetRelativeRotationFromGunHit(victimPosition, sourceGun);
 
                 var distanceFromVictim = sourceGun.Position.DistanceFrom(victimPosition.position);
-                
-                var spot = new SpotSample(string.Empty, damageRecord.Amount, Color.RED, distanceFromVictim * battleRecord.Map.DistanceConvertRatio,
+
+                var spot = new SpotSample(string.Empty, damageRecord.Amount, Color.RED,
+                    distanceFromVictim * battleRecord.Map.DistanceConvertRatio,
                     relativeAngleToVictim);
                 sp.Add(spot);
             }
