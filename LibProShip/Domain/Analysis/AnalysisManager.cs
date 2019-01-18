@@ -25,19 +25,24 @@ namespace LibProShip.Domain.Analysis
             ReplayRepository = replayRepository;
         }
 
-        public void Analysis(string replayId, string analyserName)
+        public IEnumerable<string> LoadedAnalysers()
+        {
+            return this.Analysers.Select(x => x.Name);
+        }
+
+        public void Analysis(string replayId, IEnumerable<string> analyserNames)
         {
             var replay = ReplayRepository.Find(r => r.Id == replayId).FirstOrDefault() ??
                          throw new ArgumentException();
-            var data = ReplayRepository.FindFile(replay);
+            var binary = ReplayRepository.FindFile(replay);
 
-            var st = StreamProcessors.Select(x =>
+            var battleRecord = StreamProcessors.Select(x =>
             {
                 try
                 {
-                    return x.ProcessStream(data.Clone() as byte[]);
+                    return x.ProcessStream(binary.Clone() as byte[]);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     //TODO: Add logger
                     return null;
@@ -45,11 +50,16 @@ namespace LibProShip.Domain.Analysis
             }).FirstOrDefault(x => x != null) ?? throw new Exception("Unable to process stream.");
 
 
-            var analyser = Analysers.FirstOrDefault(x => x.Name.Equals(analyserName)) ??
-                           throw new Exception($"Unable to find analyser {analyserName}");
+            var analysis = Analysers
+                .Where(x => analyserNames.Contains(x.Name));
 
-            var result = analyser.Analysis(st);
-            replay.AnalysisResults[analyser.Name] = result;
+            foreach (var analysi in analysis)
+            {
+                var collection = analysi.Analysis(battleRecord);
+                replay.AnalysisResults[analysi.Name] = collection;
+            }
+
+            this.ReplayRepository.Update(replay);
 
             EventBus.Raise(new AnalysisUpdatedEvent(this, replayId));
         }

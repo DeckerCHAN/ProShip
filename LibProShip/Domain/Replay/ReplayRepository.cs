@@ -63,7 +63,7 @@ namespace LibProShip.Domain.Replay
 
         public void Update(Replay replay)
         {
-            throw new NotImplementedException();
+            this.Collection.Update(replay);
         }
     }
 }
