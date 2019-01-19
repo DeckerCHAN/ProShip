@@ -45,11 +45,11 @@ artifacts:
 
   # pushing a single file with environment variable in path and "Deployment name" specified
   - path: .\ProShipDesktop\bin
-    name: Patch
+    name: Patch-$(appveyor_build_version)
     type: zip
 
   - path: .\Wrapper
-    name: ProShip$(appveyor_build_version)
+    name: ProShipDesktop
     type: zip
 
 deploy:
@@ -59,7 +59,9 @@ deploy:
   provider: GitHub
   auth_token:
     secure: qBTwziKBi/xxO3hYtkgOboy4xk7TujdmY1vRv9gofrqSpLJlZk7hakTpwClViD/+ # your encrypted token from GitHub
-  artifact: ProShipDesktop\ProShip.zip            # upload all NuGet packages to release assets
+  artifact: 
+    - ProShipDesktop\Patch-$(appveyor_build_version).zip
+    - ProShipDesktop.zip
   draft: false
   prerelease: false
   on:
