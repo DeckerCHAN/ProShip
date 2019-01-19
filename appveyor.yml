@@ -9,7 +9,7 @@
 #---------------------------------#
 
 # version format
-version: 1.0.{build}
+version: ${APPVEYOR_REPO_TAG_NAME}.{build}
 
 # branches to build
 branches:
