@@ -31,13 +31,11 @@ before_build:
 after_build:
   - ps: >-
 
-        New-Item -Path .\RunTime -ItemType directory
+        New-Item -Path .\Wrapper\RunTimes\$env:appveyor_build_version -ItemType directory
 
-        New-Item -Path .\RunTime\$env:appveyor_build_version -ItemType directory
+        Copy-Item -Path .\Launcher\bin\Debug\* -Destination .\Wrapper\
 
-        Copy-Item -Path .\Launcher\bin\Debug\* -Destination .\RunTime\
-
-        Copy-Item -Path .\ProShipDesktop\bin\Debug\* -Destination .\RunTime\$env:appveyor_build_version\
+        Copy-Item -Path .\ProShipDesktop\bin\Debug\* -Destination .\Wrapper\RunTimes\$env:appveyor_build_version
 
 #---------------------------------#
 #      artifacts configuration    #
@@ -50,7 +48,7 @@ artifacts:
     name: Patch
     type: zip
 
-  - path: .\RunTime
+  - path: .\Wrapper
     name: ProShip$(appveyor_build_version)
     type: zip
 
