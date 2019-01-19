@@ -30,10 +30,10 @@ before_build:
 
 before_package:
   - ps: >-
-    New-Item -Path RunTime -ItemType directory
-    New-Item -Path RunTime\$env:appveyor_build_version -ItemType directory
-    Copy-Item -Path Launcher\bin\Debug\ -Destination RunTime\
-    Copy-Item -Path ProShipDesktop\bin\Debug\ -Destination RunTime\$env:appveyor_build_version\
+        New-Item -Path RunTime -ItemType directory
+        New-Item -Path RunTime\$env:appveyor_build_version -ItemType directory
+        Copy-Item -Path Launcher\bin\Debug\ -Destination RunTime\
+        Copy-Item -Path ProShipDesktop\bin\Debug\ -Destination RunTime\$env:appveyor_build_version\
 
 #---------------------------------#
 #      artifacts configuration    #
