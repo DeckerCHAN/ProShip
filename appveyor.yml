@@ -41,7 +41,7 @@ artifacts:
 
 deploy:
   tag: $(APPVEYOR_REPO_TAG_NAME)
-  release: ProShip-$(APPVEYOR_REPO_TAG_NAME).b$(appveyor_build_version)
+  release: ProShip-$(APPVEYOR_REPO_TAG_NAME)$(appveyor_build_version)
   description: '{build}'
   provider: GitHub
   auth_token:
