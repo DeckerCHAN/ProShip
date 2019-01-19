@@ -47,7 +47,11 @@ artifacts:
 
   # pushing a single file with environment variable in path and "Deployment name" specified
   - path: ProShipDesktop\bin
-    name: ProShip.bin
+    name: Patch
+    type: zip
+
+  - path: RunTime
+    name: ProShip$(appveyor_build_version)
     type: zip
 
 deploy:
