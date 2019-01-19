@@ -59,9 +59,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: qBTwziKBi/xxO3hYtkgOboy4xk7TujdmY1vRv9gofrqSpLJlZk7hakTpwClViD/+ # your encrypted token from GitHub
-  artifact: 
-    - ProShipDesktop\Patch-$(appveyor_build_version).zip
-    - ProShipDesktop.zip
+  artifact: Patch-$(appveyor_build_version), ProShipDesktop
   draft: false
   prerelease: false
   on:
