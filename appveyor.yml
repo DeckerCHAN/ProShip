@@ -21,9 +21,9 @@ branches:
 assembly_info:
   patch: true
   file: AssemblyInfo.*
-  assembly_version: "{version}"
-  assembly_file_version: "{version}"
-  assembly_informational_version: "{version}"
+  assembly_version: "{build}"
+  assembly_file_version: "{build}"
+  assembly_informational_version: "{build}"
   
 before_build:
   - nuget restore
@@ -42,7 +42,7 @@ artifacts:
 deploy:
   tag: $(APPVEYOR_REPO_TAG_NAME)
   release: ProShip-$(APPVEYOR_REPO_TAG_NAME).b$(appveyor_build_version)
-  description: 'Pro Ship Release'
+  description: '{build}'
   provider: GitHub
   auth_token:
     secure: qBTwziKBi/xxO3hYtkgOboy4xk7TujdmY1vRv9gofrqSpLJlZk7hakTpwClViD/+ # your encrypted token from GitHub
