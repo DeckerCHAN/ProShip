@@ -5,8 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Launcher"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen" 
+        ResizeMode="NoResize"
+        Width="200"
+        Height="20">
+    <ProgressBar Value="50"></ProgressBar>
 </Window>
