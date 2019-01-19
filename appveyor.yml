@@ -36,9 +36,19 @@ before_build:
 
 artifacts:
 
-  # pushing a single file
-  - path: test.zip
-
   # pushing a single file with environment variable in path and "Deployment name" specified
   - path: ProShipDesktop\bin
-    name: myapp
+    name: ProShip
+
+deploy:
+  release: ProShip-v$(appveyor_build_version)
+  description: 'Pro Ship Release'
+  provider: GitHub
+  auth_token:
+    secure: qBTwziKBi/xxO3hYtkgOboy4xk7TujdmY1vRv9gofrqSpLJlZk7hakTpwClViD/+ # your encrypted token from GitHub
+  artifact: ProShipDesktop\ProShip.zip            # upload all NuGet packages to release assets
+  draft: false
+  prerelease: false
+  on:
+    branch: master                 # release from master branch only
+    APPVEYOR_REPO_TAG: true        # deploy on tag push only
