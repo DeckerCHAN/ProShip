@@ -28,16 +28,16 @@ assembly_info:
 before_build:
   - nuget restore
 
-before_package:
+after_build:
   - ps: >-
 
-        New-Item -Path RunTime -ItemType directory
+        New-Item -Path .\RunTime -ItemType directory
 
-        New-Item -Path RunTime\$env:appveyor_build_version -ItemType directory
+        New-Item -Path .\RunTime\$env:appveyor_build_version -ItemType directory
 
-        Copy-Item -Path Launcher\bin\Debug\ -Destination RunTime\
+        Copy-Item -Path .\Launcher\bin\Debug\* -Destination .\RunTime\
 
-        Copy-Item -Path ProShipDesktop\bin\Debug\ -Destination RunTime\$env:appveyor_build_version\
+        Copy-Item -Path .\ProShipDesktop\bin\Debug\* -Destination .\RunTime\$env:appveyor_build_version\
 
 #---------------------------------#
 #      artifacts configuration    #
@@ -46,11 +46,11 @@ before_package:
 artifacts:
 
   # pushing a single file with environment variable in path and "Deployment name" specified
-  - path: ProShipDesktop\bin
+  - path: .\ProShipDesktop\bin
     name: Patch
     type: zip
 
-  - path: RunTime
+  - path: .\RunTime
     name: ProShip$(appveyor_build_version)
     type: zip
 
