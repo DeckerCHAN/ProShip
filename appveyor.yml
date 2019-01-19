@@ -9,7 +9,7 @@
 #---------------------------------#
 
 # version format
-version: ${APPVEYOR_REPO_TAG_NAME}.{build}
+version: $(APPVEYOR_REPO_TAG_NAME).{build}
 
 # branches to build
 branches:
@@ -40,6 +40,7 @@ artifacts:
     name: ProShip
 
 deploy:
+  tag: $(APPVEYOR_REPO_TAG_NAME)
   release: ProShip-v$(appveyor_build_version)
   description: 'Pro Ship Release'
   provider: GitHub
