@@ -9,6 +9,7 @@
         WindowStartupLocation="CenterScreen" 
         ResizeMode="NoResize"
         Width="200"
-        Height="20">
-    <ProgressBar Value="50"></ProgressBar>
+        Height="20"
+        Visibility="Hidden">
+    <ProgressBar Name="ProgressBar" Value="0"></ProgressBar>
 </Window>

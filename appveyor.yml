@@ -33,7 +33,7 @@ after_build:
 
         New-Item -Path .\Wrapper\RunTimes\$env:appveyor_build_version -ItemType directory
 
-        Copy-Item -Path .\Launcher\bin\Debug\* -Destination .\Wrapper\
+         Copy-Item -Path .\Launcher\bin\Debug\* -Destination .\Wrapper\
 
         Copy-Item -Path .\ProShipDesktop\bin\Debug\* -Destination .\Wrapper\RunTimes\$env:appveyor_build_version
 
