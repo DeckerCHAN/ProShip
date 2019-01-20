@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -66,12 +67,18 @@ namespace Launcher
         {
             try
             {
+                //Kill all ProShip processes
+                foreach (var process in Process.GetProcessesByName("ProShip.exe"))
+                {
+                    process.Kill();
+                }
+                
                 this.ShowWindowAsync();
-//            if (!this.CheckFolder())
-//            {
-//                this.ErrorAndExitAsync("Put this folder inside your wows folder.");
-//                return;
-//            }
+                if (!this.CheckFolder())
+                {
+                    this.ErrorAndExitAsync("Put this folder inside your wows folder.");
+                    return;
+                }
 
                 this.UpdateProgressBarAsync(20);
                 if (!this.CheckRunTime())
@@ -94,10 +101,11 @@ namespace Launcher
                     //Get that zip file
                     var fileToUnzip = this.RunTimeFolder.GetFiles().First(x => x.Extension.Contains("zip"));
                     //Create folder with same name
-                    
+                    var newRunTimeFoder = new DirectoryInfo(Path.Combine(this.RunTimeFolder.FullName, fileToUnzip.Name.Replace(fileToUnzip.Extension,string.Empty)));
+                    newRunTimeFoder.Create();
                     //Extract
-                    ZipFile zip = ZipFile.Read(fileToUnzip.FullName);
-                    zip.ExtractAll(this.RunTimeFolder.FullName, ExtractExistingFileAction.OverwriteSilently);
+                    var zip = ZipFile.Read(fileToUnzip.FullName);
+                    zip.ExtractAll(newRunTimeFoder.FullName, ExtractExistingFileAction.OverwriteSilently);
                     zip.Dispose();
                     this.UpdateProgressBarAsync(60);
 
@@ -109,12 +117,11 @@ namespace Launcher
                 }
 
                 this.UpdateProgressBarAsync(80);
+                var exeFile = this.RunTimeFolder.GetDirectories().OrderBy(x => x.CreationTime).First().GetFiles()
+                    .First(x => x.Name == "ProShip.exe");
 
-//            for (int i = 1; i <= 100; i++)
-//            {
-//                Thread.Sleep(20);
-//                this.UpdateProgressBar(i);
-//            }
+                Process.Start(exeFile.FullName);
+
 
                 this.HideWindowAsync();
                 this.ExitAsync();
