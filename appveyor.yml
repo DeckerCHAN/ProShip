@@ -44,7 +44,7 @@ after_build:
 artifacts:
 
   # pushing a single file with environment variable in path and "Deployment name" specified
-  - path: .\ProShipDesktop\bin
+  - path: .\ProShipDesktop\bin\Debug\
     name: Patch-$(appveyor_build_version)
     type: zip
 
