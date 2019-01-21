@@ -16,7 +16,7 @@
         Title="MainWindow" Height="350" Width="525">
     <Grid>
         <materialDesign:Card Padding="32" Margin="16">
-            <TextBlock Style="{DynamicResource MaterialDesignTitleTextBlock}">My First Material Design App111</TextBlock>
+            <TextBlock Style="{DynamicResource MaterialDesignTitleTextBlock}" DataContext="">My First Material Design App111</TextBlock>
         </materialDesign:Card>
     </Grid>
 </Window>
