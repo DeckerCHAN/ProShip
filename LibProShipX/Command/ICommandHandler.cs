@@ -1,7 +1,7 @@
-namespace LibProShipX.Infrastructure
+namespace LibProShipX.Command
 {
     public interface ICommandHandler<in T> where T : ICommand
     {
-        void Handle(T command);
+        ICommandResult Handle(T command);
     }
 }

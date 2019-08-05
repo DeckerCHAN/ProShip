@@ -1,4 +1,4 @@
-namespace LibProShipX.Infrastructure
+namespace LibProShipX.Command
 {
     public interface ICommand
     {

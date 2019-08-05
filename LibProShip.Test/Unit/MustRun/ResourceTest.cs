@@ -2,7 +2,7 @@ using System.Linq;
 using LibProShip.StaticResources;
 using Xunit;
 
-namespace LibProShip.Test.Unit
+namespace LibProShip.Test.Unit.MustRun
 {
     public class ResourceTest
     {
